@@ -168,41 +168,41 @@ $(function(){
 
 					if($('input[name="data-area"]').val() == 1){
                             // <a class="dropdown-item" href="#"><i class="fe fe-plus mr-2"></i> Add</a>
-						editButton = '<a data-toggle="tooltip" data-original-title="'+editText+'" href="/'+designElems.mainData.url+'/edit/'+data+'" class="action-icon btn btn-sm btn-clean btn-icon"> <i class="la la-edit"></i></a>';
+						editButton = '<a data-toggle="tooltip" data-original-title="'+editText+'" href="/'+designElems.mainData.url+'/edit/'+data+'" class="action-icon btn btn-sm btn-clean btn-icon"> <i class="icon-xl la la-edit"></i></a>';
 					}
 
 					if($('input[name="data-tabs"]').length && $('input[name="data-tabs"]').val() == 1){
-						copyButton = '<a data-toggle="tooltip" data-original-title="'+copyText+'" href="/'+designElems.mainData.url+'/copy/'+data+'" class="action-icon btn btn-sm btn-clean btn-icon"> <i class="la la-copy"></i></a>';
-						showButton = '<a data-toggle="tooltip" data-original-title="'+(full.status == 1 ? disableText : enableText)+'" href="/'+designElems.mainData.url+'/changeStatus/'+data+'" class="action-icon btn btn-sm btn-clean btn-icon"> <i class="la la-edit"></i></a>';
+						copyButton = '<a data-toggle="tooltip" data-original-title="'+copyText+'" href="/'+designElems.mainData.url+'/copy/'+data+'" class="action-icon btn btn-sm btn-clean btn-icon"> <i class="icon-xl la la-copy"></i></a>';
+						showButton = '<a data-toggle="tooltip" data-original-title="'+(full.status == 1 ? disableText : enableText)+'" href="/'+designElems.mainData.url+'/changeStatus/'+data+'" class="action-icon btn btn-sm btn-clean btn-icon"> <i class="icon-xl la '+(full.status == 1 ? 'la-toggle-on' : 'la-toggle-off')+'"></i></a>';
 					}
 
 					if(designElems.mainData.url == 'groupNumbers'){
-						showButton = '<a data-toggle="tooltip" data-original-title="'+showText+'" href="/contacts?group_id='+full.id+'" class="action-icon btn btn-sm btn-clean btn-icon"> <i class="la la-eye"></i></a>';
+						showButton = '<a data-toggle="tooltip" data-original-title="'+showText+'" href="/contacts?group_id='+full.id+'" class="action-icon btn btn-sm btn-clean btn-icon"> <i class="icon-xl la la-eye"></i></a>';
 						if($('input[name="data-tests"]').length && $('input[name="data-tests"]').val() == 1){
-							exportButton = '<a data-toggle="tooltip" data-original-title="'+exportText+'" href="/contacts/export/'+data+'" class="action-icon btn btn-sm btn-clean btn-icon "> <i class="la la-cloud-download"></i></a>';
+							exportButton = '<a data-toggle="tooltip" data-original-title="'+exportText+'" href="/contacts/export/'+data+'" class="action-icon btn btn-sm btn-clean btn-icon "> <i class="icon-xl la la-cloud-download"></i></a>';
 						}
 					}
 
 					if($('input[name="data-cols"]').val() == 1){
-						deleteButton = '<a data-toggle="tooltip" data-original-title="'+deleteText+'" onclick="deleteItem('+data+')" class="action-icon btn btn-sm btn-clean btn-icon"> <i class="la la-trash"></i></a>'
+						deleteButton = '<a data-toggle="tooltip" data-original-title="'+deleteText+'" onclick="deleteItem('+data+')" class="action-icon btn btn-sm btn-clean btn-icon"> <i class="icon-xl la la-trash"></i></a>'
 					}
 
 					if(designElems.mainData.url == 'groupMsgs' && $('input[name="data-tab"]').val() == 1){
-						showButton = '<a data-toggle="tooltip" data-original-title="'+detailsText+'" href="/groupMsgs/view/'+full.id+'" class="action-icon btn btn-sm btn-clean btn-icon"> <i class="la la-eye"></i></a>';
-						editButton = '<a data-toggle="tooltip" data-original-title="'+refreshText+'" href="/groupMsgs/refresh/'+full.id+'" class="action-icon btn btn-sm btn-clean btn-icon"> <i class="la la-refresh"></i></a>';
+						showButton = '<a data-toggle="tooltip" data-original-title="'+detailsText+'" href="/groupMsgs/view/'+full.id+'" class="action-icon btn btn-sm btn-clean btn-icon"> <i class="icon-xl la la-eye"></i></a>';
+						editButton = '<a data-toggle="tooltip" data-original-title="'+refreshText+'" href="/groupMsgs/refresh/'+full.id+'" class="action-icon btn btn-sm btn-clean btn-icon"> <i class="icon-xl la la-refresh"></i></a>';
 						deleteButton = '';
 					}
 
 					if((designElems.mainData.url == 'transfers' || designElems.mainData.name == 'whatsapp-bankTransfers') && $('input[name="data-tab"]').val() == 1){
-						showButton = '<a data-toggle="tooltip" data-original-title="'+detailsText+'" href="/'+designElems.mainData.url+'/view/'+full.id+'" class="action-icon btn btn-sm btn-clean btn-icon"> <i class="la la-eye"></i></a>';
+						showButton = '<a data-toggle="tooltip" data-original-title="'+detailsText+'" href="/'+designElems.mainData.url+'/view/'+full.id+'" class="action-icon btn btn-sm btn-clean btn-icon"> <i class="icon-xl la la-eye"></i></a>';
 						editButton = '';
 					}
 
 					if((designElems.mainData.url == 'tickets' || designElems.mainData.url == 'clients' || designElems.mainData.url == 'invoices') && $('input[name="data-tab"]').val() == 1){
-						showButton = '<a data-toggle="tooltip" data-original-title="'+viewText+'" href="/'+designElems.mainData.url+'/view/'+full.id+'" class="action-icon btn btn-sm btn-clean btn-icon"> <i class="la la-eye"></i></a>';
+						showButton = '<a data-toggle="tooltip" data-original-title="'+viewText+'" href="/'+designElems.mainData.url+'/view/'+full.id+'" class="action-icon btn btn-sm btn-clean btn-icon"> <i class="icon-xl la la-eye"></i></a>';
 					}
 					if(designElems.mainData.url == 'tickets'){
-						deleteButton = '<a data-toggle="tooltip" data-original-title="'+deleteText+'" onclick="deleteItem('+data+')" class="action-icon btn btn-sm btn-clean btn-icon"> <i class="la la-trash"></i></a>'
+						deleteButton = '<a data-toggle="tooltip" data-original-title="'+deleteText+'" onclick="deleteItem('+data+')" class="action-icon btn btn-sm btn-clean btn-icon"> <i class="icon-xl la la-trash"></i></a>'
 					}
 					if(designElems.mainData.url == 'tickets' && $('input[name="tenant"]').val()){
                     	editButton = '';
