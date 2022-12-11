@@ -111,7 +111,6 @@ class BotPlusControllers extends Controller {
         $rules = [
             'message_type' => 'required',
             'message' => 'required',
-            'title' => 'required',
             'body' => 'required',
             'footer' => 'required',
             'buttons' => 'required',
@@ -120,7 +119,6 @@ class BotPlusControllers extends Controller {
         $message = [
             'message_type.required' => trans('main.messageTypeValidate'),
             'message.required' => trans('main.messageValidate'),
-            'title.required' => trans('main.titleValidate'),
             'body.required' => trans('main.bodyValidate'),
             'footer.required' => trans('main.footerValidate'),
             'buttons.required' => trans('main.buttonsValidate'),
@@ -147,19 +145,12 @@ class BotPlusControllers extends Controller {
             return Redirect('404');
         }
 
-        $userObj = User::find(USER_ID);
-        $channels = [];
-        $channelObj = new \stdClass();
-        $channelObj->id = Session::get('channelCode');
-        $channelObj->title = unserialize($userObj->channels)[0];
-        $channels[] = $channelObj;
-
+        $checkAsvail = 1;
         $data['data'] = BotPlus::getData($dataObj);
         $data['designElems'] = $this->getData();
         $data['designElems']['mainData']['title'] = trans('main.edit') . ' '.trans('main.smartBot') ;
         $data['designElems']['mainData']['icon'] = 'fa fa-pencil-alt';
-        $data['channels'] = $channels;
-        $checkAsvail = UserAddon::checkUserAvailability(USER_ID,1);
+        // $checkAsvail = UserAddon::checkUserAvailability(USER_ID,1);
         $data['bots'] = $checkAsvail ? Bot::dataList(1)['data'] : [];
         $data['botPlus'] = BotPlus::dataList(1)['data'];
         $data['templates'] = Template::dataList(1)['data'];
@@ -212,6 +203,14 @@ class BotPlusControllers extends Controller {
         if($validate->fails()){
             Session::flash('error', $validate->messages()->first());
             return redirect()->back();
+        }
+
+        if($input['title_type'] == 1 && (!isset($input['title']) || empty($input['title']))){
+            Session::flash('error', trans('main.titleValidate'));
+            return redirect()->back()->withInput();
+        }else if($input['title_type'] == 2 && (!Session::has('botFile') && $botObj->image == '')){
+            Session::flash('error', trans('main.titleValidate'));
+            return redirect()->back()->withInput();
         }
 
         $myData = [];
@@ -270,12 +269,25 @@ class BotPlusControllers extends Controller {
         $botObj->footer = $input['footer'];
         $botObj->buttons = $input['buttons'];
         $botObj->buttonsData = serialize($myData);
-        $botObj->status = $input['status'];
-        $botObj->category_id = $input['category_id'];
-        $botObj->moderator_id = $input['moderator_id'];
         $botObj->updated_at = DATE_TIME;
         $botObj->updated_by = USER_ID;
         $botObj->save();
+
+        $file = Session::get('botFile');
+        if($file){
+            $storageFile = Storage::files($file);
+            if(count($storageFile) > 0){
+                $images = self::addImage($storageFile[0],$botObj->id);
+                if ($images == false) {
+                    Session::flash('error', trans('main.uploadProb'));
+                    return redirect()->back()->withInput();
+                }
+                $botObj->image = $images;
+                $botObj->save();
+            }
+        }
+
+        Session::forget('botFile');
 
         Session::flash('success', trans('main.editSuccess'));
         return \Redirect::back()->withInput();
@@ -286,6 +298,7 @@ class BotPlusControllers extends Controller {
         // if(!$checkAvail){
         //     return redirect(404);
         // }
+        $checkAsvail = 1;
         $userObj = User::find(USER_ID);
         $channels = [];
         $channelObj = new \stdClass();
@@ -296,8 +309,7 @@ class BotPlusControllers extends Controller {
         $data['designElems'] = $this->getData();
         $data['designElems']['mainData']['title'] = trans('main.add') . ' '.trans('main.smartBot') ;
         $data['designElems']['mainData']['icon'] = 'fa fa-plus';
-        $data['channels'] = $channels;
-        $checkAsvail = UserAddon::checkUserAvailability(USER_ID,1);
+        // $checkAsvail = UserAddon::checkUserAvailability(USER_ID,1);
         $data['bots'] = $checkAsvail ? Bot::dataList(1)['data'] : [];
         $data['botPlus'] = BotPlus::dataList(1)['data'];
         $data['templates'] = Template::dataList(1)['data'];
@@ -311,6 +323,14 @@ class BotPlusControllers extends Controller {
         $validate = $this->validateInsertObject($input);
         if($validate->fails()){
             Session::flash('error', $validate->messages()->first());
+            return redirect()->back()->withInput();
+        }
+
+        if($input['title_type'] == 1 && (!isset($input['title']) || empty($input['title']))){
+            Session::flash('error', trans('main.titleValidate'));
+            return redirect()->back()->withInput();
+        }else if($input['title_type'] == 2 && !Session::has('botFile')){
+            Session::flash('error', trans('main.titleValidate'));
             return redirect()->back()->withInput();
         }
 
@@ -375,14 +395,29 @@ class BotPlusControllers extends Controller {
         $dataObj->footer = $input['footer'];
         $dataObj->buttons = $input['buttons'];
         $dataObj->buttonsData = serialize($myData);
-        $dataObj->category_id = $input['category_id'];
-        $dataObj->moderator_id = $input['moderator_id'];
+        // $dataObj->category_id = $input['category_id'];
+        // $dataObj->moderator_id = $input['moderator_id'];
         $dataObj->sort = BotPlus::newSortIndex();
-        $dataObj->status = $input['status'];
+        $dataObj->status = 1;
         $dataObj->created_at = DATE_TIME;
         $dataObj->created_by = USER_ID;
         $dataObj->save();
 
+        $file = Session::get('botFile');
+        if($file){
+            $storageFile = Storage::files($file);
+            if(count($storageFile) > 0){
+                $images = self::addImage($storageFile[0],$dataObj->id);
+                if ($images == false) {
+                    Session::flash('error', trans('main.uploadProb'));
+                    return redirect()->back()->withInput();
+                }
+                $dataObj->image = $images;
+                $dataObj->save();
+            }
+        }
+
+        Session::forget('botFile');
         Session::flash('success', trans('main.addSuccess'));
         return redirect()->to($this->getData()['mainData']['url'].'/');
     }
@@ -416,5 +451,55 @@ class BotPlusControllers extends Controller {
         }
 
         return \TraitsFunc::SuccessResponse(trans('main.editSuccess'));
+    }
+
+    public function uploadImage(Request $request){
+        $rand = rand() . date("YmdhisA");
+    
+        if ($request->hasFile('file')) {
+            $files = $request->file('file');
+
+            $file_size = $files->getSize();
+            $file_size = $file_size/(1024 * 1024);
+            $file_size = number_format($file_size,2);
+            $uploadedSize = \Helper::getFolderSize(public_path().'/uploads/'.TENANT_ID.'/');
+            $totalStorage = Session::get('storageSize');
+            $extraQuotas = UserExtraQuota::getOneForUserByType(GLOBAL_ID,3);
+            if($totalStorage + $extraQuotas < (doubleval($uploadedSize) + $file_size) / 1024){
+                return \TraitsFunc::ErrorMessage(trans('main.storageQuotaError'));
+            }
+
+            $type = \ImagesHelper::checkFileExtension($files->getClientOriginalName());
+            
+            if( $type != 'photo' ){
+                return \TraitsFunc::ErrorMessage(trans('main.selectFile'));
+            }
+
+            Storage::put($rand,$files);
+            Session::put('botFile',$rand);
+            return \TraitsFunc::SuccessResponse('');
+        }
+    }
+
+    public function addImage($images,$nextID=false){
+        $fileName = \ImagesHelper::UploadFile('botPlus', $images, $nextID);
+        if($fileName == false){
+            return false;
+        }
+        return $fileName;        
+    }
+
+    public function deleteImage($id){
+        $id = (int) $id;
+        $input = \Request::all();
+        $menuObj = BotPlus::find($id);
+        if($menuObj == null) {
+            return \TraitsFunc::ErrorMessage(trans('main.botNotFound'));
+        }
+
+        \ImagesHelper::deleteDirectory(public_path('/').'/uploads/'.$this->getData()['mainData']['name'].'/'.$id.'/'.$menuObj->image);
+        $menuObj->image = '';
+        $menuObj->save();
+        return \TraitsFunc::SuccessResponse(trans('main.imgDeleted'));
     }
 }

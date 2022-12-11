@@ -35,5 +35,10 @@ class VerifyCsrfToken extends Middleware
 
         '/bots/add/uploadImage/*',
         '/bots/edit/editImage/*',
+
+        '/botPlus/add/uploadImage',
+        '/botPlus/edit/*/uploadImage',
+
+        '/groupMsgs/add/uploadImage/*',
     ];
 }

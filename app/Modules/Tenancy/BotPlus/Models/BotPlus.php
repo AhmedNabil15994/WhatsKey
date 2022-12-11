@@ -20,6 +20,9 @@ class BotPlus extends Model{
         ],
     ];
 
+    static function getPhotoPath($id, $photo,$tenantId=null) {
+        return \ImagesHelper::GetImagePath('botPlus', $id, $photo,false,$tenantId);
+    }
 
     static function getOne($id){
         return self::NotDeleted()
@@ -52,7 +55,7 @@ class BotPlus extends Model{
         return $botObj;
     }
 
-    static function getMsg2($senderMessage){
+    static function getMsgBotByMsg($senderMessage){
         $botObj = self::NotDeleted()->where('status',1)->where('message',$senderMessage)->first();
         if($botObj){
             return self::getData($botObj);
@@ -106,6 +109,7 @@ class BotPlus extends Model{
         $data->message_type_text = self::getMessageType($source->message_type);
         $data->message = $source->message;
         $data->title = $source->title;
+        $data->title_type = $source->title != null ? 1 : 2;
         $data->category_id = $source->category_id;
         $data->moderator_id = $source->moderator_id;
         $data->body = $source->body;
@@ -114,6 +118,9 @@ class BotPlus extends Model{
         $data->buttonsData = $source->buttonsData != null ? unserialize($source->buttonsData) : [];
         $data->status = $source->status;
         $data->sort = $source->sort;
+        $data->image = $source->image != null ? self::getPhotoPath($source->id, $source->image,$tenantId) : "";
+        $data->image_name = $source->image;
+        $data->image_size = $data->image != '' ? \ImagesHelper::getPhotoSize($data->image) : '';
         $data->created_at = \Helper::formatDate($source->created_at);
         return $data;
     }  

@@ -24,12 +24,13 @@
         padding-bottom: 0;
     }
 </style>
+<link rel="stylesheet" href="{{ asset('assets/tenant/css/photoswipe.css') }}" />
 @endsection
 @section('breadcrumbs')
 @include('tenant.Layouts.breadcrumb',[
     'breadcrumbs' => [
         [
-            'title' => trans('main.dashboard'),
+            'title' => trans('main.menu'),
             'url' => \URL::to('/dashboard')
         ],
         [

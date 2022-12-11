@@ -14,4 +14,12 @@ Route::group(['prefix' => '/botPlus'] , function () {
     Route::post('/fastEdit', [$controller,'fastEdit']);
 	Route::post('/create', [$controller,'create']);
     Route::get('/delete/{id}', [$controller,'delete']);
+
+    /*----------------------------------------------------------
+    Images
+    ----------------------------------------------------------*/
+
+    Route::post('/add/uploadImage', [$controller,'uploadImage']);
+    Route::post('/edit/{id}/uploadImage', [$controller,'uploadImage']);
+    Route::post('/edit/{id}/deleteImage', [$controller,'deleteImage']);
 });

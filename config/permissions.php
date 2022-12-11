@@ -159,6 +159,14 @@ return [
     'BotPlusControllers@uploadImage' => 'uploadImage-bot-plus',
     'BotPlusControllers@deleteImage' => 'deleteImage-bot-plus',
 
+    'GroupMsgsControllers@index' => 'list-group-messages',
+    'GroupMsgsControllers@add' => 'add-group-message' ,
+    'GroupMsgsControllers@create' => 'add-group-message',
+    'GroupMsgsControllers@resend' => 'add-group-message',
+    'GroupMsgsControllers@view' => 'view-group-message',
+    'GroupMsgsControllers@refresh' => 'view-group-message',
+    'GroupMsgsControllers@charts' => 'charts-group-message',
+    'GroupMsgsControllers@uploadImage' => 'uploadImage-group-message',
     
 
     'SubscriptionControllers@packages' => 'general',

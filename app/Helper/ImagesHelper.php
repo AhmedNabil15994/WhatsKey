@@ -117,11 +117,6 @@ class ImagesHelper {
             //     $checkFile = $checkFile . '/templateMsgs/' . $id . '/' . $filename;
             //     return is_file($checkFile) ? URL::to($fullPath) : $default;
             //     break;
-            // case "botPlus":
-            //     $fullPath = $path.'/uploads'.($tenant != '' ? '/'.$tenant : '') . '/botPlus/' . $id . '/' . $filename;
-            //     $checkFile = $checkFile . '/botPlus/' . $id . '/' . $filename;
-            //     return is_file($checkFile) ? URL::to($fullPath) : $default;
-            //     break;
             // case "SallaCarts":
             //     $fullPath = $path.'/uploads'.($tenant != '' ? '/'.$tenant : '') . '/SallaCarts/' . $id . '/' . $filename;
             //     $checkFile = $checkFile . '/SallaCarts/' . $id . '/' . $filename;
@@ -132,11 +127,7 @@ class ImagesHelper {
             //     $checkFile = $checkFile . '/ZidCarts/' . $id . '/' . $filename;
             //     return is_file($checkFile) ? URL::to($fullPath) : $default;
             //     break;
-            // case "groupMessages":
-            //     $fullPath = $path.'/uploads'.($tenant != '' ? '/'.$tenant : '') . '/groupMessages/' . $id . '/' . $filename;
-            //     $checkFile = $checkFile . '/groupMessages/' . $id . '/' . $filename;
-            //     return is_file($checkFile) ? URL::to($fullPath) : $default;
-            //     break;
+           
             // case "chats":
             //     $fullPath = $path.'/uploads'.($tenant != '' ? '/'.$tenant : '') . '/chats/'. $filename;
             //     $checkFile = $checkFile . '/chats/' . $filename;
@@ -159,6 +150,16 @@ class ImagesHelper {
                 $checkFile = $checkFile . '/bots/' . $id . '/' . $filename;
                 return is_file($checkFile) ? URL::to($fullPath) : $default;
                 break;
+            case "botPlus":
+                $fullPath = $path.'/uploads'.($tenant != '' ? '/'.$tenant : '') . '/botPlus/' . $id . '/' . $filename;
+                $checkFile = $checkFile . '/botPlus/' . $id . '/' . $filename;
+                return is_file($checkFile) ? URL::to($fullPath) : $default;
+                break;
+            case "groupMessages":
+                $fullPath = $path.'/uploads'.($tenant != '' ? '/'.$tenant : '') . '/groupMessages/' . $id . '/' . $filename;
+                $checkFile = $checkFile . '/groupMessages/' . $id . '/' . $filename;
+                return is_file($checkFile) ? URL::to($fullPath) : $default;
+                break;    
             case "users":
                 $fullPath = $path.'/uploads'.($tenant != '' ? '/'.$tenant : '') . '/users/' . $id . '/' . $filename;
                 $checkFile = $checkFile . '/users/' . $id . '/' . $filename;
@@ -279,20 +280,20 @@ class ImagesHelper {
             $directory = $path . 'bots/' . $id;
         }
 
-        // if ($strAction == 'templateMsgs') {
-        //     $directory = $path . 'templateMsgs/' . $id;
-        // }
+        if ($strAction == 'botPlus') {
+            $directory = $path . 'botPlus/' . $id;
+        }
 
-        // if ($strAction == 'botPlus') {
-        //     $directory = $path . 'botPlus/' . $id;
-        // }
+        if ($strAction == 'groupMessages') {
+            $directory = $path . 'groupMessages/' . $id;
+        }
 
         // if ($strAction == 'chats') {
         //     $directory = $path . 'chats/';
         // }
-
-        // if ($strAction == 'groupMessages') {
-        //     $directory = $path . 'groupMessages/' . $id;
+        // 
+        // // if ($strAction == 'templateMsgs') {
+        //     $directory = $path . 'templateMsgs/' . $id;
         // }
 
         // if ($strAction == 'SallaCarts') {
@@ -303,6 +304,16 @@ class ImagesHelper {
         //     $directory = $path . 'ZidCarts/' . $id;
         // }
 
+        // if ($strAction == 'bank_transfers') {
+        //     $path = public_path() . '/uploads/';
+        //     $directory = $path . 'bank_transfers/' . $id;
+        // }
+
+        // if ($strAction == 'bankAccounts') {
+        //     $path = public_path() . '/uploads/';
+        //     $directory = $path . 'bankAccounts/' . $id;
+        // }
+        
         if ($strAction == 'faqs') {
             $directory = $path . 'faqs/' . $id;
         }
@@ -316,16 +327,6 @@ class ImagesHelper {
             $path = public_path() . '/uploads/';
             $directory = $path . 'tickets/comments/' . $id;
         }
-
-        // if ($strAction == 'bank_transfers') {
-        //     $path = public_path() . '/uploads/';
-        //     $directory = $path . 'bank_transfers/' . $id;
-        // }
-
-        // if ($strAction == 'bankAccounts') {
-        //     $path = public_path() . '/uploads/';
-        //     $directory = $path . 'bankAccounts/' . $id;
-        // }
 
         if ($strAction == 'changeLogs') {
             $path = public_path() . '/uploads/';
@@ -427,15 +428,23 @@ class ImagesHelper {
             $directory = $path . 'bots/' . $id;
         }
 
+        if ($strAction == 'groupMessages') {
+            $directory = $path . 'groupMessages/' . $id;
+        }
+
+        // if ($strAction == 'bank_transfers') {
+        //     $path = public_path() . '/uploads/';
+        //     $directory = $path . 'bank_transfers/' . $id;
+        // }
+
+        // if ($strAction == 'bankAccounts') {
+        //     $path = public_path() . '/uploads/';
+        //     $directory = $path . 'bankAccounts/' . $id;
+        // }
+        // 
         // if ($strAction == 'chats') {
         //     $directory = $path . 'chats/';
         // }
-
-        // if ($strAction == 'groupMessages') {
-        //     $directory = $path . 'groupMessages/' . $id;
-        // }
-
-
 
         if ($strAction == 'faqs') {
             $directory = $path . 'faqs/' . $id;
@@ -450,16 +459,6 @@ class ImagesHelper {
             $path = public_path() . '/uploads/';
             $directory = $path . 'tickets/comments/' . $id;
         }
-
-        // if ($strAction == 'bank_transfers') {
-        //     $path = public_path() . '/uploads/';
-        //     $directory = $path . 'bank_transfers/' . $id;
-        // }
-
-        // if ($strAction == 'bankAccounts') {
-        //     $path = public_path() . '/uploads/';
-        //     $directory = $path . 'bankAccounts/' . $id;
-        // }
 
         if ($strAction == 'changeLogs') {
             $directory = $path . 'changeLogs/' . $id;

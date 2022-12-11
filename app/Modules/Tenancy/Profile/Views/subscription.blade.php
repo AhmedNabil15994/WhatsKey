@@ -65,7 +65,7 @@
 @include('tenant.Layouts.breadcrumb',[
     'breadcrumbs' => [
         [
-            'title' => trans('main.dashboard'),
+            'title' => trans('main.menu'),
             'url' => \URL::to('/dashboard')
         ],
         [

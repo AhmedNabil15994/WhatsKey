@@ -220,21 +220,17 @@ class BotControllers extends Controller {
         if($input['reply_type'] == 1){
             $dataObj->reply = $input['replyText'];
             $dataObj->save();
-        }
-        else if($input['reply_type'] == 2){
+        }else if($input['reply_type'] == 2){
             $dataObj->reply = $input['reply']; 
             $dataObj->save();
-        }
-        else if($input['reply_type'] == 3){
+        }else if($input['reply_type'] == 3){
             $dataObj->reply = $input['caption']; 
             $dataObj->save();
-        }
-        else if($input['reply_type'] == 10){
+        }else if($input['reply_type'] == 10){
             $dataObj->reply = $input['disappearingText'];
             $dataObj->expiration_in_seconds = isset($input['expires_in']) && !empty($input['expires_in']) ? $input['expires_in'] * 60 : '';
             $dataObj->save();
-        }
-        else if($input['reply_type'] == 16){
+        }else if($input['reply_type'] == 16){
             $dataObj->https_url = $input['https_url'];
             $dataObj->url_title = $input['url_title'];
             $dataObj->url_desc = $input['url_desc'];

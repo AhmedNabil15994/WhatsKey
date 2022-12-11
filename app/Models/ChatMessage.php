@@ -137,7 +137,7 @@ class ChatMessage extends Model{
             $dataObj->sending_status = $source->sending_status ;
         }
         if( isset($source->metadata)){
-            $dataObj->metadata = json_encode($source->metadata) ;
+            $dataObj->metadata = !empty($dataObj->metadata) ? json_encode(array_merge((array)json_decode($dataObj->metadata),$source->metadata)) : json_encode($source->metadata) ;
         }
         if( isset($source->module_id) && $source->module_id != '' && $source->module_id != null){
             $dataObj->module_id = $source->module_id;

@@ -278,35 +278,40 @@ class Contact extends Model{
         $data->email = $source->email != null ? $source->email : '';
         $data->city = $source->city != null ? $source->city : '';
         $data->country = $source->country != null ? $source->country : '';
-        $data->status = $source->status;
         $data->sort = $source->sort;
         $data->created_at = \Helper::formatDate($source->created_at);
         $data->created_at2 = self::reformDate(strtotime($source->created_at));
+
         if($groupMsgObj != null){
-            $status = [];
             if($groupMsgObj && $groupMsgObj->sent_type == trans('main.publishSoon')){
-                $status= ['dark',trans('main.publishSoon')];
-                $data->reportStatus = $status;
+                $data->color = 'dark';
+                $data->status = trans('main.publishSoon');
+                $data->date = '';
                 return $data;
             }
 
             $reportObj = $source->Reports()->where('group_message_id',$groupMsgObj->id)->where('group_id',$groupMsgObj->group_id)->orderBy('id','DESC')->first();
             
             if($reportObj == null){
-                $status= ['info',trans('main.inPrgo'),date('Y-m-d H:i:s')];
+                $data->color = 'info';
+                $data->status = trans('main.inPrgo');
+                $data->date = date('Y-m-d H:i:s');
             }else{
-                if($reportObj->status == 0){
-                    $status = ['danger',trans('main.notSent'),$reportObj->created_at];
+                if($reportObj->data == 0){
+                    $data->color = 'danger';
+                    $data->status = trans('main.notSent');
                 }else if($reportObj->status == 1){
-                    $status = ['success',trans('main.sent'),$reportObj->created_at];
+                    $data->color = 'success';
+                    $data->status = trans('main.sent');
                 }else if($reportObj->status == 2){
-                    $status = ['info',trans('main.received'),$reportObj->created_at];
+                    $data->color = 'info';
+                    $data->status = trans('main.received');
                 }else if($reportObj->status == 3){
-                    $status = ['primary',trans('main.seen'),$reportObj->created_at];
+                    $data->color = 'primary';
+                    $data->status = trans('main.seen');
                 }
+                $data->date = $reportObj->created_at;
             }
-            $data->reportStatus = $status;
-
         }
         return $data;
     }

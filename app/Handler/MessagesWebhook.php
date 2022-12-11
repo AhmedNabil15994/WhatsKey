@@ -90,9 +90,18 @@ class MessagesWebhook extends ProcessWebhookJob
 	                    	$this->handleBasicBot($botObj2, $userObj->domain, $sender, $tenantObj->tenant_id, $message);
                     	}
                     }
-                    
 
-                    // // Find BotPlus Object Based on incoming message
+                    // Find BotPlus Object Based on incoming message
+                    $botPlusObj1 = BotPlus::findBotMessage($langPref, $senderMessage);
+                    if($botPlusObj1){
+	                    $this->handleBotPlus($message, $botPlusObj1, $userObj->domain, $sender,$tenantObj->tenant_id,$senderMessage);
+                    }else{
+                    	$botPlusObj2 = BotPlus::findBotMessage(!$langPref, $senderMessage);
+                    	if($botPlusObj2){
+	                    	$this->handleBotPlus($message, $botPlusObj2, $userObj->domain, $sender,$tenantObj->tenant_id,$senderMessage);
+                    	}
+                    }
+                    
                     // $botPlusObjs = BotPlus::findBotMessage($langPref, $senderMessage);
                     // if ($botPlusObjs) {
                     //     $botPlusObj = BotPlus::getData($botPlusObjs);
@@ -205,35 +214,13 @@ class MessagesWebhook extends ProcessWebhookJob
         return 1;
     }
 
-    public function handleNotification($message, $lastM)
-    {
-        $vars = Variable::where('var_key', 'LIKE', 'ONESIGNALPLAYERID_%')->get();
-        $ids = [];
-        foreach ($vars as $var) {
-            $more = array_values((array) json_decode($var->var_value));
-            $ids = array_merge($ids, $more);
-        }
-        $ids = array_unique($ids);
-
-        if (!empty($ids)) {
-            return \OneSignalHelper::sendnotification([
-                'title' => $message['senderName'],
-                'message' => $lastM,
-                'type' => 'ios',
-                'to' => array_values($ids),
-                'image' => '',
-            ]);
-        }
-        return 1;
-    }
-
     public function handleBasicBot($botObj, $domain, $sender, $tenantId, $message)
     {
         $mainWhatsLoopObj = new \OfficialHelper();
         $botObj = Bot::getData($botObj, $tenantId);
         $botObj->file = str_replace('localhost', $domain . '.whatskey.net', $botObj->file);
         // For Local
-        // $botObj->file = str_replace('newdomain1.whatskey.net/', '3aa6-154-182-246-229.ngrok.io', $botObj->file);
+        $botObj->file = str_replace('newdomain1.whatskey.net/', '828b-154-182-246-229.ngrok.io', $botObj->file);
         $myMessage = $botObj->reply;
         $message_type = '';
         $sendData['phone'] = str_replace('@c.us', '', $sender);
@@ -313,7 +300,7 @@ class MessagesWebhook extends ProcessWebhookJob
         return 1;
     }
 
-    public function handleRequest($message, $domain, $result, $sendData, $status, $message_type, $channel, $botObj = null)
+    public function handleRequest($message, $domain, $result, $sendData, $status, $message_type, $channel, $botObj = null,$senderMessage=null)
     {
         if (isset($result['data']) && isset($result['data']['id'])) {
             $checkMessageObj = ChatMessage::where('chatId', $sendData['chatId'])->where('chatName', '!=', null)->orderBy('time', 'DESC')->first();
@@ -332,6 +319,9 @@ class MessagesWebhook extends ProcessWebhookJob
             $lastMessage['sending_status'] = 2;
             $lastMessage['caption'] = $message['caption'];
             $lastMessage['type'] = $message_type;
+            if($status == 'BOT PLUS'){
+            	$lastMessage['metadata']['botMsg'] = $senderMessage;
+            }
 
             $messageObj = ChatMessage::newMessage($lastMessage);
             $dialog = ChatDialog::getOne($sendData['chatId']);
@@ -344,6 +334,103 @@ class MessagesWebhook extends ProcessWebhookJob
                 $dialogObj->lastMessage->bot_details = $botObj;
                 return broadcast(new BotMessage($domain, $dialogObj));
             }
+        }
+        return 1;
+    }
+
+    public function handleBotPlus($message, $botObj, $domain, $sender,$tenantId,$senderMessage)
+    {
+        $buttons = [];
+        $botObj = BotPlus::getData($botObj,$tenantId);
+        $mainWhatsLoopObj = new \OfficialHelper();
+        if (isset($botObj->buttonsData) && !empty($botObj->buttonsData)) {
+            foreach ($botObj->buttonsData as $key => $oneItem) {
+                $buttons[] = [
+                    'id' => $key + 1,
+                    'title' => $oneItem['text'],
+                ];
+            }
+
+            $sendData['body'] = $botObj->body;
+            if($botObj->title != ''){
+	            $sendData['title'] = $botObj->title;
+            }
+            if($botObj->image != ''){
+        		$botObj->image = str_replace('localhost', $domain . '.whatskey.net', $botObj->image);
+        		$botObj->image = str_replace('newdomain1.whatskey.net/', '828b-154-182-246-229.ngrok.io', $botObj->image);
+	            $sendData['image'] = $botObj->image;
+            }
+            $sendData['footer'] = $botObj->footer;
+            $sendData['buttons'] = $buttons;
+            $sendData['phone'] = str_replace('@c.us', '', $sender);
+            $result = $mainWhatsLoopObj->sendButtons($sendData);
+
+            $sendData['chatId'] = $sender;
+            return $this->handleRequest($message, $domain, $result, $sendData, 'BOT PLUS', 'text', 'BotMessage', $botObj,$senderMessage);
+        }
+        return 1;
+    }
+
+    public function handleButtonsResponse($message, $sender, $userObj, $tenantObj)
+    {
+        $mainWhatsLoopObj = new \OfficialHelper();
+        $msgText = '';
+        if(isset($message['metadata']['quotedMessageId'])){
+        	$messageObjs = ChatMessage::where('id', 'LIKE', '%' . $message['metadata']['quotedMessageId'])->first();
+        	if($messageObjs){
+        		$msgText = json_decode($messageObjs->metadata)->botMsg;
+        	}
+
+        	$botObjs = BotPlus::getMsgBotByMsg($msgText);
+	        $replyData = null;
+	        if (isset($botObjs->buttonsData)) {
+	            foreach ($botObjs->buttonsData as $buttonData) {
+	                if ($buttonData['text'] == $message['metadata']['selectedButtonText']) {
+	                    $replyData = $buttonData;
+	                }
+	            }
+	        }
+    	    if (isset($replyData['reply_type']) && $replyData['reply_type'] == 1) {
+                $sendData['body'] = $replyData['msg'];
+                $sendData['phone'] = str_replace('@c.us', '', $sender);
+                $result = $mainWhatsLoopObj->sendMessage($sendData);
+                $sendData['chatId'] = $sender;
+                $this->handleRequest($message, $userObj->domain, $result, $sendData, 'BOT PLUS', 'text', 'BotMessage');
+            } else if (isset($replyData['reply_type']) && $replyData['reply_type'] == 2) {
+                if ($replyData['msg_type'] == 2) {
+                    $botObj = BotPlus::getOne($replyData['msg']);
+                    if($botObj){
+                    	$this->handleBotPlus($message, $botObj, $userObj->domain, $sender,$tenantObj->tenant_id, $message);
+                    }
+                } elseif ($replyData['msg_type'] == 1) {
+                    $botObj = Bot::getOne($replyData['msg']);
+                    if($botObj){
+	                    $this->handleBasicBot($botObj, $userObj->domain, $sender, $tenantObj->tenant_id, $message);
+                    }
+                }
+            }
+        }
+        return 1;
+    }
+
+    public function handleNotification($message, $lastM)
+    {
+        $vars = Variable::where('var_key', 'LIKE', 'ONESIGNALPLAYERID_%')->get();
+        $ids = [];
+        foreach ($vars as $var) {
+            $more = array_values((array) json_decode($var->var_value));
+            $ids = array_merge($ids, $more);
+        }
+        $ids = array_unique($ids);
+
+        if (!empty($ids)) {
+            return \OneSignalHelper::sendnotification([
+                'title' => $message['senderName'],
+                'message' => $lastM,
+                'type' => 'ios',
+                'to' => array_values($ids),
+                'image' => '',
+            ]);
         }
         return 1;
     }
@@ -475,146 +562,6 @@ class MessagesWebhook extends ProcessWebhookJob
             // }
 
             return $this->handleRequest($message, $domain, $result, $sendData, 'BOT PLUS', 'text', 'chat', 'BotMessage', $botObj);
-        }
-        return 1;
-    }
-
-    public function handleBotPlus($message, $botObj, $domain, $sender)
-    {
-        $buttons = [];
-        $mainWhatsLoopObj = new \OfficialHelper();
-        if (isset($botObj->buttonsData) && !empty($botObj->buttonsData)) {
-            foreach ($botObj->buttonsData as $key => $oneItem) {
-                $buttons[] = [
-                    'id' => $key + 1,
-                    'title' => $oneItem['text'],
-                ];
-            }
-
-            $sendData['body'] = $botObj->body;
-            $sendData['title'] = $botObj->title;
-            $sendData['footer'] = $botObj->footer;
-            $sendData['buttons'] = $buttons;
-            $sendData['phone'] = str_replace('@c.us', '', $sender);
-            $result = $mainWhatsLoopObj->sendButtons($sendData);
-
-            $sendData['chatId'] = $sender;
-
-            if ($botObj->moderator_id != null) {
-                $modObj = User::find($botObj->moderator_id);
-                if ($modObj) {
-                    $dialogObj = ChatDialog::getOne($sendData['chatId']);
-                    $modArrs = $dialogObj->modsArr;
-                    if ($modArrs == null) {
-                        $dialogObj->modsArr = serialize([$botObj->moderator_id]);
-                        $dialogObj->save();
-                    } else {
-                        $oldArr = unserialize($dialogObj->modsArr);
-                        if (!in_array($botObj->moderator_id, $oldArr)) {
-                            array_push($oldArr, $botObj->moderator_id);
-                            $dialogObj->modsArr = serialize($oldArr);
-                            $dialogObj->save();
-                        }
-                    }
-                }
-            }
-
-            // if($botObj->category_id != null){
-            //     $categoryObj = Category::find($botObj->category_id);
-            //        if($categoryObj){
-            //            $labelData['liveChatId'] = $sendData['chatId'];
-            //         $labelData['labelId'] = $categoryObj->labelId;
-
-            //         $varObj = Variable::getVar('BUSINESS');
-            //         if($varObj){
-            //             $mainWhatsLoopObj2 = new \MainWhatsLoop();
-            //             $result1 = $mainWhatsLoopObj2->unlabelChat($labelData);
-            //             $result2 = $mainWhatsLoopObj2->labelChat($labelData);
-            //             $result3 = $result2->json();
-            //         }
-
-            //         $contactLabelObj = ContactLabel::newRecord(str_replace('@c.us','',$sendData['chatId']),$labelData['labelId']);
-            //         broadcast(new ChatLabelStatus($domain, ChatDialog::getData(ChatDialog::getOne($labelData['liveChatId'])) , Category::getData($categoryObj) , 1 ));
-            //        }
-            // }
-
-            return $this->handleRequest($message, $domain, $result, $sendData, 'BOT PLUS', 'text', 'chat', 'BotMessage', $botObj);
-        }
-        return 1;
-    }
-
-    public function handleButtonsResponse($message, $sender, $userObj, $tenantObj)
-    {
-        $mainWhatsLoopObj = new \OfficialHelper();
-        $msgText = '';
-//         if(is_array($message['quotedMsgBody'])){
-//             $msgText = isset($message['quotedMsgBody']['content']) ? $message['quotedMsgBody']['content'] : $message['quotedMsgBody'];
-//         }
-//         if(is_string($message['quotedMsgBody'])){
-//             $msgText= isset(json_decode($message['quotedMsgBody'])->content) ? json_decode($message['quotedMsgBody'])->content : $message['quotedMsgBody'];
-//         }
-        if (isset($message['quotedMsgId'])) {
-            $msID = $message['quotedMsgId'];
-            $messageObjs = ChatMessage::where('id', 'LIKE', '%' . $msID)->first();
-            if ($messageObjs && isset($messageObjs->body)) {
-                $msgText = isset($message['quotedMsgBody']['content']) ? $message['quotedMsgBody']['content'] : $messageObjs->body;
-            }
-        }
-        $botObjs = BotPlus::getMsg($msgText);
-        $replyData = null;
-        if (isset($botObjs->buttonsData)) {
-            foreach ($botObjs->buttonsData as $buttonData) {
-                if ($buttonData['text'] == $message['body']) {
-                    $replyData = $buttonData;
-                }
-            }
-        }
-
-        if ($replyData == null) {
-            $botPlusObj = BotPlus::getMsg2($message['body']);
-            $newReplyData = null;
-            if (isset($botPlusObj->buttonsData)) {
-                foreach ($botPlusObj->buttonsData as $buttonData) {
-                    if ($buttonData['text'] == $message['body']) {
-                        $newReplyData = $buttonData;
-                    }
-                }
-            }
-            if ($newReplyData == null) {
-                $this->handleBotPlus($message, $botPlusObj, $userObj->domain, $sender);
-            } else {
-                if (isset($newReplyData['reply_type']) && $newReplyData['reply_type'] == 1) {
-                    $sendData['body'] = $newReplyData['msg'];
-                    $sendData['phone'] = str_replace('@c.us', '', $sender);
-                    $result = $mainWhatsLoopObj->sendMessage($sendData);
-                    $sendData['chatId'] = $sender;
-                    $this->handleRequest($message, $userObj->domain, $result, $sendData, 'BOT PLUS', 'text', 'chat', 'BotMessage');
-                } else if (isset($newReplyData['reply_type']) && $newReplyData['reply_type'] == 2) {
-                    if ($newReplyData['msg_type'] == 2) {
-                        $botObj = BotPlus::getData(BotPlus::getOne($newReplyData['msg']));
-                        $this->handleBotPlus($message, $botObj, $userObj->domain, $sender);
-                    } elseif ($newReplyData['msg_type'] == 1) {
-                        $botObj = Bot::getData(Bot::getOne($newReplyData['msg']), $tenantObj->tenant_id);
-                        $this->handleBasicBot($botObj, $userObj->domain, $sender, $tenantObj->tenant_id, $message);
-                    }
-                }
-            }
-        } else {
-            if (isset($replyData['reply_type']) && $replyData['reply_type'] == 1) {
-                $sendData['body'] = $replyData['msg'];
-                $sendData['phone'] = str_replace('@c.us', '', $sender);
-                $result = $mainWhatsLoopObj->sendMessage($sendData);
-                $sendData['chatId'] = $sender;
-                $this->handleRequest($message, $userObj->domain, $result, $sendData, 'BOT PLUS', 'text', 'chat', 'BotMessage');
-            } else if (isset($replyData['reply_type']) && $replyData['reply_type'] == 2) {
-                if ($replyData['msg_type'] == 2) {
-                    $botObj = BotPlus::getData(BotPlus::getOne($replyData['msg']));
-                    $this->handleBotPlus($message, $botObj, $userObj->domain, $sender);
-                } elseif ($replyData['msg_type'] == 1) {
-                    $botObj = Bot::getData(Bot::getOne($replyData['msg']), $tenantObj->tenant_id);
-                    $this->handleBasicBot($botObj, $userObj->domain, $sender, $tenantObj->tenant_id, $message);
-                }
-            }
         }
         return 1;
     }
