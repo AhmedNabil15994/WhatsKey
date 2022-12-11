@@ -234,11 +234,10 @@ class MessagesWebhook extends ProcessWebhookJob
         $botObj->file = str_replace('localhost', $domain . '.whatskey.net', $botObj->file);
         // For Local
         // $botObj->file = str_replace('newdomain1.whatskey.net/', '3aa6-154-182-246-229.ngrok.io', $botObj->file);
-        
         $myMessage = $botObj->reply;
         $message_type = '';
         $sendData['phone'] = str_replace('@c.us', '', $sender);
-        // 1 - 2 - 3 - 4 - 5 - 8 - 9 - 10 - 11 - 16 -50
+
         if ($botObj->reply_type == 1) {
             $message_type = 'text';
             $sendData['body'] = $myMessage;
@@ -294,7 +293,6 @@ class MessagesWebhook extends ProcessWebhookJob
         }elseif ($botObj->reply_type == 50) {
             $message_type = 'webhook';
             $sendData['body'] = $botObj->webhook_url;
-            // $result = $mainWhatsLoopObj->sendMessage($sendData);
             $message['author'] = str_replace('@c.us', '', $message['author']);
             $message['chatId'] = str_replace('@c.us', '', $message['chatId']);
             $message['chatName'] = str_replace('@c.us', '', $message['chatName']);
@@ -334,14 +332,7 @@ class MessagesWebhook extends ProcessWebhookJob
             $lastMessage['sending_status'] = 2;
             $lastMessage['caption'] = $message['caption'];
             $lastMessage['type'] = $message_type;
-            // $lastMessage['metadata'] = json_encode($message['metadata']);
-            if ($message_type == 'contact') {
-                $lastMessage['body'] = $message['body'];
-            }
-            if ($message_type == 'location') {
-                $lastMessage['body'] = $message['body'];
-                $lastMessage['caption'] = $message['caption'];
-            }
+
             $messageObj = ChatMessage::newMessage($lastMessage);
             $dialog = ChatDialog::getOne($sendData['chatId']);
             $dialog->last_time = $lastMessage['time'];

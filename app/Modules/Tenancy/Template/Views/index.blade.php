@@ -166,7 +166,7 @@ $varObj = \App\Models\Variable::getVar('ME');
 
             <a href="#" class="btn iconAdditions btn-icon search-mode btn-light-info btn-md mr-2" data-toggle="tooltip" data-original-title="{{ trans('main.advancedSearchTip') }}"><i class="flaticon2-rocket-1"></i></a>
             @if($data->designElems['mainData']['url'] == 'bots' && IS_ADMIN && \Helper::checkRules('add-'.$data->designElems['mainData']['nameOne']))
-                <a href="#" class="btn unknownReply btn-icon btn-light-dark btn-md mr-2" data-toggle="tooltip" data-original-title="{{ trans('main.unknownReply') }}"><i class="flaticon2-chat-1"></i></a>
+                <a href="#" data-toggle="modal" data-target="#unknownBot" class="btn unknownReply btn-icon btn-light-dark btn-md mr-2" data-toggle="tooltip" data-original-title="{{ trans('main.unknownReply') }}"><i class="flaticon2-chat-1"></i></a>
             @endif
             @endif
         </div>

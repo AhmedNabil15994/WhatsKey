@@ -96,7 +96,7 @@ class BotControllers extends Controller {
             'message' => [
                 'type' => 'text',
                 'class' => 'form-control datatable-input',
-                'index' => '3',
+                'index' => '2',
                 'label' => trans('main.clientMessage'),
             ],
             'reply_type' => [

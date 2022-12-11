@@ -8,11 +8,9 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="form">
-                    <label class="col-3 col-form-label">{{ trans('main.messageContent') }} :</label>
-                    <div class="col-9">
-                    	<textarea name="message" class="form-control" placeholder="{{ trans('main.messageContent') }}">{{ \App\Models\Variable::getVar('UNKNOWN_BOT_REPLY') }}</textarea>
-                    </div>
+                <div class="form-group">
+                    <label>{{ trans('main.messageContent') }} :</label>
+                    <textarea name="message" class="form-control" placeholder="{{ trans('main.messageContent') }}">{{ \App\Models\Variable::getVar('UNKNOWN_BOT_REPLY') }}</textarea>
                 </div> 
             </div>
             <div class="modal-footer">
