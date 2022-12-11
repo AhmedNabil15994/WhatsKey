@@ -147,6 +147,18 @@ return [
     'BotControllers@uploadImage' => 'uploadImage-bot',
     'BotControllers@deleteImage' => 'deleteImage-bot',
 
+    'BotPlusControllers@index' => 'list-bots-plus',
+    'BotPlusControllers@edit' => 'edit-bot-plus',
+    'BotPlusControllers@update' => 'edit-bot-plus',
+    'BotPlusControllers@changeStatus' => 'edit-bot-plus',
+    'BotPlusControllers@fastEdit' => 'edit-bot-plus',
+    'BotPlusControllers@add' => 'add-bot-plus',
+    'BotPlusControllers@create' => 'add-bot-plus',
+    'BotPlusControllers@copy' => 'copy-bot-plus',
+    'BotPlusControllers@delete' => 'delete-bot-plus',
+    'BotPlusControllers@uploadImage' => 'uploadImage-bot-plus',
+    'BotPlusControllers@deleteImage' => 'deleteImage-bot-plus',
+
     
 
     'SubscriptionControllers@packages' => 'general',

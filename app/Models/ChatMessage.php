@@ -185,18 +185,9 @@ class ChatMessage extends Model{
             $dataObj->file_name = $dataObj->message_type != 'image' ? ($source->caption != null ? $source->caption : self::getFileName($dataObj->body) ) : self::getFileName($dataObj->body);
         }
         if(isset($dataObj->message_type) && $dataObj->message_type == 'contact' ){
-            if(strpos($dataObj->body, 'FN:') !== false){
-                $dataObj->contact_name = str_replace('\n','',explode('TEL',explode('FN:',$dataObj->body)[1])[0]);
-                $dataObj->contact_number = @explode(':+',explode(';waid=',$dataObj->body)[1])[0];
-                $dataObj->contact_number = str_replace('END:VCARD','',$dataObj->contact_number);
-                $arr = explode(':',$dataObj->contact_number) ; 
-                if(isset($arr[1]) && !empty($arr[1])){
-                    $dataObj->contact_number = $arr[1];
-                }
-            }else{
-                $dataObj->contact_name = $source->body;
-                $dataObj->contact_number = $source->caption;
-            }
+            $dataObj->contact_name = json_decode($source->metadata)->name;
+            $dataObj->contact_number = json_decode($source->metadata)->phone;
+            $dataObj->body = $dataObj->contact_number;
         }
         $dataObj->messageContent = $source->body != null && (strpos(' https',ltrim($source->body)) !== false || strpos(' http',ltrim($source->body)) !== false ) ? 'ðŸ“·' : $source->body;
         if(in_array($dataObj->message_type , ['audio'])){
@@ -208,6 +199,9 @@ class ChatMessage extends Model{
         }
         $dataObj->icon = $source->fromMe ? '<i class="flaticon-reply text-success"></i>' : '<i class="flaticon-speech-bubble-1 text-danger"></i>';
         $dataObj->date_time = $dataObj->created_at_day . ' ' . $dataObj->created_at_time;
+        if($source->type == 'mention'){
+            $dataObj->body = str_replace('@', '', $dataObj->body);
+        }
         $dataObj->chatId3 = str_replace('+','',$dataObj->dialog);
         $dataObj->deleted_by = $source->deleted_by;
         $dataObj->deleted_at = $source->deleted_at;
