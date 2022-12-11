@@ -1,0 +1,254 @@
+html,body{
+	font-family: "Tajawal", sans-serif !important;
+}
+a{color: inherit;}
+.Logo{
+	width: 200px;
+}
+.qrImage{
+	width: 90%;
+}
+.stepQr {
+    margin-bottom: 20px;
+    background-color: #F8F8F8;
+    border-radius: 5px;
+    padding: 13px;
+    font-size: 13px;
+    display: block;
+}
+.settings .orangeBg {
+    background-color: #FEF3C1;
+    border-radius: 5px;
+    padding: 20px;
+}
+.settings .orangeBg .titleSettings {
+    margin-bottom: 15px;
+}
+.settings .titleSettings {
+    font-size: 16px;
+    font-family: "Tajawal";
+    color: #000;
+    margin-bottom: 25px;
+}
+.settings .list li:not(:last-of-type) {
+    margin-bottom: 15px;
+}
+.settings .list li {
+    font-size: 14px;
+    font-family: "Tajawal";
+}
+.aside-menu .menu-nav>.menu-item>.menu-link .menu-text{
+	font-size: 16px;
+	font-weight: bold;
+	padding: 5px 15px;
+}
+.dashFooter{
+	display: inline-block;
+}
+.views,.listPdf,.searchTable{
+	width: 33%;
+}
+.searchTable{
+	width: 34%;
+}
+.listPDF{
+	visibility: hidden; 
+}
+html[dir="rtl"] div.dataTables_wrapper div.dataTables_filter{
+	text-align: left !important;
+}
+table.table-bordered.dataTable th:last-child, table.table-bordered.dataTable th:last-child, table.table-bordered.dataTable td:last-child, table.table-bordered.dataTable td:last-child{
+	border-left-width:1px !important;
+	border-right-width:1px !important;
+}
+html[dir="rtl"] .iti__country-list {
+	left: 0;
+	direction: ltr;
+}
+html[dir="ltr"] .iti__country-list {
+	right: 0;
+	direction: rtl;
+}
+.dropzone.dz-clickable{
+	text-align: center;
+}
+#my-preview{
+  	position: relative;
+  	text-align: center;
+    display: inline-block;
+}
+#my-preview .dz-details:hover {
+  opacity: 1;
+}
+.dropzone .dz-preview .dz-image,
+.dropzone .dz-preview .dz-image img{
+	width: 250px;
+	height: 200px;
+}
+.dz-filename span{
+	display: inline-block;
+    white-space: initial;
+    width: -webkit-fill-available;
+}
+.PhotoBTNS{
+	margin-top: 15px;
+}
+.PhotoBTNS .my-gallery,
+.PhotoBTNS .DeletePhoto{
+	display: inline-block;
+	width: 50%;
+	float: left;
+}
+.PhotoBTNS a i{
+	width: 100%;
+    display: block;
+    cursor: pointer !important;
+}
+.select2-container .select2-selection--single{
+	height: auto !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow{
+	height: 100% !important;
+}
+.hidden{
+	display: none;
+}
+.card-footer:last-child{
+	padding-right: 0;
+    padding-left: 0;
+}
+.uploadFile {
+	width: 100%;
+    border: none;
+    background-color: #F6F6F6;
+    font-family: "Tajawal";
+    margin-top: 25px;
+    margin-bottom: 25px;
+    border-radius: 5px;
+    color: #000;
+    line-height: normal;
+    height: auto;
+    padding: 15px 20px;
+}
+.uploadFile a{color: #23527c}
+.upload {
+    padding: 30px 20px 45px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    text-align: center;
+    font-size: 14px;
+    color: #000000;
+    width: 100%;
+    font-family: "Tajawal";
+    margin-bottom: 25px;
+    border: 1px dashed #B9B9B9;
+    border-radius: 5px;
+    display: inline-table;
+}
+.upload input {
+    position: absolute;
+    right: -100%;
+}
+.upload i {
+    display: block;
+    margin: 0 auto 15px;
+    color: #000;
+    font-size: 35px;
+}
+#kt_header_mobile img{
+	width: 100%;
+	height: 55px;
+}
+#colData div li {
+    padding: 15px;
+}
+#colData li, .tasklist li {
+    display: block !important;
+}
+#colData li, .tasklist li {
+    border: 1px solid #eee !important;
+    border-radius: 5px;
+    background: #FFF;
+    padding: 15px;
+}
+.tasklist li {
+    padding-bottom: 0;
+}
+#colData .select2-container{
+	width: 100% !important;
+	margin-bottom: 20px;
+}
+#colData .grItem{
+	display: inline-block;
+}
+html[dir="rtl"] #colData .grItem{
+	margin-left: 15px
+}
+html[dir="ltr"] #colData .grItem{
+	margin-right: 15px
+}
+#colData .grItem hr{
+	margin-top: .5rem;
+	margin-bottom: .5rem;
+}
+html[dir="rtl"] .checkbox span{
+	margin-left: 10px
+}
+html[dir="ltr"] .checkbox span{
+	margin-right: 10px
+}
+.pre{
+	white-space: pre-line;
+}
+.datatable-body td:first-of-type span{
+	direction: ltr;
+}
+.select2-container{
+    width:100% !important;
+}
+#telephone{
+	direction: ltr;
+}
+#full-width-modal .modal-body{
+	min-height: 900px;
+}
+.modal-dialog.modal-xl{
+	max-width: 100%;
+}
+code {
+    width: 100%;
+    direction: ltr;
+    display: block;
+    padding: 20px;
+    text-align: left;
+}
+.svg-icon img{
+	width: 100%;
+}
+
+.border-radius-0{
+	border-radius: 0;
+	direction: ltr;
+}
+/************** Labels***********/
+.label-0{background-color: #A52C71;}
+.label-1{background-color: #8FA840;}
+.label-2{background-color: #C1A03F;}
+.label-3{background-color: #772237;}
+.label-4{background-color: #AC8671;}
+.label-5{background-color: #EFB32F;}
+.label-6{background-color: #B4B227;}
+.label-7{background-color: #C79DCD;}
+.label-8{background-color: #8B6890;}
+.label-9{background-color: #FF898D;}
+.label-10{background-color: #54C166;}
+.label-11{background-color: #FF7B6C;}
+.label-12{background-color: #28C4DB;}
+.label-13{background-color: #56C9FF;}
+.label-14{background-color: #72666A;}
+.label-15{background-color: #7D8FA5;}
+.label-16{background-color: #5796FF;}
+.label-17{background-color: #6C267E;}
+.label-18{background-color: #7ACCA4;}
+.label-19{background-color: #23353F;}

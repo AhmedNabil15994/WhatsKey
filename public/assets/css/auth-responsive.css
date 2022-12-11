@@ -1,0 +1,68 @@
+
+@media(max-width: 767px){
+	div.form{
+		padding: 10px;
+	}
+	.form-card{
+		width: 100%;
+		padding: 25px 15px;
+	}
+	.col-md-7{
+		position: absolute;
+		z-index: 1;
+	}
+	div.col-md-5{
+		position: absolute;
+		z-index: 0;
+		height: 130vh;
+	}
+}
+@media(min-width: 768px) and (max-width: 991px){
+	div.form{
+		padding: 15px;
+	}
+	.form-card{
+		width: 100%;
+		padding: 15px;
+	}
+	.col-md-7{
+		position: absolute;
+		z-index: 1;
+		width: 100%;
+	}
+	div.col-md-5{
+		position: absolute;
+		z-index: 0;
+		height: 150vh;
+		width: 100%;
+	}
+}
+@media(min-width: 992px) and (max-width: 1400px){
+	div.form{
+		padding: 20px;
+	}
+	.form-card{
+		width: 100%;
+		padding: 15px;
+	}
+	div.col-md-5{
+		height: 110vh;
+	}
+}
+@media(min-width: 1200px) and (max-width: 1400px){
+
+}
+@media(min-width: 1400px) and (max-width: 1919px) {
+	div.col-md-5{
+		height: 110vh;
+	}
+	.form-card{
+		width: 80%;
+		padding: 15px;
+	}
+}
+@media(min-width: 1920px){
+	.logo{
+		margin-top: 20px;
+	}
+}

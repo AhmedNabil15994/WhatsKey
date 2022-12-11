@@ -1,0 +1,1 @@
+<img wire:poll.visible.10s wire:model="QrImage" class="qrImage mb-3" src="{{ $data->url }}" alt="qr" data-area="{{ $data->area }}">

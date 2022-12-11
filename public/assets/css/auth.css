@@ -1,0 +1,153 @@
+*{
+	font-family: "Tajawal";
+	padding: 0;
+	margin: 0;
+}
+.row{
+	margin: 0;
+	padding: 0;
+}
+.hidden{
+	display: none;
+}
+a,a:hover,a:focus{
+	text-decoration: none;
+	color: inherit;
+}
+.iti{
+	width: 100%;
+}
+div.col-md-5{
+	background: #007672;
+	height: 110vh;
+	position: relative;
+	overflow: hidden;
+}
+div.col-md-5 .first{
+	height: 40vh;
+	display: block;
+} 
+div.col-md-5 .second{
+	height: 50vh;
+	display: block;
+	padding: 20px 40px;
+	color: #f0f0f0;
+}
+div.col-md-5 .second h2{
+	font-weight: bold;
+}
+div.col-md-5 img{
+	position: absolute;
+	bottom: -90px;
+	left: 0;
+	width: 100%;
+}
+div.form{
+	text-align: center;
+	padding: 30px 20px;
+	background: #fcfcfc;
+}
+div.form.checkAvailability{
+	margin-top: 20vh;
+}
+div.form.login{
+	margin-top: 15vh;
+}
+.logo{
+	width: 250px;
+	height: 100px;
+	margin-bottom: 20px;
+}
+.form-card{
+	width: 50%;
+	display: block;
+	margin: auto;
+	border-radius: 11px;
+	box-shadow: 0px 8px 17.5px rgba(0,0,0,0.07);
+	background-color: #fff;
+	padding: 40px 20px;
+}
+.form-card h4{
+	color: #007672;
+}
+.form-card .form-details{
+	text-align: right;
+	padding: 30px 20px 20px;
+}
+.form-card .form-details span:not(.iti__country-name,.iti__dial-code){
+	display: inline-block;
+	color: #9ca3af;
+	margin-bottom: 20px;
+}
+.iti__country{
+	direction: ltr !important;
+	text-align: right !important;
+}
+.form-card .form-details .form-group{
+	position: relative;
+	margin-bottom: 20px;
+}
+.form-card .form-details label{
+	display: block;
+	color: #000;
+	font-weight: bold;
+}
+.form-card .form-details .inputField{
+	border-radius: 5px;
+	border: 1px solid #ccc;
+	display: block;
+	width: 100%;
+	padding: 10px 28px;
+}
+.form-card .form-details i:not(.fa-eye,.fa-eye-slash){
+	color: #007672;
+	position: absolute;
+	top: 35px;
+    font-size: 18px;
+    right: 10px;
+}
+.form-card .form-details i.fa-eye,
+.form-card .form-details i.fa-eye-slash{
+	color: #9ca3af;
+	position: absolute;
+	top: 35px;
+    font-size: 18px;
+    left: 10px;
+    cursor: pointer;
+}
+.form-card .form-details p{
+	display: block;
+	margin: auto;
+	font-weight: bold;
+	text-align: center;
+}
+.mediaBtn{
+	margin: auto;
+	margin-top: 20px;
+	display: block;
+	width: 100%;
+	background-color: #007672;
+	color: #f0f0f0;
+	padding: 10px 40px;
+	border: 2px solid #007672;
+	font-weight: bold;
+	box-shadow: 0px 10px 6px rgba(0,0,0,0.08);
+	border-radius: 5px;
+}
+div.form .lastP{
+	display: block;
+	margin: auto;
+	font-weight: bold;
+	margin-bottom: 10px;	
+}
+div.form .lastP a{
+	color: #007672;
+}
+.form-group .row,
+.form-group .row .w-50{
+	margin: 0;
+	padding: 0;
+}
+.forget{
+	text-align: left;
+}

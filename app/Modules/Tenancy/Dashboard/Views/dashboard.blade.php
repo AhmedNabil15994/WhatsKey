@@ -1,0 +1,341 @@
+@extends('tenant.Layouts.master')
+@section('title',trans('main.dashboard'))
+@section('pageName',trans('main.dashboard'))
+
+@section('styles')
+<style type="text/css" media="screen">
+    .timer .nextPrev .btnNext{
+        padding: 10px;
+    }
+    .timer.times{
+        margin:30px auto;
+        border-radius: 10px;
+        background-color: #00bfb5;
+        text-align: center;
+        overflow: hidden;
+        max-width:360px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 60px;
+        color: #fff;
+        margin-top: 0;
+    }
+    .timer.times i{
+        margin-left:5px;
+        position: relative;
+        top: 1px;
+    }
+    .timer.times .titleTimer{
+        margin-bottom: 30px;
+        width: 100%;
+        color: #ffffff;
+    }
+    .datatable.datatable-default>.datatable-table>.datatable-body .datatable-row>.datatable-cell{
+        white-space:pre-line;
+        text-align: center;
+    }
+    .datatable.datatable-default>.datatable-table>.datatable-head .datatable-row>.datatable-cell.datatable-cell-sort{
+        text-align: center;
+    }
+</style>
+@endsection
+
+@section('content')
+<div class="stats">
+    
+    @if(Session::has('invoice_id') && Session::get('invoice_id') != 0)
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card card-custom gutter-b bg-white">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between p-4 flex-lg-wrap flex-xl-nowrap">
+                        <div class="d-flex flex-column mr-5">
+                            <a href="{{ URL::to('/invoices/view/'.Session::get('invoice_id')) }}" class="h4 text-dark text-hover-primary mb-5">
+                                {{ trans('main.resubscribe_b1') }}
+                            </a>
+                            <p class="text-dark-50">
+                                {{ trans('main.resubscribe_p') }}
+                            </p>
+                        </div>
+                        <div class="ml-6 ml-lg-0 ml-xxl-6 flex-shrink-0">
+                            <a href="{{ URL::to('/updateSubscription?type=new') }}" target="_blank" class="btn font-weight-bolder text-uppercase btn-primary py-4 px-6">{{ trans('main.resubscribe_b2') }}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @else
+    <div class="row">
+        <div class="col-lg-6 col-md-12">
+            <div class="row">
+                <div class="col-xl-6">
+                    <div class="card card-custom bg-{{$data->sendStatus > 0 ? 'success' : 'danger'}} gutter-b" style="height: 200px;">
+                        <div class="card-body">
+                            <div id="kt_tiles_widget_201_chart" style="height: 150px"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6">
+                    <div class="card card-custom bg-{{$data->serverStatus > 0 ? 'success' : 'danger'}} gutter-b" style="height: 200px;">
+                        <div class="card-body">
+                            <div id="kt_tiles_widget_202_chart" style="height: 150px"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-6">
+                    <div class="card card-custom gutter-b" style="height: 130px">
+                        <div class="card-body d-flex flex-column">
+                            <div class="flex-grow-1">
+                                <div class="text-dark-50 font-weight-bold">{{ trans('main.dialogs') }}</div>
+                                <div class="font-weight-bolder font-size-h3">{{ $data->allDialogs }}</div>
+                            </div>
+                            <div class="progress progress-xs">
+                                <div class="progress-bar bg-primary" role="progressbar" style="width: 94%;" aria-valuenow="94" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-6">
+                    <div class="card card-custom gutter-b" style="height: 130px">
+                        <div class="card-body d-flex flex-column">
+                            <div class="flex-grow-1">
+                                <div class="text-dark-50 font-weight-bold">{{ trans('main.contacts') }}</div>
+                                <div class="font-weight-bolder font-size-h3">{{ $data->contactsCount }}</div>
+                            </div>
+                            <div class="progress progress-xs">
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: 90%;" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-6">
+                    <div class="card card-custom gutter-b" style="height: 130px">
+                        <div class="card-body d-flex flex-column">
+                            <div class="flex-grow-1">
+                                <div class="text-dark-50 font-weight-bold">{{ trans('main.sentMessages') }}</div>
+                                <div class="font-weight-bolder font-size-h3">{{ $data->sentMessages }}</div>
+                            </div>
+                            <div class="progress progress-xs">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                 <div class="col-xl-6">
+                    <div class="card card-custom gutter-b" style="height: 130px">
+                        <div class="card-body d-flex flex-column">
+                            <div class="flex-grow-1">
+                                <div class="text-dark-50 font-weight-bold">{{ trans('main.incomeMessages') }}</div>
+                                <div class="font-weight-bolder font-size-h3">{{ $data->incomingMessages }}</div>
+                            </div>
+                            <div class="progress progress-xs">
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="card card-custom card-stretch gutter-b">
+                        <div class="card-header border-0">
+                            <h3 class="card-title font-weight-bolder text-dark">{{ trans('main.lastContactsAdded') }}</h3>
+                        </div>
+                        <div class="card-body pt-0" style="height: 440px;overflow-y: scroll;">
+                            @foreach($data->lastContacts as $contact)
+                            <div class="mb-6">
+                                <!--begin::Content-->
+                                <div class="d-flex align-items-center flex-grow-1">
+                                    <div class="d-flex flex-wrap align-items-center justify-content-between w-100">
+                                        <div class="d-flex flex-column align-items-cente py-2 w-75">
+                                            <a href="#" class="text-dark-75 font-weight-bold text-hover-primary font-size-lg mb-1" dir="ltr">{{ str_replace('@','',$contact->name) }}</a>
+                                            <span class="text-muted font-weight-bold">{{ str_replace('@','',$contact->phone2) }}</span>
+                                        </div>
+                                        @if( $contact->created_at2[0] != '1970-01-01')
+                                        <span class="label label-lg label-light label-inline font-weight-bold py-4">{{ $contact->created_at2[0] }}</span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif          
+    
+    <div class="card card-custom">
+        <div class="card-header flex-wrap border-0 pt-6 pb-0">
+            <div class="card-title">
+                <h3 class="card-label">{{ trans('main.msgsArchive') }}</h3>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="mb-7">
+                <div class="row align-items-center">
+                    <div class="col-lg-9 col-xl-8">
+                        <div class="row align-items-center">
+                            <div class="col-md-6 my-2 my-md-0">
+                                <div class="input-icon">
+                                    <input type="text" class="form-control" placeholder="{{trans('main.search')}}..." id="kt_datatable_search_query" />
+                                    <span>
+                                        <i class="flaticon2-search-1 text-muted"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-xl-4 mt-5 mt-lg-0">
+                        <a href="#" class="btn btn-light-primary px-6 font-weight-bold">{{trans('main.search')}}</a>
+                    </div>
+                </div>
+            </div>
+            <table class="datatable datatable-bordered datatable-head-custom" id="kt_datatable">
+                <thead>
+                    <tr>
+                        <th title="Field #1">{{ trans('main.dialog') }}</th>
+                        <th title="Field #2">{{ trans('main.messageContent') }}</th>
+                        <th title="Field #3">{{ trans('main.status') }}</th>
+                        <th title="Field #4">{{ trans('main.extra_type') }}</th>
+                        <th title="Field #5">{{ trans('main.sentDate') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($data->data as $message)
+                    <tr>
+                        <td><a href="#" class="numbStyle"><i class="flaticon-phone-call"></i> {{ $message->dialog }}</a></td>
+                        <td>
+                            @if($message->body != null && (strpos(' https',ltrim($message->body)) !== false || filter_var(trim($message->body), FILTER_VALIDATE_URL)))
+                            📷
+                            @else
+                            @if($message->message_type == 'contact')
+                            <p>{{ $message->contact_name }}</p>
+                            <p>{{ $message->contact_number }}</p>
+                            @else
+                            {{$message->body}}
+                            @endif
+                            @endif
+                        </td>
+                        <td>{{ $message->sending_status_text }}</td>
+                        <td>
+                            @if($message->fromMe)
+                                <i class="flaticon-reply text-success"></i>
+                            @else
+                                <i class="flaticon-speech-bubble-1 text-danger"></i>
+                            @endif 
+                        </td>
+                        <td>
+                            <i class="flaticon-calendar"></i> {{ $message->created_at_day }}  {{ $message->created_at_time }}
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <!--end: Datatable-->
+        </div>
+    </div>
+  
+    @if(!empty($data->logs))
+    <div class="row">
+        <div class="card card-custom card-stretch gutter-b">
+            <div class="card-header align-items-center border-0 mt-4">
+                <h3 class="card-title align-items-start flex-column">
+                    <span class="font-weight-bolder text-dark">{{ trans('main.activityLog') }}</span>
+                    <span class="text-muted mt-3 font-weight-bold font-size-sm">{{count($data->logs)}}</span>
+                </h3>
+            </div>
+            <div class="card-body pt-4">
+                <div class="timeline timeline-6 mt-3">
+                    @foreach($data->logs as $log)
+                    <div class="timeline-item align-items-start">
+                        <div class="timeline-label font-weight-bolder text-dark-75 font-size-lg">{{ $log->created_at2 }}</div>
+                        <div class="timeline-badge">
+                            <i class="fa fa-genderless text-{{$log->type == 1 ? 'success' : ($log->type == 2 ? 'danger' : 'primary')}} icon-xl"></i>
+                        </div>
+                        <div class="font-weight-mormal font-size-lg timeline-content text-muted pl-3">{{ $log->user }} <span>{{ $log->typeText }}</span></div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+</div>
+@endsection
+
+{{-- Scripts Section --}}
+@section('scripts')
+<script src="{{asset('assets/tenant/js/pages/crud/ktdatatable/base/html-table.js')}}"></script>
+<script>
+    $(function(){
+        function _initTilesWidget(id,size,text) {
+            var element = document.getElementById(id);
+            if (!element) {
+                return;
+            }
+            var inverseColor = size == 0 ? KTApp.getSettings()['colors']['theme']['inverse']['danger'] : KTApp.getSettings()['colors']['theme']['inverse']['success'];
+            var backgroundColor = size == 0 ? KTApp.getSettings()['colors']['theme']['base']['danger'] : KTApp.getSettings()['colors']['theme']['base']['success'];
+            var options = {
+                series: [size],
+                chart: {
+                    height: 250,
+                    type: 'radialBar',
+                    offsetY: 0,
+                },
+                plotOptions: {
+                    radialBar: {
+                        startAngle: -90,
+                        endAngle: 90,
+
+                        hollow: {
+                            margin: 0,
+                            size: "70%"
+                        },
+                        dataLabels: {
+                            showOn: "always",
+                            name: {
+                                show: true,
+                                fontSize: "13px",
+                                fontWeight: "400",
+                                offsetY: -5,
+                                color: KTApp.getSettings()['colors']['gray']['gray-300']
+                            },
+                            value: {
+                                color: inverseColor,
+                                fontSize: "22px",
+                                fontWeight: "bold",
+                                offsetY: -40,
+                                show: true
+                            }
+                        },
+                        track: {
+                            background: KTUtil.changeColor(backgroundColor, -7),
+                            strokeWidth: '100%'
+                        }
+                    }
+                },
+                colors: [inverseColor],
+                stroke: {
+                    lineCap: "round",
+                },
+                labels: [text]
+            };
+
+            var chart = new ApexCharts(element, options);
+            chart.render();
+        }
+        _initTilesWidget('kt_tiles_widget_201_chart',"{{$data->sendStatus}}","{{ trans('main.sendStatus') }}");
+        _initTilesWidget('kt_tiles_widget_202_chart',"{{$data->serverStatus}}","{{ trans('main.serverStatus') }}");        
+    });
+</script>
+@endsection
