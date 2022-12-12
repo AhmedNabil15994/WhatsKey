@@ -39,10 +39,16 @@ class GroupMsgsControllers extends Controller {
 
         $messageTypes = [
             ['id'=>1,'title'=>trans('main.text')],
-            ['id'=>2,'title'=>trans('main.photoOrFile')],
+            ['id'=>2,'title'=>trans('main.botPhoto')],
+            ['id'=>3,'title'=>trans('main.video')],
             ['id'=>4,'title'=>trans('main.sound')],
-            ['id'=>5,'title'=>trans('main.link')],
-            ['id'=>6,'title'=>trans('main.whatsappNos')],
+            ['id'=>5,'title'=>trans('main.file')],
+            ['id'=>8,'title'=>trans('main.mapLocation')],
+            ['id'=>9,'title'=>trans('main.whatsappNos')],
+            ['id'=>10,'title'=>trans('main.disappearing')],
+            ['id'=>11,'title'=>trans('main.mention')],
+            ['id'=>16,'title'=>trans('main.link')],
+            ['id'=>30,'title'=>trans('main.smartBot')],
         ];
 
         $sent_types = [
@@ -398,6 +404,7 @@ class GroupMsgsControllers extends Controller {
         $dataObj->message = $message;
         $dataObj->publish_at = $date;
         $dataObj->later = $flag;
+        $dataObj->interval_in_sec = isset($input['interval']) && !empty($input['interval']) ? $input['interval'] : 3;
         $dataObj->contacts_count = $contactsCount;
         $dataObj->messages_count = 1;
         $dataObj->sort = GroupMsg::newSortIndex();
@@ -601,7 +608,7 @@ class GroupMsgsControllers extends Controller {
         return redirect()->back();
     }
 
-     public function uploadImage($type,Request $request){
+    public function uploadImage($type,Request $request){
         $rand = rand() . date("YmdhisA");
         $typeID = (int) $type;
         if(!in_array($typeID, [2,3,4,5])){

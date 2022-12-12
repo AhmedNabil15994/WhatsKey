@@ -53,146 +53,121 @@ class GroupMessageJob implements ShouldQueue
             $botObj = BotPlus::getData($botObjs);
         }
 
-        $disBotPlus = 0;
-        $tenantUser = User::first();
-        $disabled = UserAddon::getDeactivated($tenantUser->id);
-        if(in_array(10,$disabled)){
-            $disBotPlus = 1;
-        }
-
-        $centralUser = CentralUser::find(User::first()->id);
-
-        foreach ($this->contacts as $contact) {
-            $result = $this->sendData($contact,(array) $this->messageObj,$botObj,$disBotPlus,$centralUser->isBA);
-            sleep(3);
-            if($result == 1){
-                $sent+=1;
-            }else{
-                $unsent+=1;
-            }
-        }
-
-        return $messageObj->update([
-            'sent_count' => $sent,
-            'unsent_count' => $unsent,
-            'later' => 0,
-        ]);
+        return $this->reformData($this->contacts,(array) $this->messageObj,$botObj);
     }
 
-    public function sendData($contact,$messageObj,$botObj=null,$disBotPlus=0,$isBA=0){
-        $contact = (object) $contact;
-        $sendData['chatId'] = str_replace('+', '', $contact->phone).'@c.us';
-        $status = 0;
-        
-        $chatId = $sendData['chatId'];
-        unset($sendData['chatId']);
-        $sendData['phone'] = str_replace('+', '', $contact->phone);
-
-
-        $responseData = $this->sendGroupMessage($chatId,$contact,$sendData,$messageObj,$botObj,$disBotPlus);
-        $sendData = $responseData['sendData'];
-        $resp = $responseData['result'];
-
-        if(!$resp){
-            sleep(10);
-            $responseData = $this->sendGroupMessage($chatId,$contact,$sendData,$messageObj,$botObj,$disBotPlus);
-            $sendData = $responseData['sendData'];
-            $resp = $responseData['result'];
-        }
-        
-        $sendData['chatId'] = $chatId;
-             
-        
-        $messageId = '';
-        if(isset($resp) && $resp && isset($resp['data']) && isset($resp['data']['id'])){
-            $messageId = $resp['data']['id'];
-            $lastMessage['status'] = 'APP';
-            $lastMessage['id'] = $messageId;
-            $lastMessage['chatId'] = $sendData['chatId'];
-            $status = 1;
-            ChatMessage::newMessage($lastMessage);
-        }
-        ContactReport::newStatus(str_replace('@c.us','',$sendData['chatId']),$messageObj['group_id'],$messageObj['id'],$status,$messageId);
-        
-        return $status;
-    }
-    
-    public function sendGroupMessage($chatId,$contact,$sendData,$messageObj,$botObj,$disBotPlus){
+    public function reformData($contacts,$messageObj,$botObj=null){
         $mainWhatsLoopObj = new \OfficialHelper();
-        $status = 0;
-        $result = null;
-        $msg = ChatMessage::where('fromMe',1)->where('chatId',$chatId)->where('time','>=',strtotime(date('Y-m-d H:i:s'))-1800);
-
-        if($messageObj['message_type'] == 1){
-            $sendData['body'] = $this->reformMessage($messageObj['message'],$contact->name,str_replace('+', '', $contact->phone));
-            if(!$msg->where('body',$sendData['body'])->first()){
-                $result = $mainWhatsLoopObj->sendMessage($sendData);
+        $allowedContacts = [];
+        $hasWhatsapp=0;
+        $hasNotWhatsapp=0;
+        foreach ($contacts as $contact){
+            $checkData['phone'] = str_replace('+', '', $contact->phone);
+            $checkResult = $mainWhatsLoopObj->checkPhone($checkData);
+            $result = $checkResult->json();
+            $status = 0;
+            if($result && isset($result['data'])){
+                $status = $result['data']['exists'] == true ? 1 : 0;
             }
-        }elseif($messageObj['message_type'] == 2){
-            $sendData['url'] = $messageObj['file'];
-            $sendData['caption'] = $this->reformMessage($messageObj['message'],$contact->name,str_replace('+', '', $contact->phone));
-            if($messageObj['file_type'] == 'file' && $messageObj['file'] != null){
-                if(!$msg->where('body',$sendData['url'])->first()){
-                    $result = $mainWhatsLoopObj->sendFile([
-                        'phone' => $sendData['phone'],
-                        'url' => $sendData['url'],
-                    ]);
-                }
+            if($status){
+                $hasWhatsapp+=1;
+                $allowedContacts[] = [
+                    'hasWhatsapp' => 1,
+                    'phone' => $checkData['phone'],
+                    'name' => $contact->name,
+                ];
+                ContactReport::newStatus($checkData['phone'],$messageObj['group_id'],$messageObj['id'],1,'');
             }else{
-                if(!$msg->where('body',$sendData['url'])->first()){
-                    $result = $mainWhatsLoopObj->sendImage($sendData);
-                }
+                $hasNotWhatsapp+=1;
             }
-        }elseif($messageObj['message_type'] == 3){
-            $sendData['url'] = $messageObj['file'];
-            if(!$msg->where('body',$sendData['url'])->first()){
-                $result = $mainWhatsLoopObj->sendAudio($sendData);
-            }
-        }elseif($messageObj['message_type'] == 4){            
-            $sendData['body'] = $messageObj['url_title'] . " \r\n \r\n ";
-            $sendData['body'] .= $messageObj['https_url'] . " \r\n \r\n ";
-            $sendData['body'] .= $messageObj['url_desc'];
-            $sendData['body'] = $this->reformMessage($sendData['body'],$contact->name,str_replace('+', '', $contact->phone));
-            if(!$msg->where('body',$sendData['body'])->first()){
-                $result = $mainWhatsLoopObj->sendMessage($sendData);
-            }
-        }elseif($messageObj['message_type'] == 5){
-            $sendData['contactMobile'] = str_replace('+','',$messageObj['whatsapp_no']);
-            $sendData['name'] = str_replace('+','',$messageObj['whatsapp_no']);
-            if(!$msg->where('body',$sendData['contactMobile'])->first()){
-                $result = $mainWhatsLoopObj->sendContact($sendData);
-            }
-        }elseif($messageObj['message_type'] == 6){
-            if(isset($botObj->buttonsData) && !empty($botObj->buttonsData) && !$disBotPlus){
+        }
+
+        // For Local
+        // $messageObj['file'] = str_replace('newdomain1.whatskey.localhost/', 'f734-154-182-246-229.ngrok.io', $messageObj['file']);
+
+        $phones = [];
+        $messageData = [];
+        $messageFunction = '';
+        foreach ($allowedContacts as $key => $contact){
+            $phones[$key] = str_replace('+', '', $contact['phone']);
+            if($messageObj['message_type'] == 1){
+                $messageData[$key]['body'] = $this->reformMessage($messageObj['message'],$contact['name'],str_replace('+', '', $contact['phone']));
+                $messageFunction = 'sendBulkText';
+            }else if($messageObj['message_type'] == 2){
+                $messageData[$key]['caption'] = $this->reformMessage($messageObj['message'],$contact['name'],str_replace('+', '', $contact['phone']));
+                 $messageData[$key]['url'] = $messageObj['file'];
+                $messageFunction = 'sendBulkImage';
+            }else if($messageObj['message_type'] == 3){
+                $messageData[$key]['caption'] = $this->reformMessage($messageObj['message'],$contact['name'],str_replace('+', '', $contact['phone']));
+                $messageData[$key]['url'] = $messageObj['file'];
+                $messageFunction = 'sendBulkVideo';
+            }else if($messageObj['message_type'] == 4){
+                $messageData[$key]['url'] = $messageObj['file'];
+                $messageFunction = 'sendBulkAudio';
+            }else if($messageObj['message_type'] == 5){
+                $messageData[$key]['url'] = $messageObj['file'];
+                $messageFunction = 'sendBulkFile';
+            }else if($messageObj['message_type'] == 8){
+                $messageData[$key]['address'] = $this->reformMessage($messageObj['message'],$contact['name'],str_replace('+', '', $contact['phone']));
+                $messageData[$key]['lat'] = $messageObj['lat'];
+                $messageData[$key]['lng'] = $messageObj['lng'];
+                $messageFunction = 'sendBulkLocation';
+            }else if($messageObj['message_type'] == 9){
+                $messageData[$key]['contact'] = str_replace('+', '', $messageObj['message']);
+                $messageData[$key]['name'] = str_replace('+', '', $messageObj['message']);
+                $messageFunction = 'sendBulkContact';
+            }else if($messageObj['message_type'] == 10){
+                $messageData[$key]['body'] = $this->reformMessage($messageObj['message'],$contact['name'],str_replace('+', '', $contact['phone']));
+                $messageData[$key]['expiration'] = $messageObj['expiration_in_seconds'];
+                $messageFunction = 'sendBulkDisappearing';
+            }else if($messageObj['message_type'] == 11){
+                $messageData[$key]['contact'] = str_replace('+','',$messageObj['message']);
+                $messageFunction = 'sendBulkMention';
+            }else if($messageObj['message_type'] == 16){
+                $messageData[$key]['title'] = $this->reformMessage($messageObj['url_title'],$contact['name'],str_replace('+', '', $contact['phone']));
+                $messageData[$key]['url'] = $messageObj['message'];
+                $messageData[$key]['description'] = $this->reformMessage($messageObj['url_title'],$contact['name'],str_replace('+', '', $contact['phone']));
+                $messageFunction = 'sendBulkLink';
+            }else if($messageObj['message_type'] == 30){
                 $buttons = [];
-                foreach($botObj->buttonsData as $key => $oneItem){
-                    $buttons[]= [
-                        'id' => $key+1,
+                foreach ($botObj->buttonsData as $buttonKey => $oneItem) {
+                    $buttons[] = [
+                        'id' => $buttonKey + 1,
                         'title' => $oneItem['text'],
                     ];
                 }
-                $sendData['body'] = $this->reformMessage($botObj->body,$contact->name,str_replace('+', '', $contact->phone));
-                $sendData['title'] = $this->reformMessage($botObj->title,$contact->name,str_replace('+', '', $contact->phone));
-                $sendData['footer'] = $this->reformMessage($botObj->footer,$contact->name,str_replace('+', '', $contact->phone));
-                $sendData['buttons'] = $buttons;
-                $result = $mainWhatsLoopObj->sendButtons($sendData);
+                $messageData[$key]['body'] = $this->reformMessage($botObj->title,$contact['name'],str_replace('+', '', $contact['phone']));
+                $messageData[$key]['body'] .= " \r\n \r\n".$this->reformMessage($botObj->body,$contact['name'],str_replace('+', '', $contact['phone']));
+                $messageData[$key]['footer'] = $this->reformMessage($botObj->footer,$contact['name'],str_replace('+', '', $contact['phone']));
+                $messageData[$key]['buttons'] = $buttons;
+                $messageFunction = 'sendBulkButtons';
             }
         }
 
-        if(isset($result) && $result){
-            $result = $result->json();
-            if(isset($result['status']) && isset($result['status']['status']) && $result['status']['status'] != 1){
-                $status = 0;
-            }else{
-                $status = 1;
-            }
-        }
-
-        return [
-            'result' => $result,
-            'sendData' => $sendData,
-            'status' => $status,
+        $sendRequest = [
+            'phones' => $phones,
+            'interval' => $messageObj['interval_in_sec'],
+            'messageData' => $messageData
         ];
+
+        if(!empty($phones)){
+            if($messageObj['message_type'] == 4){
+                $testResult = $mainWhatsLoopObj->sendBulkAudio([
+                    'phones' => $phones,
+                    'interval' => 30 + $messageObj['interval_in_sec'],
+                    'url' => $messageObj['file'],
+                ]);
+            }else{
+                $mainWhatsLoopObj->$messageFunction($sendRequest);
+            }
+            $oldObj = GroupMsg::find($messageObj['id']);
+            return $oldObj->update([
+                'sent_msgs' => $oldObj->sent_msgs + $hasWhatsapp,
+                'unsent_count' => $oldObj->unsent_count + $hasNotWhatsapp,
+            ]);
+        }
+
+        return 1;
     }
 
     public function reformMessage($text,$contactName,$contactPhone){

@@ -98,8 +98,16 @@
             <input class="form-control" disabled name="name_ar" value="{{ $data->msg->publish_at2 }}">
         </div>
         <div class="form-group">
+            <label>{{ trans('main.message_type') }} :</label>
+            <input class="form-control" disabled name="message_type" value="{{ $data->msg->message_type_text }}">
+        </div> 
+        <div class="form-group">
             <label>{{ trans('main.message_content') }} :</label>
-            <textarea class="form-control" disabled name="name_ar">{{ $data->msg->message }}</textarea>
+            @if($data->msg->message != '')
+            <textarea class="form-control" disabled name="name_ar">{{$data->msg->message}}</textarea>
+            @else
+            <a href="{{$data->msg->file}}" class="btn btn-md btn-success font-weight-bolder" target="_blank"><i class="fa fa-download"></i> {{$data->msg->file_name}}</a>
+            @endif
         </div> 
         <div class="card-footer text-right">
             @if(\Helper::checkRules('add-group-message'))

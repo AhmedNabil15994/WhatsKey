@@ -102,12 +102,6 @@ class MessagesWebhook extends ProcessWebhookJob
                     	}
                     }
                     
-                    // $botPlusObjs = BotPlus::findBotMessage($langPref, $senderMessage);
-                    // if ($botPlusObjs) {
-                    //     $botPlusObj = BotPlus::getData($botPlusObjs);
-                    //     $this->handleBotPlus($message, $botPlusObj, $userObj->domain, $sender);
-                    // }
-
                     // // Find TemplateMsg Object Based on incoming message
                     // $templateObj = TemplateMsg::findBotMessage($langPref, $senderMessage);
                     // if ($templateObj) {
@@ -132,13 +126,6 @@ class MessagesWebhook extends ProcessWebhookJob
 
             // Fire Webhook For Client
             // $this->fireWebhook($message);
-        } 
-        else if (isset($allData['event']) && $allData['event'] == 'newMessageStatus') {
-
-            $actions = $allData['ack'];
-            $this->handleUpdates($userObj->domain, $actions);
-            // Fire Webhook For Client
-            $this->fireWebhook($actions);
         } 
         else if (isset($allData['event']) && $allData['event'] == 'connectionStatus') {
 
@@ -444,15 +431,6 @@ class MessagesWebhook extends ProcessWebhookJob
                 ->doNotSign()
                 ->dispatch();
         } else {
-            // $webhook = Variable::get_Webhook_url();
-            // if ($webhook) {
-            //     Logger('URL from tenant db: ' . $webhook);
-            //     return WebhookCall::create()
-            //         ->url($webhook)
-            //         ->payload(['data' => $data])
-            //         ->doNotSign()
-            //         ->dispatch();
-            // }
             $webhook = Variable::getVar('WEBHOOK_URL');
             if($webhook){
                 WebhookCall::create()
@@ -461,34 +439,6 @@ class MessagesWebhook extends ProcessWebhookJob
                    ->doNotSign()
                    ->dispatch();
             }
-        }
-        return 1;
-    }
-
-    public function handleUpdates($domain, $actions)
-    {
-        foreach ($actions as $action) {
-            $action = (array) $action;
-            $sender = $action['chatId'];
-            $messageId = $action['id'];
-            $messageObj = ChatMessage::where('id', $messageId)->first();
-            if ($action['status'] == 'delivered') {
-                $statusInt = 2;
-                $contactObj = ContactReport::where('contact', str_replace('@c.us', '', $sender))->where('message_id', $messageId)->update(['status' => $statusInt]);
-            } elseif ($action['status'] == 'viewed') {
-                $statusInt = 3;
-                $contactObj = ContactReport::where('contact', str_replace('@c.us', '', $sender))->where('message_id', $messageId)->update(['status' => $statusInt]);
-            } elseif ($action['status'] == 'sent') {
-                $statusInt = 1;
-            }
-
-            if (isset($messageObj) && $statusInt > $messageObj->sending_status) {
-                $messageObj->update(['sending_status' => $statusInt]);
-                if ($statusInt == 3) {
-                    ChatMessage::where('fromMe', $messageObj->fromMe)->where('chatId', $sender)->where('sending_status', '<=', 2)->update(['sending_status' => 3]);
-                }
-            }
-            broadcast(new MessageStatus($domain, $sender, $messageId, $statusInt));
         }
         return 1;
     }
@@ -679,12 +629,5 @@ class MessagesWebhook extends ProcessWebhookJob
             }
         }
         return 1;
-    }
-
-    public function failed(Throwable $exception)
-    {
-        // Logger($exception);
-        // $data = json_decode($this->webhookCall, true);
-        // system('/usr/local/bin/php /home/wloop/public_html/artisan queue:retry '.$data['uuid']);
     }
 }

@@ -154,6 +154,11 @@ class GroupMsg extends Model{
         $data->status = $source->status;
         $data->sort = $source->sort;
         $data->later = $source->later;
+        $data->lat = $source->lat;
+        $data->lng = $source->lng;
+        $data->mention = $source->mention;
+        $data->expiration_in_seconds = $source->expiration_in_seconds;
+        $data->interval_in_sec = $source->interval_in_sec;
         $data->bot_plus_id = $source->bot_plus_id;
         $data->creator = str_replace("+", '', $source->Creator->phone);
         $data->created_at = \Helper::formatDate($source->created_at);
@@ -184,17 +189,52 @@ class GroupMsg extends Model{
 
     static function getMessage($source){
         $text = '';
-        if($source->message_type == 1 || $source->message_type == 2){
+        if(in_array($source->message_type, [1,2,3,8,10])){
             $text = $source->message;
-        }elseif($source->message_type == 4){
-            $text = $source->https_url;
-        }elseif($source->message_type == 5){
+        }elseif($source->message_type == 9){
             $text = $source->whatsapp_no;
+        }elseif($source->message_type == 11){
+            $text = $source->mention;
+        }elseif($source->message_type == 16){
+            $text = $source->https_url;
         }elseif($source->message_type == 30){
             $text = $source->BotPlus!= null ? $source->BotPlus->body : '';
         }
         return $text;
     }
+
+    static function getMessageType($type){
+        $text = '';
+        if($type == 1){
+            $text = trans('main.text');
+        }else if($type == 2){
+            $text = trans('main.botPhoto');
+        }else if($type == 3){
+            $text = trans('main.video');
+        }else if($type == 4){
+            $text = trans('main.sound');
+        }else if($type == 5){
+            $text = trans('main.file');
+        }else if($type == 8){
+            $text = trans('main.mapLocation');
+        }else if($type == 9){
+            $text = trans('main.whatsappNos');
+        }else if($type == 10){
+            $text = trans('main.disappearing');
+        }else if($type == 11){
+            $text = trans('main.mention');
+        }else if($type == 16){
+            $text = trans('main.link');
+        }else if($type == 30){
+            $text = trans('main.botPlus');
+        }
+        return $text;
+    }
+
+    static function newSortIndex(){
+        return self::count() + 1;
+    }
+
     // static function getMessage($data,$source){
     //     $text = '';
     //     if($source->message_type == 1){
@@ -215,27 +255,4 @@ class GroupMsg extends Model{
     //     }
     //     return $text;
     // }
-
-    static function getMessageType($type){
-        $text = '';
-        if($type == 1){
-            $text = trans('main.text');
-        }else if($type == 2){
-            $text = trans('main.photoOrFile');
-        }else if($type == 3){
-            $text = trans('main.sound');
-        }else if($type == 4){
-            $text = trans('main.link');
-        }else if($type == 5){
-            $text = trans('main.whatsappNos');
-        }else if($type == 6){
-            $text = trans('main.botPlus');
-        }
-        return $text;
-    }
-
-    static function newSortIndex(){
-        return self::count() + 1;
-    }
-
 }
