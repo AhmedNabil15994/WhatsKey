@@ -51,8 +51,8 @@
                 <span class="fa-icon">
                     <i class="icon-3x flaticon-paper-plane text-white"></i>
                 </span>
-                <span class="card-title font-weight-bolder text-white font-size-h2 mb-0 d-block">{{ $data->msg->sent_msgs }}</span>
-                <span class="font-weight-bold text-white font-size-sm">{{ trans('main.sent_msgs') }}</span>
+                <span class="card-title font-weight-bolder text-white font-size-h2 mb-0 d-block">{{ $data->msg->contacts_count * $data->msg->messages_count }}</span>
+                <span class="font-weight-bold text-white font-size-sm">{{ trans('main.msgs_no') }}</span>
             </div>
         </div>
     </div>
@@ -60,10 +60,10 @@
         <div class="card card-custom bg-success card-stretch gutter-b">
             <div class="card-body">
                 <span class="fa-icon">
-                    <i class="icon-3x flaticon-close text-white"></i>
+                    <i class="icon-3x flaticon2-checkmark text-white"></i>
                 </span>
-                <span class="card-title font-weight-bolder text-white font-size-h2 mb-0 d-block">{{ $data->msg->unsent_msgs }}</span>
-                <span class="font-weight-bold text-white font-size-sm">{{ trans('main.unsent_msgs') }}</span>
+                <span class="card-title font-weight-bolder text-white font-size-h2 mb-0 d-block">{{ $data->msg->sent_count }}</span>
+                <span class="font-weight-bold text-white font-size-sm">{{ trans('main.sent_msgs') }}</span>
             </div>
         </div>
     </div>
@@ -71,10 +71,10 @@
         <div class="card card-custom bg-warning card-stretch gutter-b">
             <div class="card-body">
                 <span class="fa-icon">
-                    <i class="icon-3x fa fa-eye text-white"></i>
+                    <i class="icon-3x flaticon-close text-white"></i>
                 </span>
-                <span class="card-title font-weight-bolder text-white font-size-h2 mb-0 d-block">{{ $data->msg->viewed_msgs }}</span>
-                <span class="font-weight-bold text-white font-size-sm">{{ trans('main.viewed_msgs') }}</span>
+                <span class="card-title font-weight-bolder text-white font-size-h2 mb-0 d-block">{{ $data->msg->unsent_count }}</span>
+                <span class="font-weight-bold text-white font-size-sm">{{ trans('main.unsent_msgs') }}</span>
             </div>
         </div>
     </div>
@@ -123,7 +123,6 @@
         <h3 class="card-title"><i class="{{ $data->designElems['mainData']['icon'] }}"></i> {{ trans('main.recipients') }}</h3>
         <div class="card-toolbar">
             <a href="{{ URL::to('/groupMsgs/resend/'.$data->msg->id.'/2') }}" class="btn mx-1 resend btn-primary">{{ trans('main.resendUnsent') }}</a>   
-            <a href="{{ URL::to('/groupMsgs/refresh/'.$data->msg->id) }}" class="btn mx-1 resend btn-secondary">{{ trans('main.refresh2') }}</a>   
         </div>
     </div>
     <div class="card-body">

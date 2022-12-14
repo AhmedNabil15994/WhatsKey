@@ -36,6 +36,8 @@ class CreateGroupMessagesTable extends Migration
             $table->string('lng')->nullable();
             $table->string('expiration_in_seconds')->nullable();
             $table->integer('bot_plus_id')->nullable();
+            $table->integer('list_id')->nullable();
+            $table->integer('poll_id')->nullable();
             $table->integer('interval_in_sec')->nullable();
             $table->integer('status')->nullable();
             $table->integer('sort')->nullable();

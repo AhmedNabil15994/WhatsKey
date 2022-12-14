@@ -10,13 +10,14 @@ use App\Models\UserExtraQuota;
 use App\Models\UserAddon;
 use App\Models\Bot;
 use App\Models\BotPlus;
+use App\Models\ListMsg;
+use App\Models\Poll;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use App\Models\WebActions;
 use App\Jobs\GroupMessageJob;
 use App\Jobs\CheckWhatsappJob;
-use App\Jobs\FixReport;
 use DataTables;
 use Storage;
 use Redirect;
@@ -49,6 +50,8 @@ class GroupMsgsControllers extends Controller {
             ['id'=>11,'title'=>trans('main.mention')],
             ['id'=>16,'title'=>trans('main.link')],
             ['id'=>30,'title'=>trans('main.smartBot')],
+            ['id'=>31,'title'=>trans('main.listMsg')],
+            ['id'=>32,'title'=>trans('main.polls')],
         ];
 
         $sent_types = [
@@ -162,25 +165,25 @@ class GroupMsgsControllers extends Controller {
                 'data-col' => 'contacts_count',
                 'anchor-class' => '',
             ],
-            'sent_msgs' => [
+            'messages' => [
+                'label' => trans('main.msgs_no'),
+                'type' => '',
+                'className' => '',
+                'data-col' => 'messages',
+                'anchor-class' => '',
+            ],
+            'sent_count' => [
                 'label' => trans('main.sent_msgs'),
                 'type' => '',
                 'className' => '',
-                'data-col' => 'sent_msgs',
+                'data-col' => 'sent_count',
                 'anchor-class' => '',
             ],
-            'unsent_msgs' => [
+            'unsent_count' => [
                 'label' => trans('main.unsent_msgs'),
                 'type' => '',
                 'className' => '',
-                'data-col' => 'unsent_msgs',
-                'anchor-class' => '',
-            ],
-            'viewed_msgs' => [
-                'label' => trans('main.viewed_msgs'),
-                'type' => '',
-                'className' => '',
-                'data-col' => 'viewed_msgs',
+                'data-col' => 'unsent_count',
                 'anchor-class' => '',
             ],
             'publish_at' => [
@@ -262,17 +265,53 @@ class GroupMsgsControllers extends Controller {
 
     protected function validateInsertBotPlusObject($input){
         $rules = [
-            'title' => 'required',
-            'body' => 'required',
-            'footer' => 'required',
+            'BPtitle' => 'required',
+            'BPbody' => 'required',
+            'BPfooter' => 'required',
             'buttons' => 'required',
         ];
 
         $message = [
-            'title.required' => trans('main.titleValidate'),
-            'body.required' => trans('main.bodyValidate'),
-            'footer.required' => trans('main.footerValidate'),
+            'BPtitle.required' => trans('main.titleValidate'),
+            'BPbody.required' => trans('main.bodyValidate'),
+            'BPfooter.required' => trans('main.footerValidate'),
             'buttons.required' => trans('main.buttonsValidate'),
+        ];
+
+        $validate = \Validator::make($input, $rules, $message);
+        return $validate;
+    }
+
+    protected function validateInsertListObject($input){
+        $rules = [
+            'LMtitle' => 'required',
+            'LMbody' => 'required',
+            'LMfooter' => 'required',
+            'sections' => 'required',
+            'buttonText' => 'required',
+        ];
+
+        $message = [
+            'LMtitle.required' => trans('main.titleValidate'),
+            'LMbody.required' => trans('main.bodyValidate'),
+            'LMfooter.required' => trans('main.footerValidate'),
+            'sections.required' => trans('main.sectionsValidate'),
+            'buttonText.required' => trans('main.buttonTextValidate'),
+        ];
+
+        $validate = \Validator::make($input, $rules, $message);
+        return $validate;
+    }
+
+    protected function validateInsertPollObject($input){
+        $rules = [
+            'PLbody' => 'required',
+            'options' => 'required',
+        ];
+
+        $message = [
+            'PLbody.required' => trans('main.bodyValidate'),
+            'options.required' => trans('main.optionsValidate'),
         ];
 
         $validate = \Validator::make($input, $rules, $message);
@@ -288,6 +327,7 @@ class GroupMsgsControllers extends Controller {
         }
 
         $myData = [];
+        $itemCount = 0;
         if($input['message_type'] == 1){
             if(!isset($input['replyText']) || empty($input['replyText'])){
                 Session::flash('error', trans('main.messageValidate'));
@@ -350,7 +390,142 @@ class GroupMsgsControllers extends Controller {
                 ];
             }
         }
+        else if($input['message_type'] == 31){
+            $validate = $this->validateInsertListObject($input);
+            if($validate->fails()){
+                Session::flash('error', $validate->messages()->first());
+                return redirect()->back()->withInput();
+            }
+            for ($i = 0; $i < $input['sections']; $i++) {
+                if(!isset($input['title_'.($i+1)]) || empty($input['title_'.($i+1)]) || $input['title_'.($i+1)] == null ){
+                    Session::flash('error', trans('main.invalidSectionTitle',['section'=>($i+1)]));
+                    return redirect()->back()->withInput();
+                }
 
+                if(!isset($input['options_'.($i+1)]) || empty($input['options_'.($i+1)]) || $input['options_'.($i+1)] == null ){
+                    Session::flash('error', trans('main.invalidOptions',['section'=>($i+1)]));
+                    return redirect()->back()->withInput();
+                }
+                $sectionTitle = $input['title_'.($i+1)];
+                $sectionOptions = $input['options_'.($i+1)];
+
+
+                $itemData = [];
+                for ($x = 1; $x <= $sectionOptions; $x++) {
+                    $itemCount++;
+                    if(!isset($input['item_title_'.($i+1).'_'.$x]) || empty($input['item_title_'.($i+1).'_'.$x]) || $input['item_title_'.($i+1).'_'.$x] == null ){
+                        Session::flash('error', trans('main.invalidType',['button'=>($i+1)]));
+                        return redirect()->back()->withInput();
+                    }
+
+                    if(!isset($input['item_reply_type_'.($i+1).'_'.$x]) || empty($input['item_reply_type_'.($i+1).'_'.$x]) || $input['item_reply_type_'.($i+1).'_'.$x] == null ){
+                        Session::flash('error', trans('main.invalidType',['button'=>($i+1)]));
+                        return redirect()->back()->withInput();
+                    }
+
+                    $replyType = (int)$input['item_reply_type_'.($i+1).'_'.$x];
+
+                    if($replyType == 1 && ( !isset($input['btn_reply_'.($i+1).'_'.$x]) || empty($input['btn_reply_'.($i+1).'_'.$x]) ) && (!isset($input['url_'.($i+1).'_'.$x]) && !isset($input['contact_'.($i+1).'_'.$x])) ){
+                        Session::flash('error', trans('main.invalidReply',['button'=>($i+1)]));
+                        return redirect()->back()->withInput();
+                    }
+
+                    if($replyType == 2 && ( !isset($input['btn_msg_'.($i+1).'_'.$x]) || empty($input['btn_msg_'.($i+1).'_'.$x]) )){
+                        Session::flash('error', trans('main.invalidMsg',['button'=>($i+1)]));
+                        return redirect()->back()->withInput();
+                    }
+
+                    $modelType = '';
+                    if($replyType == 2 && ( !isset($input['btn_msg_type_'.($i+1).'_'.$x]) || empty($input['btn_msg_type_'.($i+1).'_'.$x]) )  ){
+                        Session::flash('error', trans('main.invalidMsg',['button'=>($i+1)]));
+                        return redirect()->back()->withInput();
+                    }
+
+                    $itemTitle = $input['item_title_'.($i+1).'_'.$x];
+                    $itemDesc  = @$input['item_description_'.($i+1).'_'.$x];
+                    $modelType = $input['btn_msg_type_'.($i+1).'_'.$x];
+                    $modelName = $modelType != null ?  ((int)$modelType == 1 ? '\App\Models\Bot' : '\App\Models\BotPlus')  : '';
+                    $msg = $replyType == 1 ? $input['btn_reply_'.($i+1).'_'.$x] : '';
+
+                    if($modelName != '' && $msg == ''){
+                        $dataObj = $modelName::find($input['btn_msg_'.($i+1).'_'.$x]);
+                        if($dataObj){
+                            $msg = $dataObj->id;
+                        }
+                    }
+                    $itemData[] = [
+                        'title' => $itemTitle,
+                        'description' => $itemDesc,
+                        'rowId' => $itemCount,
+                        'reply_type' => $replyType,
+                        'msg_type' => $modelType,
+                        'model_name' => $modelName,
+                        'msg' => $msg,
+                    ];
+                }
+
+                $myData[] = [
+                    'id' => $i + 1,
+                    'title' => $sectionTitle,
+                    'rows' => $itemData,
+                ];
+            }
+        }
+        else if($input['message_type'] == 32){
+            $validate = $this->validateInsertPollObject($input);
+            if($validate->fails()){
+                Session::flash('error', $validate->messages()->first());
+                return redirect()->back()->withInput();
+            }
+            for ($i = 0; $i < $input['options']; $i++) {
+                if(!isset($input['poll_text_'.($i+1)]) || empty($input['poll_text_'.($i+1)]) || $input['poll_text_'.($i+1)] == null ){
+                    Session::flash('error', trans('main.invalidText',['button'=>($i+1)]));
+                    return redirect()->back()->withInput();
+                }
+
+                if(!isset($input['poll_reply_type_'.($i+1)]) || empty($input['poll_reply_type_'.($i+1)]) || $input['poll_reply_type_'.($i+1)] == null ){
+                    Session::flash('error', trans('main.invalidType',['button'=>($i+1)]));
+                    return redirect()->back()->withInput();
+                }
+
+                $replyType = (int)$input['poll_reply_type_'.($i+1)];
+                if($replyType == 1 && ( !isset($input['poll_reply_'.($i+1)]) || empty($input['poll_reply_'.($i+1)]) )){
+                    Session::flash('error', trans('main.invalidReply',['button'=>($i+1)]));
+                    return redirect()->back()->withInput();
+                }
+
+                if($replyType == 2 && ( !isset($input['poll_msg_'.($i+1)]) || empty($input['poll_msg_'.($i+1)]) )){
+                    Session::flash('error', trans('main.invalidMsg',['button'=>($i+1)]));
+                    return redirect()->back()->withInput();
+                }
+
+                $modelType = '';
+                if($replyType == 2 && ( !isset($input['poll_msg_type_'.($i+1)]) || empty($input['poll_msg_type_'.($i+1)]) )){
+                    Session::flash('error', trans('main.invalidMsg',['button'=>($i+1)]));
+                    return redirect()->back()->withInput();
+                }
+
+                $modelType = (int)$input['poll_msg_type_'.($i+1)];
+                $modelName = $modelType != '' ?  ($modelType == 1 ? '\App\Models\Bot' : '\App\Models\BotPlus')  : '';
+                $msg = $replyType == 1 ? $input['poll_reply_'.($i+1)] : '';
+
+                if($modelName != '' && $msg == ''){
+                    $dataObj = $modelName::find($input['poll_msg_'.($i+1)]);
+                    if($dataObj){
+                        $msg = $dataObj->id;
+                    }
+                }
+
+                $myData[] = [
+                    'id' => $i + 1,
+                    'text' => $input['poll_text_'.($i+1)],
+                    'reply_type' => $input['poll_reply_type_'.($i+1)],
+                    'msg_type' => $modelType,
+                    'model_name' => $modelName,
+                    'msg' => $msg,
+                ];
+            }
+        }
         $groupObj = GroupNumber::getOne($input['group_id']);
         if($groupObj == null){
             return redirect('404');
@@ -381,7 +556,11 @@ class GroupMsgsControllers extends Controller {
         }else if($input['message_type'] == 8){
             $message = $input['address'];
         }else if($input['message_type'] == 30){
-            $message = $input['body'];
+            $message = $input['BPbody'];
+        }else if($input['message_type'] == 31){
+            $message = $input['LMbody'];
+        }else if($input['message_type'] == 32){
+            $message = $input['PLbody'];
         }
 
         $contactsCount = Contact::NotDeleted()->where('group_id',$groupObj->id)->count();
@@ -451,9 +630,9 @@ class GroupMsgsControllers extends Controller {
             $botObj = new BotPlus;
             $botObj->message_type = 1;
             $botObj->message = 'Group Message '.$dataObj->id;
-            $botObj->title = $input['title'];
-            $botObj->body = $input['body'];
-            $botObj->footer = $input['footer'];
+            $botObj->title = $input['BPtitle'];
+            $botObj->body = $input['BPbody'];
+            $botObj->footer = $input['BPfooter'];
             $botObj->buttons = $input['buttons'];
             $botObj->buttonsData = serialize($myData);
             $botObj->sort = BotPlus::newSortIndex();
@@ -463,6 +642,40 @@ class GroupMsgsControllers extends Controller {
             $botObj->save();
 
             $dataObj->bot_plus_id = $botObj->id;
+            $dataObj->save();
+        }else if($input['message_type'] == 31){
+            $botObj = new ListMsg;
+            $botObj->message_type = 1;
+            $botObj->message = 'Group Message '.$dataObj->id;
+            $botObj->title = $input['LMtitle'];
+            $botObj->buttonText = $input['buttonText'];
+            $botObj->body = $input['LMbody'];
+            $botObj->footer = $input['LMfooter'];
+            $botObj->sections = $input['sections'];
+            $botObj->sectionsData = serialize($myData);
+            $botObj->sort = ListMsg::newSortIndex();
+            $botObj->status = 1;
+            $botObj->deleted_by = 1;
+            $botObj->deleted_at = DATE_TIME;
+            $botObj->save();
+
+            $dataObj->list_id = $botObj->id;
+            $dataObj->save();
+        }else if($input['message_type'] == 32){
+            $botObj = new Poll;
+            $botObj->message_type = 1;
+            $botObj->message = 'Group Message '.$dataObj->id;
+            $botObj->body = $input['PLbody'];
+            $botObj->options = $input['options'];
+            $botObj->optionsData = serialize($myData);
+            $botObj->selected_options = $input['selected_options'];
+            $botObj->sort = Poll::newSortIndex();
+            $botObj->status = 1;
+            $botObj->deleted_by = 1;
+            $botObj->deleted_at = DATE_TIME;
+            $botObj->save();
+
+            $dataObj->poll_id = $botObj->id;
             $dataObj->save();
         }
 
@@ -590,22 +803,6 @@ class GroupMsgsControllers extends Controller {
 
         Session::flash('success', trans('main.addSuccess'));
         return redirect()->to($this->getData()['mainData']['url'].'/view/'.$groupMsgObj->id);
-    }
-
-    public function refresh($id){
-        $id = (int) $id;
-        $groupMsgObj = GroupMsg::NotDeleted()->find($id);
-        if($groupMsgObj == null) {
-            return Redirect('404');
-        }
-
-        try {
-            // dispatch(new FixReport($id))->onConnection('cjobs');
-            dispatch(new FixReport($id))->onConnection('database');
-        } catch (Exception $e) {}
-
-        Session::flash('success', trans('main.inPrgo'));
-        return redirect()->back();
     }
 
     public function uploadImage($type,Request $request){

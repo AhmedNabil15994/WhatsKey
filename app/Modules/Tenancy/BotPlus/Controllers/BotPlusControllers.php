@@ -154,8 +154,6 @@ class BotPlusControllers extends Controller {
         $data['bots'] = $checkAsvail ? Bot::dataList(1)['data'] : [];
         $data['botPlus'] = BotPlus::dataList(1)['data'];
         $data['templates'] = Template::dataList(1)['data'];
-        $data['mods'] = User::getModerators()['data'];
-        $data['labels'] = Category::dataList()['data'];
         return view('Tenancy.BotPlus.Views.edit')->with('data', (object) $data);      
     }
 
@@ -313,8 +311,6 @@ class BotPlusControllers extends Controller {
         $data['bots'] = $checkAsvail ? Bot::dataList(1)['data'] : [];
         $data['botPlus'] = BotPlus::dataList(1)['data'];
         $data['templates'] = Template::dataList(1)['data'];
-        $data['mods'] = User::getModerators()['data'];
-        $data['labels'] = Category::dataList()['data'];
         return view('Tenancy.BotPlus.Views.add')->with('data', (object) $data);
     }
 

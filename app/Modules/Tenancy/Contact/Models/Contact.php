@@ -60,7 +60,7 @@ class Contact extends Model{
         if($contactObj == null){
             $contactObj = new self;
             $contactObj->name = $name;
-            $contactObj->phone = $phone;
+            $contactObj->phone = str_replace('+', '', $phone);
             $contactObj->group_id = 1;
             $contactObj->sort = self::newSortIndex();
         }
@@ -290,14 +290,14 @@ class Contact extends Model{
                 return $data;
             }
 
-            $reportObj = $source->Reports()->where('group_message_id',$groupMsgObj->id)->where('group_id',$groupMsgObj->group_id)->orderBy('id','DESC')->first();
-            
+            $reportObj = $source->LastReport;
+
             if($reportObj == null){
                 $data->color = 'info';
                 $data->status = trans('main.inPrgo');
                 $data->date = date('Y-m-d H:i:s');
             }else{
-                if($reportObj->data == 0){
+                if($reportObj->status == 0){
                     $data->color = 'danger';
                     $data->status = trans('main.notSent');
                 }else if($reportObj->status == 1){

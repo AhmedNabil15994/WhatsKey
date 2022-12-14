@@ -189,7 +189,7 @@ $(function(){
 
 					if(designElems.mainData.url == 'groupMsgs' && $('input[name="data-tab"]').val() == 1){
 						showButton = '<a data-toggle="tooltip" data-original-title="'+detailsText+'" href="/groupMsgs/view/'+full.id+'" class="action-icon btn btn-sm btn-clean btn-icon"> <i class="icon-xl la la-eye"></i></a>';
-						editButton = '<a data-toggle="tooltip" data-original-title="'+refreshText+'" href="/groupMsgs/refresh/'+full.id+'" class="action-icon btn btn-sm btn-clean btn-icon"> <i class="icon-xl la la-refresh"></i></a>';
+						editButton = '';
 						deleteButton = '';
 					}
 

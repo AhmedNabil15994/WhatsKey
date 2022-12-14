@@ -101,6 +101,8 @@
                     @if($data->checkAvailBotPlus == 1)
                     <option value="30" {{ old('message_type') == 30 ? 'selected' : '' }}>{{ trans('main.smartBot') }}</option>
                     @endif
+                    <option value="31" {{ old('message_type') == 31 ? 'selected' : '' }}>{{ trans('main.listMsg') }}</option>
+                    <option value="32" {{ old('message_type') == 32 ? 'selected' : '' }}>{{ trans('main.polls') }}</option>
                 </select>
             </div>
 
@@ -225,15 +227,15 @@
             <div class="reply hidden" data-id="30">
                 <div class="form-group textRow">
                     <label>{{ trans('main.title') }} :</label>
-                    <input class="form-control" type="text" value="{{ old('title') }}" name="title" placeholder="{{ trans('main.title') }}">
+                    <input class="form-control" type="text" value="{{ old('title') }}" name="BPtitle" placeholder="{{ trans('main.title') }}">
                 </div>
                 <div class="form-group">
                     <label>{{ trans('main.body') }} :</label>
-                    <textarea class="form-control" name="body" placeholder="{{ trans('main.body') }}">{{ old('body') }}</textarea>
+                    <textarea class="form-control" name="BPbody" placeholder="{{ trans('main.body') }}">{{ old('body') }}</textarea>
                 </div>
                 <div class="form-group">
                     <label>{{ trans('main.footer') }} :</label>
-                    <input class="form-control" type="text" value="{{ old('footer') }}" name="footer" placeholder="{{ trans('main.footer') }}">
+                    <input class="form-control" type="text" value="{{ old('footer') }}" name="BPfooter" placeholder="{{ trans('main.footer') }}">
                 </div>
                 <div class="form-group">
                     <label>{{ trans('main.buttons') }} :</label>
@@ -282,7 +284,162 @@
                 </div>
             </div>
             @endif
+            <div class="reply hidden" data-id="31">
+                <div class="form-group">
+                    <label>{{ trans('main.title') }} :</label>
+                    <input class="form-control" type="text" value="{{ old('title') }}" name="LMtitle" placeholder="{{ trans('main.title') }}">
+                </div>
+                <div class="form-group">
+                    <label>{{ trans('main.body') }} :</label>
+                    <textarea class="form-control" name="LMbody" placeholder="{{ trans('main.body') }}">{{ old('body') }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>{{ trans('main.footer') }} :</label>
+                    <input class="form-control" type="text" value="{{ old('footer') }}" name="LMfooter" placeholder="{{ trans('main.footer') }}">
+                </div>
+                <div class="form-group">
+                    <label>{{ trans('main.buttonText') }} :</label>
+                    <input class="form-control" type="text" value="{{ old('buttonText') }}" name="buttonText" placeholder="{{ trans('main.buttonText') }}">
+                </div>
+                <div class="form-group">
+                    <label>{{ trans('main.sections') }} :</label>
+                    <select class="form-control" data-toggle="select2" data-style="btn-outline-myPR" name="sections">
+                        <option value="1" {{ old('sections') == 1 ? 'selected' : '' }}>1</option>
+                        <option value="2" {{ old('sections') == 2 ? 'selected' : '' }}>2</option>
+                        <option value="3" {{ old('sections') == 3 ? 'selected' : '' }}>3</option>
+                        <option value="4" {{ old('sections') == 4 ? 'selected' : '' }}>4</option>
+                        <option value="5" {{ old('sections') == 5 ? 'selected' : '' }}>5</option>
+                        <option value="6" {{ old('sections') == 6 ? 'selected' : '' }}>6</option>
+                        <option value="7" {{ old('sections') == 7 ? 'selected' : '' }}>7</option>
+                        <option value="8" {{ old('sections') == 8 ? 'selected' : '' }}>8</option>
+                        <option value="9" {{ old('sections') == 9 ? 'selected' : '' }}>9</option>
+                        <option value="10" {{ old('sections') == 10 ? 'selected' : '' }}>10</option>
+                    </select>
+                    <div class="clearfix"></div>
+                    <hr>
+                    <div class="secs mt-5">
+                        <div class='form-group mains'>
+                            <label>{{ trans('main.sectionData',['section'=>1]) }} :</label>
+                            <div class='optionsRow'>
+                                <div class='row'>
+                                    <div class='col-md-6'>
+                                        <div class="form-group">
+                                            <label>{{ trans('main.title') }} :</label>
+                                            <input class="form-control" type='text' name='title_1' value="" placeholder='{{ trans('main.title') }}'>
+                                        </div>
+                                    </div>
+                                    <div class='col-md-6'>
+                                        <div class="form-group">
+                                            <label>{{ trans('main.options') }} :</label>
+                                            <select data-toggle='select2' class='options form-control' name='options_1'>
+                                                <option value="1" {{ old('options_1') == 1 ? 'selected' : '' }}>1</option>
+                                                <option value="2" {{ old('options_1') == 2 ? 'selected' : '' }}>2</option>
+                                                <option value="3" {{ old('options_1') == 3 ? 'selected' : '' }}>3</option>
+                                                <option value="4" {{ old('options_1') == 4 ? 'selected' : '' }}>4</option>
+                                                <option value="5" {{ old('options_1') == 5 ? 'selected' : '' }}>5</option>
+                                                <option value="6" {{ old('options_1') == 6 ? 'selected' : '' }}>6</option>
+                                                <option value="7" {{ old('options_1') == 7 ? 'selected' : '' }}>7</option>
+                                                <option value="8" {{ old('options_1') == 8 ? 'selected' : '' }}>8</option>
+                                                <option value="9" {{ old('options_1') == 9 ? 'selected' : '' }}>9</option>
+                                                <option value="10" {{ old('options_1') == 10 ? 'selected' : '' }}>10</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="row items item_1_1">
+                                <label class='w-100' style="padding: 15px;">{{ trans('main.itemData',['item'=>1]) }} :</label>
+                                <div class="row repy w-100">
+                                    <input type='hidden' name='btn_msg_type_1_1' value=''>
 
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" name="item_title_1_1" placeholder='{{ trans('main.title') }}'>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <textarea class="form-control" name='item_description_1_1' placeholder='{{ trans('main.desc') }}' maxlength="140"></textarea>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select data-toggle='select2' class='reply_types form-control' name='item_reply_type_1_1'>
+                                            <option value='1' selected>{{ trans('main.newReply') }}</option>
+                                            <option value='2'>{{ trans('main.botMsg') }}</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <textarea name='btn_reply_1_1' class="replyText form-control" placeholder='{{ trans('main.messageContent') }}' maxlength="140"></textarea>
+
+                                        <select data-toggle="" class='form-control dets hidden' name='btn_msg_1_1'>
+                                            <option value='' selected>{{ trans('main.choose') }}</optin>
+                                            @foreach($data->bots as $bot)
+                                            <option value="{{ $bot->id }}" data-type="1">{{ trans('main.clientMessage') . ' ( ' .$bot->message . ' ) ==== ' . trans('main.classicBot') }}</option>
+                                            @endforeach
+                                            @foreach($data->botPlus as $plusBot)
+                                            <option value="{{ $plusBot->id }}" data-type="2">{{ trans('main.clientMessage') . ' ( ' .$plusBot->message . ' ) ==== ' . trans('main.smartBot') }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+            <div class="reply hidden" data-id="32">
+                <div class="form-group">
+                    <label>{{ trans('main.body') }} :</label>
+                    <textarea class="form-control" name="PLbody" placeholder="{{ trans('main.body') }}">{{ old('body') }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>{{ trans('main.selectableOptionsCount') }} :</label>
+                    <input class="form-control" type="tel" value="{{ old('selected_options') }}" name="selected_options" placeholder="{{ trans('main.selectableOptionsCount') }}">
+                </div>
+                <div class="form-group">
+                    <label>{{ trans('main.options') }} :</label>
+                    <select class="form-control" data-toggle="select2" data-style="btn-outline-myPR" name="options">
+                        <option value="1" {{ old('buttons') == 1 ? 'selected' : '' }}>1</option>
+                        <option value="2" {{ old('buttons') == 2 ? 'selected' : '' }}>2</option>
+                        <option value="3" {{ old('buttons') == 3 ? 'selected' : '' }}>3</option>
+                        <option value="4" {{ old('buttons') == 4 ? 'selected' : '' }}>4</option>
+                        <option value="5" {{ old('buttons') == 5 ? 'selected' : '' }}>5</option>
+                        <option value="6" {{ old('buttons') == 6 ? 'selected' : '' }}>6</option>
+                        <option value="7" {{ old('buttons') == 7 ? 'selected' : '' }}>7</option>
+                        <option value="8" {{ old('buttons') == 8 ? 'selected' : '' }}>8</option>
+                        <option value="9" {{ old('buttons') == 9 ? 'selected' : '' }}>9</option>
+                        <option value="10" {{ old('buttons') == 10 ? 'selected' : '' }}>10</option>
+                    </select>
+                    <div class="clearfix"></div>
+                    <div class="polls mt-5">
+                        <div class='form-group mains'>
+                            <label class='titleLabel'>{{ trans('main.btnData',['button'=>1]) }} :</label>
+                            <div class='row'>
+                                <div class='col-md-4'>
+                                    <input class="form-control" type='text' name='poll_text_1' value="" placeholder='{{ trans('main.text') }}'>
+                                </div>
+                                <div class='col-md-4'>
+                                    <select class="form-control reply_types" data-toggle='select2' name='poll_reply_type_1'>
+                                        <option value='1' selected>{{ trans('main.newReply') }}</option>
+                                        <option value='2'>{{ trans('main.botMsg') }}</option>
+                                    </select>
+                                </div>
+                                <div class='col-md-4 repy'>
+                                    <textarea class="form-control" name='poll_reply_1' placeholder='{{ trans('main.messageContent') }}' maxlength="140"></textarea>
+                                    <select data-toggle="" class='form-control dets hidden' name='poll_msg_1'>
+                                        <option value='' selected>{{ trans('main.choose') }}</optin>
+                                        @foreach($data->bots as $bot)
+                                        <option value="{{ $bot->id }}" data-type="1">{{ trans('main.clientMessage') . ' ( ' .$bot->message . ' ) ==== ' . trans('main.classicBot') }}</option>
+                                        @endforeach
+                                        @foreach($data->botPlus as $plusBot)
+                                        <option value="{{ $plusBot->id }}" data-type="2">{{ trans('main.clientMessage') . ' ( ' .$plusBot->message . ' ) ==== ' . trans('main.smartBot') }}</option>
+                                        @endforeach
+                                    </select>
+                                    <input type='hidden' name='poll_msg_type_1' value=''>
+                                </div>
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+            </div>
             <div class="card-footer text-right">
                 <button type="submit" class="btn btn-primary mr-2">{{trans('main.add')}}</button>
                 <a href="{{ URL::to('/'.$data->designElems['mainData']['url']) }}" class="btn btn-secondary">{{trans('main.back')}}</a>
@@ -300,4 +457,6 @@
 @section('scripts')
 <script src="{{ asset('assets/tenant/components/addMsg.js') }}"></script>
 <script src="{{ asset('assets/tenant/components/addBotPlus.js') }}"></script>
+<script src="{{ asset('assets/tenant/components/addListMsg.js') }}"></script>
+<script src="{{ asset('assets/tenant/components/addPoll.js') }}"></script>
 @endsection

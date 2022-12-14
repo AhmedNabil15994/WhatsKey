@@ -13,6 +13,8 @@ use App\Models\ContactReport;
 use App\Models\Contact;
 use App\Models\ChatMessage;
 use App\Models\BotPlus;
+use App\Models\ListMsg;
+use App\Models\Poll;
 use App\Models\UserAddon;
 use App\Models\User;
 use App\Models\CentralUser;
@@ -53,6 +55,16 @@ class GroupMessageJob implements ShouldQueue
             $botObj = BotPlus::getData($botObjs);
         }
 
+        if($messageObj->list_id != null){
+            $botObjs = ListMsg::find($messageObj->list_id);
+            $botObj = ListMsg::getData($botObjs);
+        }
+
+        if($messageObj->poll_id != null){
+            $botObjs = Poll::find($messageObj->poll_id);
+            $botObj = Poll::getData($botObjs);
+        }
+
         return $this->reformData($this->contacts,(array) $this->messageObj,$botObj);
     }
 
@@ -63,12 +75,13 @@ class GroupMessageJob implements ShouldQueue
         $hasNotWhatsapp=0;
         foreach ($contacts as $contact){
             $checkData['phone'] = str_replace('+', '', $contact->phone);
+            $status = 0;
             $checkResult = $mainWhatsLoopObj->checkPhone($checkData);
             $result = $checkResult->json();
-            $status = 0;
             if($result && isset($result['data'])){
                 $status = $result['data']['exists'] == true ? 1 : 0;
             }
+
             if($status){
                 $hasWhatsapp+=1;
                 $allowedContacts[] = [
@@ -76,14 +89,13 @@ class GroupMessageJob implements ShouldQueue
                     'phone' => $checkData['phone'],
                     'name' => $contact->name,
                 ];
-                ContactReport::newStatus($checkData['phone'],$messageObj['group_id'],$messageObj['id'],1,'');
             }else{
                 $hasNotWhatsapp+=1;
             }
+            ContactReport::newStatus($checkData['phone'],$messageObj['group_id'],$messageObj['id'],$status,'');
         }
-
         // For Local
-        // $messageObj['file'] = str_replace('newdomain1.whatskey.localhost/', 'f734-154-182-246-229.ngrok.io', $messageObj['file']);
+        // $messageObj['file'] = str_replace('newdomain1.whatskey.localhost/', 'd677-154-182-251-196.ngrok.io', $messageObj['file']);
 
         $phones = [];
         $messageData = [];
@@ -141,6 +153,39 @@ class GroupMessageJob implements ShouldQueue
                 $messageData[$key]['footer'] = $this->reformMessage($botObj->footer,$contact['name'],str_replace('+', '', $contact['phone']));
                 $messageData[$key]['buttons'] = $buttons;
                 $messageFunction = 'sendBulkButtons';
+            }else if($messageObj['message_type'] == 31){
+                $sections = [];
+                foreach ($botObj->sectionsData as $listKey => $oneItem) {
+                    $rows = [];
+                    foreach($oneItem['rows'] as $oneRow){
+                        $rows[] = [
+                            'rowId' => $oneRow['rowId'],
+                            'title' => $oneRow['title'],
+                            'description' => $oneRow['description'],
+                        ];
+                    }
+                    $sections[] = [
+                        'title' => $oneItem['title'],
+                        'rows' => $rows,
+                    ];
+                }
+
+                $messageData[$key]['title'] = $this->reformMessage($botObj->title,$contact['name'],str_replace('+', '', $contact['phone']));
+                $messageData[$key]['body'] = $this->reformMessage($botObj->body,$contact['name'],str_replace('+', '', $contact['phone']));
+                $messageData[$key]['footer'] = $this->reformMessage($botObj->footer,$contact['name'],str_replace('+', '', $contact['phone']));
+                $messageData[$key]['buttonText'] = $this->reformMessage($botObj->buttonText,$contact['name'],str_replace('+', '', $contact['phone']));
+                $messageData[$key]['sections'] = $sections;
+                $messageFunction = 'sendBulkList';
+            }else if($messageObj['message_type'] == 32){
+                $options = [];
+                foreach ($botObj->optionsData as $pollKey => $oneItem) {
+                    $options[] = $oneItem['text'];
+                }
+
+                $messageData[$key]['body'] = $this->reformMessage($botObj->body,$contact['name'],str_replace('+', '', $contact['phone']));
+                $messageData[$key]['selectableOptionsCount'] = $botObj->selected_options;
+                $messageData[$key]['options'] = $options;
+                $messageFunction = 'sendBulkPoll';
             }
         }
 
@@ -161,10 +206,12 @@ class GroupMessageJob implements ShouldQueue
                 $mainWhatsLoopObj->$messageFunction($sendRequest);
             }
             $oldObj = GroupMsg::find($messageObj['id']);
-            return $oldObj->update([
-                'sent_msgs' => $oldObj->sent_msgs + $hasWhatsapp,
-                'unsent_count' => $oldObj->unsent_count + $hasNotWhatsapp,
-            ]);
+            if($messageObj['messages'] > $oldObj->sent_count + $oldObj->unsent_count){
+                $oldObj->sent_count = $oldObj->sent_count + $hasWhatsapp;
+                $oldObj->unsent_count = $oldObj->unsent_count + $hasNotWhatsapp;
+            }            
+            $oldObj->later = 0;
+            return $oldObj->save();
         }
 
         return 1;

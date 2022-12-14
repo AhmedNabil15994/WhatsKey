@@ -142,6 +142,9 @@ class GroupMsg extends Model{
         $data->url_image = $source->url_image != null ? self::getPhotoPath($source->id, $source->url_image,$tenantId) : "";
         $data->contacts_count = $source->contacts_count;
         $data->messages_count = $source->messages_count;
+        $data->messages = $source->messages_count * $source->contacts_count;
+        $data->sent_count = $source->sent_count;
+        $data->unsent_count = $source->unsent_count;
         $data->sent_msgs = $counts[0];
         $data->unsent_msgs = $counts[1];
         $data->viewed_msgs = $counts[2];
@@ -149,7 +152,7 @@ class GroupMsg extends Model{
         $data->file_name = $source->file_name;
         $data->file_size = $data->file != '' ? \ImagesHelper::getPhotoSize($data->file) : '';
         $data->file_type = $data->file != '' ? \ImagesHelper::checkFileExtension($data->file_name) : '';
-        $data->sent_type = self::getStatus($data);
+        $data->sent_type = self::getStatus($source);
         $data->whatsapp_no = $source->whatsapp_no;
         $data->status = $source->status;
         $data->sort = $source->sort;
@@ -176,14 +179,16 @@ class GroupMsg extends Model{
     }
 
     static function getStatus($source){
-        if($source->publish_at > date('Y-m-d H:i:s') && (isset($source->later) && $source->later == 1) ){
+        if($source->later == 1){
             return trans('main.publishSoon');
-        }
-
-        if($source->sent_msgs + $source->unsent_msgs == $source->contacts_count && $source->sent_msgs > 0){
-            return trans('main.sent');
         }else{
-            return trans('main.inPrgo');
+            if($source->sent_count + $source->unsent_count >= $source->contacts_count && $source->sent_count > 0){
+                return trans('main.sent');
+            }else if($source->sent_count == 0 && $source->unsent_count == 0){
+                return trans('main.suspended');
+            }else{
+                return trans('main.inPrgo');
+            }
         }
     }
 
@@ -199,6 +204,10 @@ class GroupMsg extends Model{
             $text = $source->https_url;
         }elseif($source->message_type == 30){
             $text = $source->BotPlus!= null ? $source->BotPlus->body : '';
+        }elseif($source->message_type == 31){
+            $text = $source->message;
+        }else{
+            $text = $source->message;
         }
         return $text;
     }
@@ -227,6 +236,10 @@ class GroupMsg extends Model{
             $text = trans('main.link');
         }else if($type == 30){
             $text = trans('main.botPlus');
+        }else if($type == 31){
+            $text = trans('main.listMsg');
+        }else if($type == 32){
+            $text = trans('main.polls');
         }
         return $text;
     }

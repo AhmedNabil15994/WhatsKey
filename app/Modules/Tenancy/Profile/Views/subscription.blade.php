@@ -91,6 +91,7 @@
         <a href="{{ URL::to('/profile/subscription/syncContacts') }}" class="btn btn-light-primary btn-md mr-3 mb-3 btn-pill"><i class="la la-user-circle"></i>{{ trans('main.syncContacts') }}</a>
         @if($data->me->isBussines)
         <a href="{{ URL::to('/profile/subscription/syncLabels') }}" class="btn btn-light-info btn-md mr-3 mb-3 btn-pill"><i class="la la-tags"></i>{{ trans('main.syncLabels') }}</a>
+        <a href="{{ URL::to('/profile/subscription/syncOrdersProducts') }}" class="btn btn-light-success btn-md mr-3 mb-3 btn-pill"><i class="la la-tags"></i>{{ trans('main.syncOrdersProducts') }}</a>
         @endif
         <a href="{{ URL::to('/profile/subscription/restoreAccountSettings') }}" class="btn btn-light-danger btn-md mr-3 mb-3 btn-pill"><i class="la la-trash-alt"></i>{{ trans('main.restoreAccountSettings') }}</a>
     </div>

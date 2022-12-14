@@ -52,7 +52,7 @@
 @media(min-width: 1200px) and (max-width: 1400px){
 
 }
-@media(min-width: 1400px) and (max-width: 1919px) {
+@media(min-width: 1400px) and (max-width: 1900px) {
 	div.col-md-5{
 		height: 110vh;
 	}

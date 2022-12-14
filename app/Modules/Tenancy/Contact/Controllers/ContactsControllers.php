@@ -222,7 +222,7 @@ class ContactsControllers extends Controller {
             return redirect()->back()->withInput();
         }
 
-        $phone = $input['phone'];
+        $phone = str_replace('+', '', $input['phone']);
         $contactObj = Contact::NotDeleted()->where('id','!=',$id)->where('group_id',$input['group_id'])->where('phone',$phone)->first();
         if($contactObj != null){
             Session::flash('error', trans('main.phoneError'));
@@ -292,7 +292,7 @@ class ContactsControllers extends Controller {
             if(!$contactObj){
                 $dataObj = new Contact;
                 $dataObj->name = $input['client_name'];
-                $dataObj->phone = $input['phone'];
+                $dataObj->phone = str_replace('+', '', $input['phone']);
                 $dataObj->city = $input['city'];
                 $dataObj->email = $input['email'];
                 $dataObj->country = $input['country'];
@@ -334,11 +334,11 @@ class ContactsControllers extends Controller {
                 return redirect()->back()->withInput();
             }
             for ($i = 0; $i < count($numbersArr) ; $i++) {
-                $phone = '+'.str_replace('\r', '', $numbersArr[$i]);
+                $phone = str_replace('\r', '', $numbersArr[$i]);
                 $contactObj = Contact::NotDeleted()->where('group_id',$input['group_ids'])->where('phone',$phone)->first();
                 if(!$contactObj){
                     $dataObj = new Contact;
-                    $dataObj->phone = trim($phone);
+                    $dataObj->phone = str_replace('+', '', trim($phone));
                     $dataObj->group_id = $input['group_ids'];
                     $dataObj->name = trim($phone);
                     $dataObj->status = 1;
@@ -369,7 +369,7 @@ class ContactsControllers extends Controller {
             $col = $item[1];
             $dataObj = Contact::find($item[0]);
             if($col == 'phone'){
-                $item[2] = '+'.$item[2];
+                $item[2] = str_replace('+', '', $item[2]);
             }elseif ($col == 'name') {
                 ChatDialog::where('id',str_replace('+', '', $dataObj->phone).'@c.us')->update(['name'=>$item[2]]);
             }
