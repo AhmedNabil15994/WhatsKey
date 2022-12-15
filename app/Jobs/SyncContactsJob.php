@@ -10,6 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Contact;
 use App\Models\Variable;
+use App\Models\ChatDialog;
 
 class SyncContactsJob implements ShouldQueue
 {
@@ -33,10 +34,17 @@ class SyncContactsJob implements ShouldQueue
      */
     public function handle()
     {
-        
         if(!empty($this->contacts)){
             foreach ($this->contacts as $contact) {
-                Contact::newPhone($contact['id'],isset($contact['notify']) ? $contact['notify'] : $contact['name'] );
+                $contactName = isset($contact['notify']) ? $contact['notify'] : $contact['name'];
+                Contact::newPhone($contact['id'], $contactName);
+                ChatDialog::where([
+                    ['id' , '=' , $contact['id']],
+                    ['name' , '=' , ''],
+                ])->orWhere([
+                    ['id' , '=' , $contact['id']],
+                    ['name' , '=' , null],
+                ])->update(['name' => $contactName]);
             }
         }
 

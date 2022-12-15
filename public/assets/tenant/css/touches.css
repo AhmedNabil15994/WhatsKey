@@ -252,3 +252,37 @@ code {
 .label-17{background-color: #6C267E;}
 .label-18{background-color: #7ACCA4;}
 .label-19{background-color: #23353F;}
+
+.chatItem{
+	cursor: pointer;
+}
+.chatMsg{
+	line-break: anywhere;
+}
+.w-40{
+	width: 35% !important;
+}
+.spinner.spinner-xl:before{
+	width: 4rem;
+	height: 4rem;
+}
+.scroll-pulls{
+	max-height: 520px;
+}
+#kt_scrollDown{
+	align-items: center;
+    cursor: pointer;
+    background-color: #3699ff;
+    width: 24px;
+    height: 24px;
+    padding: 4px;
+    border-radius: 50%;
+    margin-top: -30px;
+    opacity: .5;
+    position: fixed;
+    bottom: 200px;
+    left: 200px;
+}
+#kt_scrollDown:hover{
+	opacity: 1;
+}

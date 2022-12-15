@@ -13,8 +13,12 @@ class CreateDialogsTable extends Migration
             $table->string('name')->nullable();
             $table->text('image')->nullable();
             $table->text('metadata')->nullable();
-            $table->integer('is_pinned')->default(0);
-            $table->integer('is_read')->default(0);
+            $table->string('pinned')->nullable();
+            $table->string('archived')->nullable();
+            $table->string('unreadCount')->nullable();
+            $table->string('unreadMentionCount')->nullable();
+            $table->string('notSpam')->nullable();
+            $table->string('readOnly')->nullable();
             $table->text('modsArr')->nullable();
             $table->string('last_time')->nullable();
         });
