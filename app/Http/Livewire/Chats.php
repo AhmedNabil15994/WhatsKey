@@ -13,12 +13,13 @@ class Chats extends Component
     public $page = 1;
     public $page_size = 30;
     public $chats;
-    protected $listeners = ['loadMore','searchAllChats'];
+    protected $listeners = ['loadMore','searchAllChats','chatsChanges'];
 
     public function mount(){
         $data['limit'] = $this->page_size;
         $data['name'] =  null;
         $this->chats = ChatDialog::dataList($this->page_size, null)['data'];
+        $this->chats = json_decode(json_encode($this->chats), true);
     }
 
     public function render()
@@ -64,4 +65,52 @@ class Chats extends Component
         $this->chats = $chats['chats'];
     }
 
+    public function chatsChanges($chat,$domain){
+        $oldChats = $this->chats;
+        $newChats = [];
+        $pinned = [];
+        $notPinned = [];
+        $item;
+        $found = 0;
+        $domainUrl = str_replace('myDomain',$domain,config('app.MY_DOMAIN'));
+        $chat['image'] = str_replace('http://localhost',$domainUrl,$chat['image']);
+        foreach ($oldChats as $key => $value) {
+            if($value['id'] == $chat['lastMessage']['chatId']){
+                $found = 1;
+                $item = $chat;
+            }else{
+                $item = $value;
+            }
+            $item = (object) $item;
+            if(isset($item->lastMessage)){
+                $item->lastMessage = (object) $item->lastMessage;
+            }
+            if($item->pinned > 0){
+                $pinned[] = $item;
+            }else{
+                $notPinned[] = $item;
+            }
+        }
+
+        if(!$found){
+            $chat = (object) $chat;
+            if(isset($chat->lastMessage)){
+                $chat->lastMessage = (object) $chat->lastMessage;
+            }
+            if($chat->pinned > 0){
+                $pinned[] = $chat;
+            }else{
+                $notPinned[] = $chat;
+            }
+        }
+
+        usort($pinned, function($a, $b) {
+            return ((int) $b->pinned) - ((int) $a->pinned);
+        });
+
+        usort($notPinned, function($a, $b) {
+            return ((int) $b->lastMessage->time) - ((int) $a->lastMessage->time);
+        });
+        $this->chats = array_merge($pinned,$notPinned);
+    }
 }

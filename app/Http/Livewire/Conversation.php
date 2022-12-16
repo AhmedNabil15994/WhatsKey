@@ -20,7 +20,7 @@ class Conversation extends Component
     public $page = 1;
     public $page_size = 30;
 
-    protected $listeners = ['loadMessages','loadMoreMsgs'];
+    protected $listeners = ['loadMessages','loadMoreMsgs','newIncomingMsg','sendMsg'];
 
     public function mount(){
         $this->myImage = User::getData(User::find(USER_ID))->photo;
@@ -43,5 +43,21 @@ class Conversation extends Component
     public function render()
     {   
         return view('livewire.conversation');
+    }
+
+    public function newIncomingMsg($data){
+        $chat = $data['message'];
+        $chat['lastMessage'] = (array) $chat['lastMessage'];
+        $msg = $chat['lastMessage'];
+        if($msg['chatId'] == $this->selected){
+            $msgs = array_reverse($this->messages);
+            $msgs[]= $msg;
+            $msgs = array_reverse($msgs);
+            $this->messages = $msgs;
+            $this->emit('conversationOpened');
+        }
+
+        $this->emitTo('chats','chatsChanges',$data['message'],$data['domain']); 
+        $this->emitTo('chat','lastUpdates',$data['message'],$data['domain']); 
     }
 }

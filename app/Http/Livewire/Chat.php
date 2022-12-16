@@ -10,10 +10,13 @@ class Chat extends Component
     public $chat;
     public $selected;
 
+    protected $listeners = ['lastUpdates'];
 
     public function mount($chat)
     {
+        $chat = json_decode(json_encode($chat), true);
         $this->chat = $chat;
+        // dd($this->chat);
     }
 
     public function render()
@@ -27,5 +30,14 @@ class Chat extends Component
             'chat' => $this->chat,
             'messages' => ChatMessage::dataList($this->chat['id'], 30),
         ]); 
+    }
+
+    public function lastUpdates($data,$domain){
+        $chat = json_decode(json_encode($data), true);
+        if($this->chat['id'] == $data['lastMessage']['chatId']){
+            $domainUrl = str_replace('myDomain',$domain,config('app.MY_DOMAIN'));
+            $data['image'] = str_replace('http://localhost',$domainUrl,$data['image']);
+            $this->chat =  $data;
+        }
     }
 }

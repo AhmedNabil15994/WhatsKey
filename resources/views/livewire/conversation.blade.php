@@ -12,6 +12,7 @@
                     @foreach(array_reverse($messages) as $oneMessage)
                     @php 
                         $oneMessage = (array) $oneMessage; 
+                        // dd($messages);
                         $oneMessage['metadata'] = (array) $oneMessage['metadata']; 
                     @endphp
                     <div class="d-flex flex-column mb-5 align-items-{{$oneMessage['fromMe'] == 1 ? 'end' : 'start'}}">

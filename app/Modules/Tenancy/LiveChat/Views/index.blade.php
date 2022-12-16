@@ -100,7 +100,16 @@
 	    		$(this).parents('.w-100').find('.progress-bar').css('width','100%');
 	    	}
 	    });
+
+	    // $(document).on('.sendMsg textarea', 'keydown', function(e) {
+		// 	if (e.keyCode == 13) {
+		// 		_handeMessaging(element);
+		// 		e.preventDefault();
+
+		// 		return false;
+		// 	}
+		// });
     })
 </script>
-
+<script src="{{mix('js/app.js')}}"></script>
 @endsection

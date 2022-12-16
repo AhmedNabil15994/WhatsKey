@@ -188,11 +188,12 @@ class MessagesWebhook extends ProcessWebhookJob
 		$dialog = ChatDialog::updateOrCreate(['id' => $message['chatId']], ['last_time' => $message['time']]);
 
         $dialogObj = ChatDialog::getData($dialog);
-        if ($message['fromMe'] == 0) {
-            // broadcast(new IncomingMessage($domain, $dialogObj));
-        } else {
-            // broadcast(new SentMessage($domain, $dialogObj));
-        }
+        broadcast(new IncomingMessage($domain, $dialogObj));
+        // if ($message['fromMe'] == 0) {
+        //     broadcast(new IncomingMessage($domain, $dialogObj));
+        // } else {
+        //     // broadcast(new SentMessage($domain, $dialogObj));
+        // }
 
         if ($message['type'] == 'text') {
             return $message['body'];
@@ -217,7 +218,7 @@ class MessagesWebhook extends ProcessWebhookJob
         $botObj = Bot::getData($botObj, $tenantId);
         $botObj->file = str_replace('localhost', $domain . '.whatskey.net', $botObj->file);
         // For Local
-        $botObj->file = str_replace('newdomain1.whatskey.net/', 'bc4d-156-219-245-180.ngrok.io', $botObj->file);
+        $botObj->file = str_replace('newdomain1.whatskey.net/', 'df19-156-219-245-180.ngrok.io', $botObj->file);
         $myMessage = $botObj->reply;
         $message_type = '';
         $sendData['phone'] = str_replace('@c.us', '', $sender);
@@ -325,18 +326,6 @@ class MessagesWebhook extends ProcessWebhookJob
             }
 
             $messageObj = ChatMessage::newMessage($lastMessage);
-            $dialog = ChatDialog::getOne($sendData['chatId']);
-            $dialog->last_time = $lastMessage['time'];
-            $dialogObj = ChatDialog::getData($dialog);
-            if ($channel == 'SentMessage') {
-                // return broadcast(new SentMessage($domain, $dialogObj));
-                return 1;
-            } else if ($channel == 'BotMessage' && $botObj) {
-                $dialogObj->lastMessage = $messageObj;
-                $dialogObj->lastMessage->bot_details = $botObj;
-                // return broadcast(new BotMessage($domain, $dialogObj));
-                return 1;
-            }
         }
         return 1;
     }
@@ -360,7 +349,7 @@ class MessagesWebhook extends ProcessWebhookJob
             }
             if($botObj->image != ''){
         		$botObj->image = str_replace('localhost', $domain . '.whatskey.net', $botObj->image);
-        		$botObj->image = str_replace('newdomain1.whatskey.net/', 'bc4d-156-219-245-180.ngrok.io', $botObj->image);
+        		$botObj->image = str_replace('newdomain1.whatskey.net/', 'df19-156-219-245-180.ngrok.io', $botObj->image);
 	            $sendData['image'] = $botObj->image;
             }
             $sendData['footer'] = $botObj->footer;

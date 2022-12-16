@@ -1,8 +1,5 @@
 <div>
     @php
-        $chat = (array) $chat;
-        $chat['lastMessage'] = (array) @$chat['lastMessage'];
-        $chat['lastMessage']['metadata'] = (array) @$chat['lastMessage']['metadata'];
         $senderText = $chat['lastMessage']['fromMe']? trans('main.you').':' : '';
         $msgIcon = '';
         $msgBody = strlen($chat['lastMessage']['body']) > 100 ? substr($chat['lastMessage']['body'], 0, 100) . ' ........' : $chat['lastMessage']['body'];
