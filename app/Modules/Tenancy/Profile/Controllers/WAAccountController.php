@@ -268,7 +268,7 @@ class WAAccountController extends Controller
             'sendDelay' => '0',
             'webhooks' => [
                 'messageNotifications' => str_replace('://', '://'.$domain.'.', config('app.BASE_URL')).'/services/webhooks/messages-webhook',
-                'ackNotifications' => str_replace('://', '://'.$domain.'.', config('app.BASE_URL')).'/services/webhooks/messages-webhook',
+                'ackNotifications' => str_replace('://', '://'.$domain.'.', config('app.BASE_URL')).'/services/acks/messages-webhook',
             ],
             'ignoreOldMessages' => 1,
         ];

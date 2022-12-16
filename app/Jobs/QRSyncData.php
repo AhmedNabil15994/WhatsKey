@@ -43,7 +43,7 @@ class QRSyncData implements ShouldQueue
             'sendDelay' => '0',
             'webhooks' => [
                 'messageNotifications' => str_replace('://', '://'.$domain.'.', config('app.BASE_URL')).'/services/webhooks/messages-webhook',
-                'ackNotifications' => str_replace('://', '://'.$domain.'.', config('app.BASE_URL')).'/services/webhooks/messages-webhook',
+                'ackNotifications' => str_replace('://', '://'.$domain.'.', config('app.BASE_URL')).'/services/webhooks/acks-webhook',
             ],
             'ignoreOldMessages' => 1,
         ];

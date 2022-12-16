@@ -286,3 +286,33 @@ code {
 #kt_scrollDown:hover{
 	opacity: 1;
 }
+.messages .msgDetails{
+	font-size: 12px;
+}
+.messages .replyHeader{
+	background: rgba(255,255,255,.5);
+}
+.messages .link a,
+.messages .mention a,
+.messages .contact a,
+.messages .buttons button,
+.messages .templates button
+.messages .lists a,
+.messages .group a,
+.messages .catalog a,
+.messages .product a,
+.messages .order a,
+.messages .poll a{
+	color: #3699ff;
+}
+.messages .contact,
+.messages .group{
+	min-width: 250px;
+}
+#listSections .row{
+	margin:0;
+	padding:0;
+}
+#listSections p{
+	margin-bottom: 5px;
+}

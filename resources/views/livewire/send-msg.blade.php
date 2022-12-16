@@ -1,4 +1,4 @@
-<div class="card-footer px-6 align-items-center">
+<div class="w-100">
     <textarea class="form-control border-0 p-0" rows="2" placeholder="Type a message"></textarea>
     <div class="d-flex align-items-center justify-content-between mt-5">
         <div class="mr-3">

@@ -16,6 +16,8 @@
 <script src="{{ asset('assets/tenant/plugins/sweet-alert/jquery.sweet-alert.js') }}"></script>
 <script src="{{ asset('assets/tenant/components/globals.js') }}"></script>
 <!-- third party js -->
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.9.0/cdn.min.js"></script>
+
 @livewireScripts 
 <script>
     window.livewire_app_url = "{{ URL::to('/') }}"; 

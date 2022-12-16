@@ -160,7 +160,7 @@ class ChatMessage extends Model{
         $source = (object) $source;
         $dataObj->id = $source->id;
         
-        $dataObj->body = isset($source->body) ? ( $source->deleted_by != null ? 'رسالة محذوفة أو غير مدعومة' : (str_contains($source->body, 'www.') && !str_contains($source->body,'http') ? str_replace('www.', 'https://www.', $source->body) : $source->body)) : '';
+        $dataObj->body = ( $source->deleted_by != null ? 'رسالة محذوفة أو غير مدعومة' : $source->body);
         $dataObj->fromMe = isset($source->fromMe) ? $source->fromMe : '';
         $dataObj->isForwarded = isset($source->isForwarded) ? $source->isForwarded : '';
         $dataObj->author = isset($source->author) ? $source->author : '';
@@ -194,15 +194,12 @@ class ChatMessage extends Model{
         if(in_array($dataObj->message_type , ['audio'])){
             $dataObj->messageContent = trans('main.sound');
         }
-        if($source->type == 'location' && $source->body == ''){
-            $metadata = json_decode($source->metadata);
-            $dataObj->body = !empty($metadata) ? $metadata->latitude.';'.$metadata->longitude : str_replace(':',';',$source->body);
-        }
+       
         $dataObj->icon = $source->fromMe ? '<i class="flaticon-reply text-success"></i>' : '<i class="flaticon-speech-bubble-1 text-danger"></i>';
         $dataObj->date_time = $dataObj->created_at_day . ' ' . $dataObj->created_at_time;
-        if($source->type == 'mention'){
-            $dataObj->body = str_replace('@', '', $dataObj->body);
-        }
+        // if($source->type == 'mention'){
+        //     $dataObj->body = str_replace('@', '', $dataObj->body);
+        // }
         $dataObj->chatId3 = str_replace('+','',$dataObj->dialog);
         $dataObj->deleted_by = $source->deleted_by;
         $dataObj->deleted_at = $source->deleted_at;

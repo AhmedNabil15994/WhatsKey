@@ -1,4 +1,4 @@
-<div class="card-header align-items-center px-4 py-3"> 
+<div class="w-100 d-flex">
     <div class="text-left flex-grow-1">
         <button type="button" class="btn btn-clean btn-sm btn-icon btn-icon-md d-lg-none" id="kt_app_chat_toggle">
             <span class="svg-icon svg-icon-lg">
@@ -32,8 +32,8 @@
     <div class="text-center flex-grow-1">
         <div class="text-dark-75 font-weight-bold font-size-h5">{{$name}}</div>
         <div>
-            {{-- <span class="label label-sm label-dot label-success"></span> --}}
-            {{-- <span class="font-weight-bold text-muted font-size-sm">Active</span> --}}
+            <span class="label label-sm label-dot label-success"></span>
+            <span class="font-weight-bold text-muted font-size-sm">Active</span>
         </div>
     </div>
     <div class="text-right flex-grow-1">

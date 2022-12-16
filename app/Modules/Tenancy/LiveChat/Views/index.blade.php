@@ -57,6 +57,7 @@
 
     	Livewire.on('conversationOpened', chat => {
 	    	$('.scroll-pulls').scrollTop($('.messages')[0].scrollHeight);
+	    	$('[data-toggle="tooltip"]').tooltip()
 	    });
 
 
@@ -80,6 +81,25 @@
 	    		$('#kt_scrollDown').removeClass('hidden')
 		    }
     	});
+
+    	$(document).ready(function () {
+	        window.livewire.emit('showModal');
+	    });
+
+	    window.livewire.on('showModal', () => {
+	        $('#listSections').modal('show');
+	    });
+
+	    $(document).on('change','[name="radios"]',function(){
+	    	if($(this).is(':checked')){
+	    		$('p.score').html(0);
+	    		$('.progress-bar').data('aria-valuenow',0);
+	    		$('.progress-bar').css('width','0%');
+	    		$(this).parents('.float-left').siblings('div.float-right').children('p.score').html(1);
+	    		$(this).parents('.w-100').find('.progress-bar').data('aria-valuenow',100);
+	    		$(this).parents('.w-100').find('.progress-bar').css('width','100%');
+	    	}
+	    });
     })
 </script>
 
