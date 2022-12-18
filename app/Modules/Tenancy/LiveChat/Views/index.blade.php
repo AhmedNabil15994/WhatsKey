@@ -98,7 +98,7 @@
 		    		if(this.scrollTop == 0) {
 				    	window.livewire.emit('loadMoreMsgs')
 				    }
-			    		// $('#kt_scrollDown').removeClass('hidden')
+			    	$('#kt_scrollDown').removeClass('hidden')
 				    // if(this.scrollTop >= 0){
 				    // }
 
@@ -144,6 +144,12 @@
 						window.livewire.emitTo('send-msg','sendMsg',$(this).val())
 						$(this).val(' ')
 					}
+				});
+
+				$(document).on('click','.sendMsg .btn-primary', function(e) {
+					let myEvent = $.Event('keydown');
+					myEvent.keyCode = 13;
+					$('.sendMsg textarea').trigger(myEvent)
 				});
 
 				$(document).on('click','.replyMsg',function(e){

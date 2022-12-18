@@ -343,8 +343,8 @@ html[dir="ltr"] .chatDetails{
     text-align: right;
 }
 .image img{
-	width: 350px;
-	height: 250px;
+	width: 100%;
+    height: fit-content;
 	display: block;
 }
 .emojionearea .emojionearea-button{
