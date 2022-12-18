@@ -325,6 +325,9 @@ code {
 	right: auto !important;
 	left: -7px !important;
 }
+.scroll-pulls .ps__rail-y .ps__thumb-y{
+	background-color: #e4e6ef !important;
+}
 .replyMsg{
 	cursor: pointer;
 }
