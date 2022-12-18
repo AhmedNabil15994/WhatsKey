@@ -9,6 +9,7 @@ use \Spatie\WebhookClient\ProcessWebhookJob;
 use \Spatie\WebhookServer\WebhookCall;
 
 use App\Events\MessageStatus;
+use App\Events\DialogUpdateStatus;
 
 use App\Models\User;
 use App\Models\CentralVariable;
@@ -28,6 +29,11 @@ class AcksWebhook extends ProcessWebhookJob
         if (isset($allData['event']) && $allData['event'] == 'message-status') {
             $actions = $allData['ack'];
             $this->handleUpdates($tenantUser->domain, $actions);
+            // Fire Webhook For Client
+            $this->fireWebhook($actions);
+        } else if (isset($allData['event']) && $allData['event'] == 'dialog-update') {
+            $actions = $allData['data'];
+            $this->handleChatsUpdates($tenantUser->domain, $actions);
             // Fire Webhook For Client
             $this->fireWebhook($actions);
         } 
@@ -93,11 +99,24 @@ class AcksWebhook extends ProcessWebhookJob
             if (isset($messageObj) && $statusInt > $messageObj->sending_status) {
                 $messageObj->update(['sending_status' => $statusInt]);
                 if ($statusInt == 3) {
-                    ChatMessage::where('fromMe', $messageObj->fromMe)->where('chatId', $sender)->where('sending_status', '<=', 2)->update(['sending_status' => 3]);
+                    ChatMessage::where('fromMe', $messageObj->fromMe)->where('chatId', $sender)->update(['sending_status' => 3]);
                 }
             }
-            broadcast(new MessageStatus($domain, $sender, $messageId, $statusInt));
+            broadcast(new MessageStatus(strtolower($domain), $sender, $messageId, $statusInt));
         }
+        return 1;
+    }
+
+    public function handleChatsUpdates($domain, $actions)
+    {
+        $actions = (array) $actions;
+        if(isset($actions['pinned'])){
+            ChatDialog::where('id',$actions['chatId'])->update(['pinned' => (int) $actions['pinned']]);
+        }
+        if(isset($actions['archived'])){
+            ChatDialog::where('id',$actions['chatId'])->update(['archived' =>  $actions['archived'] == 'true' ? 1 : 0]);
+        }
+        broadcast(new DialogUpdateStatus(strtolower($domain), $actions));
         return 1;
     }
 }

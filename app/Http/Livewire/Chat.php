@@ -10,7 +10,7 @@ class Chat extends Component
     public $chat;
     public $selected;
 
-    protected $listeners = ['lastUpdates'];
+    protected $listeners = ['lastUpdates','changeDialogStatus'];
 
     public function mount($chat)
     {
@@ -40,4 +40,15 @@ class Chat extends Component
             $this->chat =  $data;
         }
     }
+
+    public function changeDialogStatus($data,$domain){
+        $data = json_decode(json_encode($data), true);
+        if(isset($data) && isset($data['id']) && $this->chat['id'] == $data['id']){
+            $domainUrl = str_replace('myDomain',$domain,config('app.MY_DOMAIN'));
+            $data['image'] = str_replace('http://localhost',$domainUrl,$data['image']);
+            $this->chat =  $data;
+        }
+    }
+
+    
 }

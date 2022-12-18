@@ -111,7 +111,7 @@ html[dir="ltr"] .iti__country-list {
 	height: 100% !important;
 }
 .hidden{
-	display: none;
+	display: none !important;
 }
 .card-footer:last-child{
 	padding-right: 0;
@@ -371,4 +371,13 @@ html[dir="ltr"] emoji-picker{
 }
 .messageItem .text-dark{
 	white-space: pre-line;
+}
+.vhidden{
+	visibility: hidden;
+}
+html[dir="rtl"] .pinIcon{
+	margin-right: -10px;
+}
+html[dir="ltr"] .pinIcon{
+	margin-left: -10px;
 }

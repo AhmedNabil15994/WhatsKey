@@ -13,7 +13,7 @@ class Chats extends Component
     public $page = 1;
     public $page_size = 30;
     public $chats;
-    protected $listeners = ['loadMore','searchAllChats','chatsChanges'];
+    protected $listeners = ['loadMore','searchAllChats','chatsChanges','changeDialogStatus'];
 
     public function mount(){
         $data['limit'] = $this->page_size;
@@ -116,6 +116,60 @@ class Chats extends Component
         $this->chats = array_merge($pinned,$notPinned);
         if($chat['lastMessage']['fromMe'] == 0){
             $this->emit('playAudio');
+        }
+    }
+
+    public function changeDialogStatus($data){
+        $data = json_decode(json_encode($data), true);
+        $pinned = [];
+        $notPinned = [];
+        $oldChats = $this->chats;
+        $oldChats = json_decode(json_encode($oldChats), true);
+        $found = 0;
+        $chatData = $data['data'];
+        if(isset($chatData['chatId'])){
+            $chatObj = ChatDialog::getData(ChatDialog::getOne($chatData['chatId']));
+            foreach ($oldChats as $key => $value) {
+                if($value['id'] == $chatData['chatId']){
+                    $found = 1;
+                    $item = $chatObj;
+                }else{
+                    $item = $value;
+                }
+                $item = (object) $item;
+                if(isset($item->lastMessage)){
+                    $item->lastMessage = (object) $item->lastMessage;
+                }
+                if((int)$item->pinned > 0){
+                    $pinned[] = $item;
+                }else{
+                    $notPinned[] = $item;
+                }
+            }
+
+            if(!$found){
+                $chat = $chatObj;
+                if($chat){
+                    if(isset($chat->lastMessage)){
+                        $chat->lastMessage = (object) $chat->lastMessage;
+                    }
+                    if((int)$chat->pinned > 0){
+                        $pinned[] = $chat;
+                    }else{
+                        $notPinned[] = $chat;
+                    }
+                }
+            }
+
+            usort($pinned, function($a, $b) {
+                return ((int) $b->pinned) - ((int) $a->pinned);
+            });
+
+            usort($notPinned, function($a, $b) {
+                return ((int) $b->lastMessage->time) - ((int) $a->lastMessage->time);
+            });
+            $this->emitTo('chat','changeDialogStatus',$chatObj,$data['domain']);
+            $this->chats = array_merge($pinned,$notPinned);
         }
     }
 }

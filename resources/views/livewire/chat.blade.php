@@ -42,7 +42,7 @@
         }
     @endphp
     @if($chat['lastMessage'])
-    <div class="card py-3 px-3 mb-1 chatItem {{$chat['pinned'] > 0 ? 'pinned' : ''}} " wire:click="openMessages('{{$chat['id']}}')">
+    <div class="card py-3 px-3 mb-1 chatItem {{$chat['pinned'] > 0 ? 'pinned' : ''}} " data-pin="{{$chat['pinned']}}" wire:click="openMessages('{{$chat['id']}}')">
         <div class="d-flex">
             <div class="symbol symbol-circle symbol-50 mr-3">
                 <img alt="Pic" src="{{$chat['image']}}" />
@@ -52,19 +52,19 @@
                 <span class="chatMsg text-muted font-weight-bold font-size-sm">{!! $msgIcon.' '.$senderText.' '.$msgBody !!}</span>
             </div>
         </div>
-        <div class="d-flex flex-column chatDetails">
-            <span class="text-muted font-weight-bold font-size-sm">{{$chat['last_time']}}</span>
-            @if($chat['pinned'] > 0)
-            <span class="svg-icon text-muted svg-icon-xl mt-1">
-                <svg height="15" width="15" preserveAspectRatio="xMidYMid meet" class="">
-                    <path fill="currentColor" d="M12.074 4.21 8.7 8.232l.116 4.233a.4.4 0 0 1-.657.318L.43 6.297a.4.4 0 0 1 .199-.702l4.196-.622L8.196.957a.63.63 0 0 1 .887-.078l2.914 2.445a.63.63 0 0 1 .077.887ZM1.294 14.229a.713.713 0 0 1-1.09-.915l2.674-3.64 1.536 1.288-3.12 3.267Z"></path>
-                </svg>
-            </span>
-            @endif
-
-            @if($chat['unreadCount'] > 0)
-            <span class="label label-md label-success font-weight-bold" style="margin-top: -27px">{{$chat['unreadCount']}}</span>
-            @endif
+        <div class="chatDetails">
+            <span class="text-muted font-weight-bold font-size-sm d-block">{{$chat['last_time']}}</span>
+            <div class="row text-center" style="margin: 0;">
+                <span class="svg-icon text-muted svg-icon-xl mt-1 d-inline-block {{$chat['archived'] > 0 ? '' : 'vhidden'}}">
+                    <i class="icon-xl text-muted la la-archive"></i>
+                </span>
+                <span class="label label-lg label-success mt-1 mx-1 font-weight-bold d-inline-block font-size-h6 {{$chat['unreadCount'] > 0 ? '' : 'vhidden'}}" style="padding: 3px 0">{{$chat['unreadCount']}}</span>
+                <span class="svg-icon text-muted svg-icon-xl mt-2 pinIcon d-inline-block {{$chat['pinned'] > 0 ? '' : 'vhidden'}}">
+                    <svg height="15" width="15" preserveAspectRatio="xMidYMid meet" class="">
+                        <path fill="currentColor" d="M12.074 4.21 8.7 8.232l.116 4.233a.4.4 0 0 1-.657.318L.43 6.297a.4.4 0 0 1 .199-.702l4.196-.622L8.196.957a.63.63 0 0 1 .887-.078l2.914 2.445a.63.63 0 0 1 .077.887ZM1.294 14.229a.713.713 0 0 1-1.09-.915l2.674-3.64 1.536 1.288-3.12 3.267Z"></path>
+                    </svg>
+                </span>
+            </div>
         </div>
     </div>
     @endif

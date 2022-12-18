@@ -20,7 +20,7 @@ class Conversation extends Component
     public $page = 1;
     public $page_size = 30;
 
-    protected $listeners = ['loadMessages','loadMoreMsgs','newIncomingMsg','sendMsg'];
+    protected $listeners = ['loadMessages','loadMoreMsgs','newIncomingMsg','sendMsg','changeMessageStatus'];
 
     public function mount(){
         $this->myImage = User::getData(User::find(USER_ID))->photo;
@@ -52,7 +52,7 @@ class Conversation extends Component
         if($msg['chatId'] == $this->selected){
             if($this->messages[0]['id'] != $chat['lastMessage']['id']){
                 $msgs = array_reverse($this->messages);
-                if($msg['message_type'] != 'reaction'){
+                if(!in_array($msg['message_type'],['reaction','poll_vote','poll_unvote'])){
                     $msgs[]= $msg;
                 }
                 $msgs = array_reverse($msgs);
@@ -65,4 +65,21 @@ class Conversation extends Component
             $this->emitTo('chat','lastUpdates',$data['message'],$data['domain']); 
         }
     }
+
+    public function changeMessageStatus($data){
+        $data = json_decode(json_encode($data), true);
+        $msgs = [];
+        $incomingFromMe = str_contains($data['messageId'], 'true_');
+        if($data['chatId'] == $this->selected){
+            foreach ($this->messages as $key => $value) {
+                if($value['id'] == $data['messageId']){
+                    $value['sending_status'] = $data['statusInt'];
+                }else if ($value['fromMe'] == $incomingFromMe) {
+                    $value['sending_status'] = $data['statusInt'];
+                }
+                $msgs[] = $value;
+            }
+        }
+        $this->messages = $msgs;
+    }    
 }
