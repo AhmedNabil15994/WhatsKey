@@ -157,8 +157,8 @@ class ChatDialog extends Model{
         }
         $dataObj->metadata = isset($source->metadata) ? serialize($source->metadata) : '';
         $dataObj->last_time = isset($source->last_time) ? $source->last_time : '';
-        $dataObj->pinned = isset($source->pinned) ? $source->pinned : 0;
-        $dataObj->archived = isset($source->archived) ? $source->archived : 0;
+        $dataObj->pinned = isset($source->pinned) ? (int)$source->pinned : 0;
+        $dataObj->archived = isset($source->archived) && $source->archived == 'true' ? 1 : 0;
         $dataObj->unreadCount = isset($source->unreadCount) ? $source->unreadCount : 0;
         $dataObj->unreadMentionCount = isset($source->unreadMentionCount) ? $source->unreadMentionCount : 0;
         $dataObj->notSpam = isset($source->notSpam) ? $source->notSpam : 0;

@@ -1,11 +1,14 @@
 <div class="flex-row-fluid ml-lg-8" id="kt_chat_content">
-    <div class="card card-custom">
-        <div class="card-header align-items-center px-4 py-3"> 
+    <div class="card card-custom" style="height: 100%; background: url({{asset('assets/tenant/images/bg-chat.png')}});">
+        <div class="card-header px-1 py-1" style="display: block;min-height: 45px;background:{{$selected ? '#FFF':'transparent'}}"> 
         @if($selected)
-        <livewire:chat-actions  :name="$chat['name']" :wire:key="$chat['id'].'actions'" />
+        @php
+            $chat['name'] = mb_convert_encoding($chat['name'], 'UTF-8', 'UTF-8');
+        @endphp
+        <livewire:chat-actions  :name="$chat['name']" :wire:key="'actions'.$chat['id']" />
         @endif
         </div>
-        <div class="card-body">
+        <div class="card-body" style="position:relative;padding: 0 1.5rem; {{$selected ? 'background: rgba(0,0,0,.25)' : ''}};">
             <div class="scroll scroll-pull scroll-pulls" data-mobile-height="350">
                 <div class="messages" id="messages">
                     @if($selected)
@@ -13,105 +16,25 @@
                     @php 
                         $oneMessage = (array) $oneMessage; 
                         // dd($messages);
+                        $oneMessage['body'] = mb_convert_encoding($oneMessage['body'], 'UTF-8', 'UTF-8');
                         $oneMessage['metadata'] = (array) $oneMessage['metadata']; 
+                        $id = array_reverse(explode('_',$oneMessage['id']))[0];
                     @endphp
-                    <div class="d-flex flex-column mb-5 align-items-{{$oneMessage['fromMe'] == 1 ? 'end' : 'start'}}">
-                        <div class="d-flex align-items-center">
-                            @if($oneMessage['fromMe'] == 1)
-                            <div>
-                                <span class="text-muted font-size-sm">{{$oneMessage['date_time']}}</span>
-                            </div>
-                            <div class="symbol symbol-circle symbol-40 ml-3">
-                                <img alt="Pic" src="{{$myImage}}" />
-                            </div>
-                            @else
-                            <div class="symbol symbol-circle symbol-40 mr-3">
-                                <img alt="Pic" src="{{$chat['image']}}" />
-                            </div>
-                            <div>
-                                <span class="text-muted font-size-sm">{{$oneMessage['date_time']}}</span>
-                            </div>
-                            @endif
-                        </div>
-                        <div class="mt-2 rounded p-5 bg-{{$oneMessage['fromMe'] == 1 ? 'gray-100' : 'light-success'}} text-dark-50 font-weight-bold font-size-lg text-{{$oneMessage['fromMe'] == 1 ? 'right' : 'left'}} max-w-400px" style="{{$oneMessage['message_type'] == 'disappearing' ? "position: relative;" : ''}}">
-                            @if($oneMessage['message_type'] == 'text')
-                            <livewire:text-msg :msg="$oneMessage" :wire:key="'msg'.$oneMessage['id']"/>
-
-                            @elseif($oneMessage['message_type'] == 'image')
-                            <livewire:image-msg :msg="$oneMessage" :wire:key="'msg'.$oneMessage['id']"/>
-
-                            @elseif($oneMessage['message_type'] == 'video')
-                            <livewire:video-msg :msg="$oneMessage" :wire:key="'msg'.$oneMessage['id']"/>
-
-                            @elseif($oneMessage['message_type'] == 'audio')
-                            <livewire:audio-msg :msg="$oneMessage" :wire:key="'msg'.$oneMessage['id']"/>
-
-                            @elseif($oneMessage['message_type'] == 'document')
-                            <livewire:file-msg :msg="$oneMessage" :wire:key="'msg'.$oneMessage['id']"/>
-
-                            @elseif($oneMessage['message_type'] == 'sticker')
-                            <livewire:sticker-msg :msg="$oneMessage" :wire:key="'msg'.$oneMessage['id']"/>
-
-                            @elseif($oneMessage['message_type'] == 'gif')
-                            <livewire:gif-msg :msg="$oneMessage" :wire:key="'msg'.$oneMessage['id']"/>
-
-                            @elseif($oneMessage['message_type'] == 'linkWithPreview')
-                            <livewire:link-msg :msg="$oneMessage" :wire:key="'msg'.$oneMessage['id']"/>
-
-                            @elseif($oneMessage['message_type'] == 'location')
-                            <livewire:location-msg :msg="$oneMessage" :wire:key="'msg'.$oneMessage['id']"/>
-
-                            @elseif($oneMessage['message_type'] == 'contact')
-                            <livewire:contact-msg :msg="$oneMessage" :wire:key="'msg'.$oneMessage['id']"/>
-
-                            @elseif($oneMessage['message_type'] == 'disappearing')
-                            <livewire:disappearing-msg :msg="$oneMessage" :wire:key="'msg'.$oneMessage['id']"/>
-
-                            @elseif($oneMessage['message_type'] == 'mention')
-                            <livewire:mention-msg :msg="$oneMessage" :wire:key="'msg'.$oneMessage['id']"/>
-
-                            @elseif($oneMessage['message_type'] == 'buttons')
-                            <livewire:buttons-msg :msg="$oneMessage" :wire:key="'msg'.$oneMessage['id']"/>
-
-                            @elseif($oneMessage['message_type'] == 'template')
-                            <livewire:template-msg :msg="$oneMessage" :wire:key="'msg'.$oneMessage['id']"/>
-
-                            @elseif($oneMessage['message_type'] == 'list')
-                            <livewire:list-msg :msg="$oneMessage" :wire:key="'msg'.$oneMessage['id']"/>
-                            <livewire:list-sections :msg="$oneMessage" :wire:key="'modal'.$oneMessage['id']"/>
-
-                            @elseif($oneMessage['message_type'] == 'groupInvitation')
-                            <livewire:group-msg :msg="$oneMessage" :wire:key="'msg'.$oneMessage['id']"/>
-
-                            @elseif($oneMessage['message_type'] == 'catalog')
-                            <livewire:catalog-msg :msg="$oneMessage" :wire:key="'msg'.$oneMessage['id']"/>
-
-                            @elseif($oneMessage['message_type'] == 'product')
-                            <livewire:product-msg :msg="$oneMessage" :wire:key="'msg'.$oneMessage['id']"/>
-
-                            @elseif($oneMessage['message_type'] == 'order')
-                            <livewire:order-msg :msg="$oneMessage" :wire:key="'msg'.$oneMessage['id']"/>
-
-                            @elseif($oneMessage['message_type'] == 'poll')
-                            <livewire:poll-msg :msg="$oneMessage" :wire:key="'msg'.$oneMessage['id']"/>
-
-                            @endif
-                        </div>
-                    </div>                    
+                    <livewire:message :wire:key="time().$id" :msg="$oneMessage" :chatName="$chat['name']"/>               
                     @endforeach
                     @endif
-                    <div id="kt_scrollDown" class="scrollDown text-right float-right hidden">
-                        <span class="fa-icon fa-icon-xl">
-                            <i class="la la-angle-double-down text-white"></i>
-                        </span>
-                    </div>
                     <div class="clearfix"></div>
                 </div>
             </div>
+            <div id="kt_scrollDown" class="scrollDown text-right float-right hidden">
+                <span class="fa-icon fa-icon-xl">
+                    <i class="la la-angle-double-down text-white"></i>
+                </span>
+            </div>
         </div>
-        <div class="card-footer px-6 align-items-center">
+        <div class="card-footer px-3 py-3 align-items-center" style="background:{{$selected ? '#FFF':'transparent'}}">
         @if($selected)
-        <livewire:send-msg  :wire:key="$chat['id']"/>
+        <livewire:send-msg :selected="$selected" :wire:key="'send'.$chat['id']"/>
         @endif
         </div>
     </div>

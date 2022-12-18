@@ -267,7 +267,7 @@ code {
 	height: 4rem;
 }
 .scroll-pulls{
-	max-height: 520px;
+	max-height: 673px;
 }
 #kt_scrollDown{
 	align-items: center;
@@ -279,9 +279,9 @@ code {
     border-radius: 50%;
     margin-top: -30px;
     opacity: .5;
-    position: fixed;
-    bottom: 200px;
-    left: 200px;
+    position: absolute;
+    bottom: 10px;
+    left: 30px;
 }
 #kt_scrollDown:hover{
 	opacity: 1;
@@ -290,7 +290,8 @@ code {
 	font-size: 12px;
 }
 .messages .replyHeader{
-	background: rgba(255,255,255,.5);
+	background: rgba(0,0,0,.1);
+	border-radius: 5px;
 }
 .messages .link a,
 .messages .mention a,
@@ -315,4 +316,59 @@ code {
 }
 #listSections p{
 	margin-bottom: 5px;
+}
+.scroll-pulls:hover .ps__rail-y{
+	opacity: 1 !important;	
+} 
+.scroll-pulls .ps__rail-y{
+	display: block;
+	right: auto !important;
+	left: -7px !important;
+}
+.replyMsg{
+	cursor: pointer;
+}
+.chatDetails{
+	position: absolute;
+}
+html[dir="rtl"] .chatDetails{
+	left: 10px;
+    text-align: left;
+}
+html[dir="ltr"] .chatDetails{
+	right: 10px;
+    text-align: right;
+}
+.image img{
+	width: 350px;
+	height: 250px;
+	display: block;
+}
+.emojionearea .emojionearea-button{
+	top: 7px !important;
+}
+.emojionearea .emojionearea-button>div.emojionearea-button-open{
+	margin-right: 2px;
+}
+.emojionearea .emojionearea-button>div.emojionearea-button-open:hover{
+	color: #3699ff;
+}
+.emojionearea .emojionearea-editor{
+	display: none !important;
+}
+.tox .tox-statusbar{
+	display: none !important; 
+}
+emoji-picker{
+	position: absolute;
+    bottom: 0;
+}
+html[dir="rtl"] emoji-picker{
+    right: 100%;
+}
+html[dir="ltr"] emoji-picker{
+    left: 100%;
+}
+.messageItem .text-dark{
+	white-space: pre-line;
 }

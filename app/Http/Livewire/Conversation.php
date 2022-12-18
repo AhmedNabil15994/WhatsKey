@@ -37,7 +37,7 @@ class Conversation extends Component
         $start = $this->page * $this->page_size;
         $msgs = ChatMessage::where('chatId',$this->chat['id'])->orderBy('time','DESC')->skip($start)->take($this->page_size);
         $this->page += 1;
-        $this->messages = array_merge($this->messages,ChatMessage::generateObj($msgs,0)['data']);
+        $this->messages = json_decode(json_encode(array_merge($this->messages,ChatMessage::generateObj($msgs,0)['data'])), true);
     }
 
     public function render()
@@ -50,14 +50,19 @@ class Conversation extends Component
         $chat['lastMessage'] = (array) $chat['lastMessage'];
         $msg = $chat['lastMessage'];
         if($msg['chatId'] == $this->selected){
-            $msgs = array_reverse($this->messages);
-            $msgs[]= $msg;
-            $msgs = array_reverse($msgs);
-            $this->messages = $msgs;
-            $this->emit('conversationOpened');
+            if($this->messages[0]['id'] != $chat['lastMessage']['id']){
+                $msgs = array_reverse($this->messages);
+                if($msg['message_type'] != 'reaction'){
+                    $msgs[]= $msg;
+                }
+                $msgs = array_reverse($msgs);
+                $this->messages = $msgs;
+                $this->emit('conversationOpened');
+            }
         }
-
-        $this->emitTo('chats','chatsChanges',$data['message'],$data['domain']); 
-        $this->emitTo('chat','lastUpdates',$data['message'],$data['domain']); 
+        if(isset($chat['lastMessage']) && isset($chat['lastMessage']['id']) && $this->messages[0]['id'] != $chat['lastMessage']['id']){
+            $this->emitTo('chats','chatsChanges',$data['message'],$data['domain']); 
+            $this->emitTo('chat','lastUpdates',$data['message'],$data['domain']); 
+        }
     }
 }

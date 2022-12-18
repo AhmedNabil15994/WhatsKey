@@ -52,8 +52,9 @@ class Chats extends Component
     public function loadMore(){
         $start = $this->page * $this->page_size;
 
-        $dialogs = ChatDialog::orderBy('pinned','DESC')->orderByDesc(ChatMessage::select('time')
+        $dialogs = ChatDialog::whereHas('Messages')->orderBy('pinned','DESC')->orderByDesc(ChatMessage::select('time')
             ->whereColumn('messages.chatId', 'dialogs.id')
+            ->where('time','!=', null)
             ->orderBy('time','DESC')
             ->take(1)
         )->skip($start)->take($this->page_size);
@@ -73,6 +74,7 @@ class Chats extends Component
         $item;
         $found = 0;
         $domainUrl = str_replace('myDomain',$domain,config('app.MY_DOMAIN'));
+        $chat = json_decode(json_encode($chat), true);
         $chat['image'] = str_replace('http://localhost',$domainUrl,$chat['image']);
         foreach ($oldChats as $key => $value) {
             if($value['id'] == $chat['lastMessage']['chatId']){
@@ -112,5 +114,8 @@ class Chats extends Component
             return ((int) $b->lastMessage->time) - ((int) $a->lastMessage->time);
         });
         $this->chats = array_merge($pinned,$notPinned);
+        if($chat['lastMessage']['fromMe'] == 0){
+            $this->emit('playAudio');
+        }
     }
 }

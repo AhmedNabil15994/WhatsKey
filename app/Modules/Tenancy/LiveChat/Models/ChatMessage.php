@@ -37,7 +37,7 @@ class ChatMessage extends Model{
 
     static function dataList($chatId=null,$limit=null,$disDetails=null,$start=null) {
         $input = \Request::all();
-        $source = self::where('id','!=',null);
+        $source = self::where('type','!=','reaction');
         if (isset($input['from']) && !empty($input['from']) && isset($input['to']) && !empty($input['to'])) {
             $source->where('time','>=', strtotime($input['from'].' 00:00:00'))->where('time','<=',strtotime($input['to'].' 23:59:59'));
         }
