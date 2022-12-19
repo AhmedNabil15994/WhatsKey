@@ -3,15 +3,14 @@ let domain = 'newdomain1';
 
 window.Echo.channel(domain+'-NewIncomingMessage').listen('IncomingMessage', (data) => {
 	window.Livewire.emitTo('conversation','newIncomingMsg', data);
-    // console.log(data)
 })
 
-window.Echo.channel(domain+'-UpdateMessageStatus').listen('MessageStatus', (status) => {
-	window.Livewire.emitTo('conversation','changeMessageStatus', status);
+window.Echo.channel(domain+'-UpdateMessageStatus').listen('MessageStatus', (data) => {
+	window.Livewire.emitTo('conversation','changeMessageStatus', data);
 })
 
-window.Echo.channel(domain+'-UpdateDialogStatus').listen('DialogUpdateStatus', (status) => {
-	window.Livewire.emitTo('chats','changeDialogStatus', status);
+window.Echo.channel(domain+'-UpdateDialogStatus').listen('DialogUpdateStatus', (data) => {
+	window.Livewire.emitTo('chats','changeDialogStatus', data);
 })
 
 

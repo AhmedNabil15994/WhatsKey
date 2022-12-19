@@ -37,6 +37,41 @@ class ImagesHelper {
         return self::checkExtensionType(strtolower($extension));
     }
 
+    static function checkChatExtensionType($extension,$type=null){
+        $images = ['jpg', 'jpeg', 'gif', 'png', 'bmp', 'svg', 'svgz', 'cgm', 'djv', 'djvu', 'ico', 'ief','jpe', 'pbm', 'pgm', 'pnm', 'ppm', 'ras', 'rgb', 'tif', 'tiff', 'wbmp', 'xbm', 'xpm', 'xwd','svg+xml'];
+        $files = ['vnd.openxmlformats-officedocument.spreadsheetml.sheet','bin','encrypted','xlsx','csv','plain','txt','docx','ppt','word','vnd.openxmlformats-officedocument.wordprocessingml.document','zip','rar','x-rar','pdf','plain'];
+        $videos = ['3gp','quicktime','mov','octet-stream','3g2','avi','uvh','uvm','uvu','uvp','uvs','uaa','fvt','f4v','flv','fli','h261','h263','h264','jpgv','m4v','asf','pyv','wm','wmx','wmv','wvx','mj2','mxu','mp4','ogv','webm','qt','movie','viv','avi','mkv','x-m4v'];
+        $sounds = ['wav','mp3','m3u','aac','vorbis','flac','alac','aiff','dsd','ogg','oga','mpeg','ppt','ptt'];
+
+        if(in_array($extension, $images)){
+            if($type != null){
+                return ['image',$images];
+            }
+            return 'image';
+        }
+
+        if(in_array($extension, $files)){
+            if($type != null){
+                return ['document',$files];
+            }
+            return 'document';
+        }
+
+        if(in_array($extension, $videos)){
+            if($type != null){
+                return ['video',$videos];
+            }
+            return 'video';
+        }
+
+        if(in_array($extension, $sounds)){
+            if($type != null){
+                return ['audio',$sounds];
+            }
+            return 'audio';
+        }
+    }
+
     static function checkExtensionType($extension,$type=null){
         $images = ['jpg', 'jpeg', 'gif', 'png', 'bmp', 'svg', 'svgz', 'cgm', 'djv', 'djvu', 'ico', 'ief','jpe', 'pbm', 'pgm', 'pnm', 'ppm', 'ras', 'rgb', 'tif', 'tiff', 'wbmp', 'xbm', 'xpm', 'xwd','svg+xml'];
         $files = ['vnd.openxmlformats-officedocument.spreadsheetml.sheet','bin','encrypted','xlsx','csv','plain','txt','docx','ppt','word','vnd.openxmlformats-officedocument.wordprocessingml.document','zip','rar','x-rar','pdf','plain'];
@@ -128,11 +163,6 @@ class ImagesHelper {
             //     return is_file($checkFile) ? URL::to($fullPath) : $default;
             //     break;
            
-            // case "chats":
-            //     $fullPath = $path.'/uploads'.($tenant != '' ? '/'.$tenant : '') . '/chats/'. $filename;
-            //     $checkFile = $checkFile . '/chats/' . $filename;
-            //     return is_file($checkFile) ? URL::to($fullPath) : $default;
-            //     break;
             // case "bank_transfers":
             //     $checkFile = public_path() . '/uploads';
             //     $fullPath = $path.'/uploads' . '/bank_transfers/' . $id . '/' . $filename;
@@ -160,6 +190,11 @@ class ImagesHelper {
                 $checkFile = $checkFile . '/groupMessages/' . $id . '/' . $filename;
                 return is_file($checkFile) ? URL::to($fullPath) : $default;
                 break;    
+            case "chats":
+                $fullPath = $path.'/uploads'.($tenant != '' ? '/'.$tenant : '') . '/chats/'. $filename;
+                $checkFile = $checkFile . '/chats/' . $filename;
+                return is_file($checkFile) ? URL::to($fullPath) : $default;
+                break;
             case "users":
                 $fullPath = $path.'/uploads'.($tenant != '' ? '/'.$tenant : '') . '/users/' . $id . '/' . $filename;
                 $checkFile = $checkFile . '/users/' . $id . '/' . $filename;
@@ -248,7 +283,7 @@ class ImagesHelper {
         $tenant = '';
         $file = 'whatsloop';
         if(!\Session::has('central')){
-            $tenant = TENANT_ID;
+            $tenant = Session::get('tenant_id');
             $domain = Domain::where('tenant_id',$tenant)->first();
             if($domain){
                 $file = $domain->domain;
@@ -288,9 +323,9 @@ class ImagesHelper {
             $directory = $path . 'groupMessages/' . $id;
         }
 
-        // if ($strAction == 'chats') {
-        //     $directory = $path . 'chats/';
-        // }
+        if ($strAction == 'chats') {
+            $directory = $path . 'chats/';
+        }
         // 
         // // if ($strAction == 'templateMsgs') {
         //     $directory = $path . 'templateMsgs/' . $id;
@@ -396,7 +431,7 @@ class ImagesHelper {
         $tenant = '';
         $file = 'whatsloop';
         if(!\Session::has('central')){
-            $tenant = TENANT_ID;
+            $tenant = Session::get('tenant_id');
             $domain = Domain::where('tenant_id',$tenant)->first();
             if($domain){
                 $file = $domain->domain;
@@ -442,9 +477,9 @@ class ImagesHelper {
         //     $directory = $path . 'bankAccounts/' . $id;
         // }
         // 
-        // if ($strAction == 'chats') {
-        //     $directory = $path . 'chats/';
-        // }
+        if ($strAction == 'chats') {
+            $directory = $path . 'chats/';
+        }
 
         if ($strAction == 'faqs') {
             $directory = $path . 'faqs/' . $id;
@@ -539,7 +574,7 @@ class ImagesHelper {
         $file = 'whatsloop';
         $path = public_path() . '/uploads/';
         if(!\Session::has('central')){
-            $tenant = TENANT_ID;
+            $tenant = Session::get('tenant_id');
             $path = public_path() . '/uploads/'.$tenant.'/';
             $domain = Domain::where('tenant_id',$tenant)->first();
             if($domain){
@@ -551,9 +586,9 @@ class ImagesHelper {
         $fileName = $file . '-' . $rand;
         $directory = '';
 
-        // if ($strAction == 'chats') {
-        //     $directory = $path . 'chats/';
-        // }
+        if ($strAction == 'chats') {
+            $directory = $path . 'chats/';
+        }
 
         // if ($strAction == 'bank_transfers') {
         //     $path = public_path() . '/uploads/';
@@ -589,7 +624,12 @@ class ImagesHelper {
         if (!file_exists($directory)) {
             mkdir($directory, 0777, true);
         }
-
+        if($strAction == 'chats'){
+            $realPath = $fieldInput->getRealPath();
+            if (File::move($realPath, $directory.'/'.$fileName_full)){
+                return $fileName_full;
+            }
+        }
         if ($fileObj->move($directory, $fileName_full)){
             return $fileName_full;
         }

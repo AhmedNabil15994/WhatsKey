@@ -3,6 +3,8 @@
 namespace App\Http\Livewire;
 
 use Livewire\Component;
+use Livewire\WithFileUploads;
+
 use App\Models\ChatMessage;
 use App\Models\ChatDialog;
 use App\Models\UserExtraQuota;
@@ -19,7 +21,11 @@ class SendMsg extends Component
     public $msgType = 1;
     public $selected;
     protected $listeners = ['sendMsg'];
+    public $file = '';
+    public $dataUrl = '';
+    public $originalName = '';
 
+    use WithFileUploads;
     public function mount($selected){
         $this->selected = $selected;
     }
@@ -27,6 +33,41 @@ class SendMsg extends Component
     public function render()
     {
         return view('livewire.send-msg');
+    }
+
+    public function fileUpload()
+    {
+        $image = $this->file;
+        $file_size = $image->getSize();
+        $file_size = $file_size / (1024 * 1024);
+        $file_size = number_format($file_size, 2);
+        $this->originalName = $image->getClientOriginalName();
+
+        $uploadedSize = \Helper::getFolderSize(public_path() . '/uploads/' . Session::get('tenant_id') . '/');
+        $totalStorage = Session::get('storageSize');
+        $extraQuotas = UserExtraQuota::getOneForUserByType(Session::get('global_id'), 3);
+        if ($totalStorage + $extraQuotas < (doubleval($uploadedSize) + $file_size) / 1024) {
+            return \TraitsFunc::ErrorMessage(trans('main.storageQuotaError'));
+        }
+
+        $myType = explode('/', $image->getMimeType())[1];
+        $message_type = \ImagesHelper::checkChatExtensionType($myType);        
+        $fileName = \ImagesHelper::uploadFileFromRequest('chats', $image, $message_type);
+        if ($image == false || $fileName == false) {
+            return \TraitsFunc::ErrorMessage("Upload Files Failed !!", 400);
+        }
+
+        if($message_type == 'image'){
+            $this->msgType = 2;
+        }elseif($message_type == 'video'){
+            $this->msgType = 3;
+        }elseif($message_type == 'audio'){
+            $this->msgType = 4;
+        }elseif ($message_type == 'document') {
+            $this->msgType = 5;
+        }
+
+        $this->dataUrl = config('app.BASE_URL')  . '/uploads/' . Session::get('tenant_id') . '/chats/' . $fileName;
     }
 
     public function sendMsg($msgBody,Request $request){
@@ -54,40 +95,14 @@ class SendMsg extends Component
         $domain = explode('.', $request->getHost())[0];
         $senderStatus = ucwords(Session::get('name'));
 
-        // if sending first message
-        // if (isset($input['messageType']) && $input['messageType'] == 'new') {
-        //     $chats = explode(',', $input['chatId']);
-        //     unset($input['chatId']);
-        //     try {
-        //         dispatch(new NewDialogJob($chats, $input, $request->hasFile('file') ? $request->file('file') : null, $domain, $senderStatus, $centralUser->isBA))->onConnection('cjobs');
-        //     } catch (Exception $e) {
-
-        //     }
-        //     $dataList['status'] = \TraitsFunc::SuccessMessage("Message Sent Successfully !.");
-        //     return \Response::json((object) $dataList);
-        // }
-        //  if messages in group
-        // if (!str_contains($selected, '@g.us')) {
-        //     $sendData['phone'] = str_replace('@c.us', '', $selected);
-        // } else {
-        //     $sendData['chat'] = str_replace('@g.us', '', $selected);
-        // }
-        //  if message is a reply
-        // if (isset($input['replyOn']) && !empty($input['replyOn'])) {
-        //     $quotedMessageObj = ChatMessage::where('id', $input['replyOn'])->first();
-        //     if (!$quotedMessageObj) {
-        //         return \TraitsFunc::ErrorMessage('This Message Not Found to be replied');
-        //     }
-        //     $quotedMessageObj = ChatMessage::getData($quotedMessageObj);
-        //     $sendData['quotedMsgId'] = $input['replyOn'];
-        // }
         $mainWhatsLoopObj = new \OfficialHelper();
         $sendData['phone'] = str_replace('@c.us', '', $selected);
         $caption = '';
+        $metadata = [];
         $message_type = '';
         $bodyData = '';
 
-        if ($input['type'] == 1) {
+        if($input['type'] == 1) {
             if (!isset($this->msgBody) || empty($this->msgBody)) {
                 return \TraitsFunc::ErrorMessage("Message Field Is Required");
             }
@@ -96,70 +111,49 @@ class SendMsg extends Component
             $sendData['body'] = $this->msgBody;
             $bodyData = $this->msgBody;
             $result = $mainWhatsLoopObj->sendMessage($sendData);
-        } 
-        // elseif ($input['type'] == 2) {
-        //     if ($request->hasFile('file')) {
-        //         $image = $request->file('file');
+        }elseif ($input['type'] == 2) {
+            if($this->dataUrl != ''){
+                $message_type = 'image';
+                if($this->msgBody != ''){
+                    $sendData['caption'] = $this->msgBody;
+                    $caption = $this->msgBody;
+                }
+                $sendData['url'] = $this->dataUrl;
+                $bodyData = $this->dataUrl;
+                $result = $mainWhatsLoopObj->sendImage($sendData);
+                $metadata['filename'] = $this->originalName;
+            }      
+        }elseif ($input['type'] == 3) {
+            if($this->dataUrl != ''){
+                $message_type = 'video';
+                if($this->msgBody != ''){
+                    $sendData['caption'] = $this->msgBody;
+                    $caption = $this->msgBody;
+                }
+                $sendData['url'] = $this->dataUrl;
+                $bodyData = $this->dataUrl;
+                $result = $mainWhatsLoopObj->sendVideo($sendData);
+                $metadata['filename'] = $this->originalName;
+            }      
+        }elseif ($input['type'] == 4) {
+            if($this->dataUrl != ''){
+                $message_type = 'audio';
+                $sendData['url'] = $this->dataUrl;
+                $bodyData = $this->dataUrl;
+                $result = $mainWhatsLoopObj->sendAudio($sendData);
+                $metadata['filename'] = $this->originalName;
+            }      
+        }elseif ($input['type'] == 5) {
+            if($this->dataUrl != ''){
+                $message_type = 'document';
+                $sendData['url'] = $this->dataUrl;
+                $bodyData = $this->dataUrl;
+                $result = $mainWhatsLoopObj->sendFile($sendData);
+                $metadata['filename'] = $this->originalName;
+            }      
+        }
 
-        //         $file_size = $image->getSize();
-        //         $file_size = $file_size / (1024 * 1024);
-        //         $file_size = number_format($file_size, 2);
-        //         $uploadedSize = \Helper::getFolderSize(public_path() . '/uploads/' . TENANT_ID . '/');
-        //         $totalStorage = Session::get('storageSize');
-        //         $extraQuotas = UserExtraQuota::getOneForUserByType(GLOBAL_ID, 3);
-        //         if ($totalStorage + $extraQuotas < (doubleval($uploadedSize) + $file_size) / 1024) {
-        //             return \TraitsFunc::ErrorMessage(trans('main.storageQuotaError'));
-        //         }
 
-        //         $myType = explode('/', $image->getMimeType())[1];
-        //         $message_type = \ImagesHelper::checkExtensionType($myType);
-
-        //         $fileName = \ImagesHelper::uploadFileFromRequest('chats', $image, $message_type);
-        //         if ($image == false || $fileName == false) {
-        //             return \TraitsFunc::ErrorMessage("Upload Files Failed !!", 400);
-        //         }
-
-        //         $bodyData = config('app.BASE_URL') . '/public' . '/uploads/' . TENANT_ID . '/chats/' . $fileName;
-        //         $sendData['url'] = $bodyData;
-        //         if ($message_type == 'photo') {
-        //             if (isset($input['caption']) && !empty($input['caption'])) {
-        //                 $sendData['caption'] = $input['caption'];
-        //                 $caption = $input['caption'];
-        //             }
-        //             $result = $mainWhatsLoopObj->sendImage($sendData);
-        //             $sendData['filename'] = $fileName;
-        //         } else {
-        //             $caption = $request->file('file')->getClientOriginalName();
-        //             $result = $mainWhatsLoopObj->sendFile($sendData);
-        //             $sendData['filename'] = $caption;
-        //         }
-        //         $whats_message_type = $message_type == 'photo' ? 'image' : 'document';
-        //     }
-        // } elseif ($input['type'] == 3) {
-        //     if ($request->hasFile('file')) {
-        //         $image = $request->file('file');
-
-        //         $file_size = $image->getSize();
-        //         $file_size = $file_size / (1024 * 1024);
-        //         $file_size = number_format($file_size, 2);
-        //         $uploadedSize = \Helper::getFolderSize(public_path() . '/uploads/' . TENANT_ID . '/');
-        //         $totalStorage = Session::get('storageSize');
-        //         $extraQuotas = UserExtraQuota::getOneForUserByType(GLOBAL_ID, 3);
-        //         if ($totalStorage + $extraQuotas < (doubleval($uploadedSize) + $file_size) / 1024) {
-        //             return \TraitsFunc::ErrorMessage(trans('main.storageQuotaError'));
-        //         }
-
-        //         $fileName = \ImagesHelper::uploadFileFromRequest('chats', $image, '', 'video');
-        //         if ($image == false || $fileName[0] == false) {
-        //             return \TraitsFunc::ErrorMessage("Upload Files Failed !!", 400);
-        //         }
-        //         $bodyData = config('app.BASE_URL') . '/public/uploads/' . TENANT_ID . '/chats/' . $fileName;
-        //         $message_type = "video";
-        //         $sendData['url'] = $bodyData;
-        //         $whats_message_type = 'video';
-        //         $result = $mainWhatsLoopObj->sendVideo($sendData);
-        //         $sendData['filename'] = $fileName;
-        //     }
         // } elseif ($input['type'] == 4) {
         //     if ($request->hasFile('file')) {
         //         $image = $request->file('file');
@@ -271,7 +265,7 @@ class SendMsg extends Component
             $lastMessage['time'] = strtotime(date('Y-m-d H:i:s'));
             $lastMessage['body'] = $bodyData;
             $lastMessage['caption'] = $caption;
-            $lastMessage['metadata'] = [];
+            $lastMessage['metadata'] = $metadata;
             $lastMessage['chatName'] = $checkMessageObj != null ? $checkMessageObj->chatName : '';
             $lastMessage['type'] = $message_type;
             $lastMessage['sending_status'] = 1;

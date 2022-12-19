@@ -60,10 +60,10 @@ class Conversation extends Component
                 $this->emit('conversationOpened');
             }
         }
-        if(isset($chat['lastMessage']) && isset($chat['lastMessage']['id']) && $this->messages[0]['id'] != $chat['lastMessage']['id']){
-            $this->emitTo('chats','chatsChanges',$data['message'],$data['domain']); 
-            $this->emitTo('chat','lastUpdates',$data['message'],$data['domain']); 
-        }
+        // if(isset($chat['lastMessage']) && isset($chat['lastMessage']['id']) && isset($this->messages) && isset($this->messages[0]) && $this->messages[0]['id'] != $chat['lastMessage']['id']){
+        //     $this->emitTo('chats','chatsChanges',$data['message'],$data['domain']); 
+        //     $this->emitTo('chat','lastUpdates',$data['message'],$data['domain']); 
+        // }
     }
 
     public function changeMessageStatus($data){
@@ -79,7 +79,7 @@ class Conversation extends Component
                 }
                 $msgs[] = $value;
             }
+            $this->messages = $msgs;
         }
-        $this->messages = $msgs;
     }    
 }

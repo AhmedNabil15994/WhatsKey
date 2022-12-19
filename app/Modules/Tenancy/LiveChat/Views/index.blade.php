@@ -56,14 +56,9 @@
 		<script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
 		<script src="{{asset('assets/tenant/js/pages/custom/chat/chat.js')}}"></script>
 		<script>
-		    
-		    // Livewire.on('conversationClosed', chat => {
-		    //     $('#kt_chat_content').addClass('hidden')
-		    // })
 		    $(function(){
 				
 				window.livewire.emit('loadDialogs')
-		    	
 		    	$('#kt_chat_aside .scroll').on('scroll',function(){
 		    		if(this.scrollTop == (this.scrollHeight - this.offsetHeight)) {
 				      	$('.spinContainer').removeClass('hidden')
@@ -72,7 +67,7 @@
 		    	});
 
 		    	Livewire.on('conversationOpened', chat => {
-			    	$('.scroll-pulls').scrollTop($('.messages')[0].scrollHeight);
+			    	$('#kt_scrollDown').click()
 			    	$('[data-toggle="tooltip"]').tooltip()
 			    	$('#kt_scrollDown').addClass('hidden')
 			    });
@@ -84,8 +79,8 @@
 			    });
 
 		    	$('#kt_scrollDown').on('click',function(){
-			    	$('.scroll-pulls').scrollTop($('.messages')[0].scrollHeight);
 			    	$('#kt_scrollDown').addClass('hidden')
+			    	$('.scroll-pulls').scrollTop(1000000);
 		    	});
 
 		    	$(document).on('click','.sendTextArea,a.btn-clean:not(.emoji),.btn-primary,.card-body',function(){
@@ -98,22 +93,9 @@
 		    		if(this.scrollTop == 0) {
 				    	window.livewire.emit('loadMoreMsgs')
 				    }
-			    	$('#kt_scrollDown').removeClass('hidden')
-				    // if(this.scrollTop >= 0){
-				    // }
-
-				    // if(this.scrollTop > 0) {
-			    		// $('#kt_scrollDown').removeClass('hidden')
-					// }
+				    $('#kt_scrollDown').removeClass('hidden')
 		    	});
 
-
-		    	// $('.messages').on('scroll',function(){
-		    	// 	if(this.scrollTop == $('.messages')[0].scrollHeight - 200) {
-			    // 		$('#kt_scrollDown').removeClass('hidden')
-				//     	// window.livewire.emit('loadMoreMsgs')
-				//     }
-		    	// });
 
 		    	$(document).ready(function () {
 			        window.livewire.emit('showModal');
@@ -150,12 +132,19 @@
 					let myEvent = $.Event('keydown');
 					myEvent.keyCode = 13;
 					$('.sendMsg textarea').trigger(myEvent)
-				});
+				});				
 
 				$(document).on('click','.replyMsg',function(e){
 					let id = $(this).data('id');
 			    	$('.scroll-pulls').scrollTop($(this).parents('.messages').find('#'+id)[0].offsetTop);
 				});
+
+				$(document).on('click','.attachment',function(e){
+					$('input[type="file"]')[0].click()
+				});
+
+
+		      
 		    })
 		</script>
 		<script src="{{mix('js/app.js')}}"></script>
