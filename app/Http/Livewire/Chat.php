@@ -25,7 +25,6 @@ class Chat extends Component
     }
 
     public function openMessages($chatId){
-        $this->selected = $chatId;
         $this->emitTo('conversation','loadMessages',[
             'chat' => $this->chat,
             'messages' => ChatMessage::dataList($this->chat['id'], 30),

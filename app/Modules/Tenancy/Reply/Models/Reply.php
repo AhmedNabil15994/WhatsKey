@@ -18,7 +18,7 @@ class Reply extends Model{
             ->first();
     }
 
-    static function dataList() {
+    static function dataList($status=null) {
         $input = \Request::all();
 
         $source = self::NotDeleted()->where(function ($query) use ($input) {
@@ -36,6 +36,9 @@ class Reply extends Model{
                     }
         
                 });
+        if($status != null){
+            $source->where('status',$status);
+        }
         if(isset($input['channel']) && !empty($input['channel'])){
             $source->where('channel',$input['channel']);
         }
@@ -67,6 +70,7 @@ class Reply extends Model{
         $data->channel = $source->channel;
         $data->description_ar = $source->description_ar;
         $data->description_en = $source->description_en;
+        $data->description = $source->{'description_'.(defined(LANGUAGE_PREF) ? LANGUAGE_PREF : 'ar')};
         $data->status = $source->status;
         $data->sort = $source->sort;
         $data->created_at = \Helper::formatDate($source->created_at);

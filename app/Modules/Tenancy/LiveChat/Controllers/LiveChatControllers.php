@@ -28,6 +28,36 @@ class LiveChatControllers extends Controller
 
     use TraitsFunc;
 
+    public function upload(Request $request){
+        if($request->hasFile('audio-blob')){
+            $image = $request->file('audio-blob');
+
+            $file_size = $image->getSize();
+            $file_size = $file_size / (1024 * 1024);
+            $file_size = number_format($file_size, 2);
+
+            $uploadedSize = \Helper::getFolderSize(public_path() . '/uploads/' . Session::get('tenant_id') . '/');
+            $totalStorage = Session::get('storageSize');
+            $extraQuotas = UserExtraQuota::getOneForUserByType(Session::get('global_id'), 3);
+            if ($totalStorage + $extraQuotas < (doubleval($uploadedSize) + $file_size) / 1024) {
+                return \TraitsFunc::ErrorMessage(trans('main.storageQuotaError'));
+            }
+
+
+            $fileName = \ImagesHelper::uploadFileFromRequest('chats', $image, 50,'sounds');
+            if($fileName == false){
+                return false;
+            }
+            $dataUrl = config('app.BASE_URL')  . '/uploads/' . Session::get('tenant_id') . '/chats/' . $fileName;
+            $originalName = $image->getClientOriginalName();
+            Session::put('audioName',$originalName);
+            Session::put('audioDataURL',$dataUrl);
+
+            return 1;
+        }
+    }
+
+
     public function checkPerm()
     {
         return (in_array(2, UserAddon::getDeactivated(User::first()->id))) ? 1 : 0;
@@ -589,6 +619,7 @@ class LiveChatControllers extends Controller
                 $lastMessage['chatName'] = $checkMessageObj != null ? $checkMessageObj->chatName : '';
                 $lastMessage['message_type'] = $message_type;
                 $lastMessage['sending_status'] = 1;
+                $lastMessage['notified'] = 1;
                 $lastMessage['type'] = $whats_message_type;
                 if (isset($quotedMessageObj)) {
                     $lastMessage['quotedMsgId'] = $input['replyOn'];

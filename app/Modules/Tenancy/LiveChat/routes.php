@@ -6,6 +6,7 @@ LiveChat
 $controller = \App\Http\Controllers\LiveChatControllers::class;
 Route::group(['prefix' => '/livechat'] , function () use ($controller) {
     Route::get('/', [$controller,'index']);
+    Route::post('/upload',[$controller,'upload']);
     Route::get('/dialogs', [$controller,'dialogs']);
     Route::post('/pinChat', [$controller,'pinChat']);
     Route::post('/unpinChat', [$controller,'unpinChat']);

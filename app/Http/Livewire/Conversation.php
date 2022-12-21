@@ -4,6 +4,9 @@ namespace App\Http\Livewire;
 
 use Livewire\Component;
 use App\Models\User;
+use App\Models\Reply;
+use App\Models\Template;
+use App\Models\Contact;
 use App\Models\ChatMessage;
 
 class Conversation extends Component
@@ -19,11 +22,17 @@ class Conversation extends Component
     public $myImage;
     public $page = 1;
     public $page_size = 30;
+    public $replies = [];
+    public $templates = [];
+    public $contacts = [];
 
     protected $listeners = ['loadMessages','loadMoreMsgs','newIncomingMsg','sendMsg','changeMessageStatus'];
 
     public function mount(){
         $this->myImage = User::getData(User::find(USER_ID))->photo;
+        $this->replies = Reply::dataList(1)['data'];
+        $this->templates = Template::dataList(1)['data'];
+        $this->contacts = Contact::dataList(1)['data'];
     }
 
     public function loadMessages($data){
@@ -50,14 +59,19 @@ class Conversation extends Component
         $chat['lastMessage'] = (array) $chat['lastMessage'];
         $msg = $chat['lastMessage'];
         if($msg['chatId'] == $this->selected){
-            if($this->messages[0]['id'] != $chat['lastMessage']['id']){
+            if(isset($this->messages[0]) && $this->messages[0]['id'] != $chat['lastMessage']['id']){
                 $msgs = array_reverse($this->messages);
                 if(!in_array($msg['message_type'],['reaction','poll_vote','poll_unvote'])){
                     $msgs[]= $msg;
                 }
                 $msgs = array_reverse($msgs);
-                $this->messages = $msgs;
-                $this->emit('conversationOpened');
+            }else{
+                $msgs[] = $msg;
+            }
+            $this->messages = $msgs;
+            $this->emit('conversationOpened');
+            if($chat['lastMessage']['fromMe'] == 0){
+                $this->emit('playAudio');
             }
         }
         // if(isset($chat['lastMessage']) && isset($chat['lastMessage']['id']) && isset($this->messages) && isset($this->messages[0]) && $this->messages[0]['id'] != $chat['lastMessage']['id']){
@@ -80,6 +94,8 @@ class Conversation extends Component
                 $msgs[] = $value;
             }
             $this->messages = $msgs;
+            $this->emit('focusInput');
         }
     }    
+
 }

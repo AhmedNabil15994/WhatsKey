@@ -11,7 +11,7 @@ use Response;
 class Chats extends Component
 {
     public $page = 1;
-    public $page_size = 30;
+    public $page_size = 20;
     public $chats;
     protected $listeners = ['loadMore','searchAllChats','chatsChanges','changeDialogStatus'];
 
@@ -59,7 +59,8 @@ class Chats extends Component
             ->take(1)
         )->skip($start)->take($this->page_size);
         $this->page += 1;
-        $this->chats = array_merge($this->chats,ChatDialog::generateObj($dialogs,0)['data']);
+        $chats = array_merge($this->chats,ChatDialog::generateObj($dialogs,0)['data']);
+        $this->chats = json_decode(json_encode($chats), true);
     }
 
     public function searchAllChats($chats){

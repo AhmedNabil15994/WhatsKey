@@ -188,7 +188,9 @@ class MessagesWebhook extends ProcessWebhookJob
 		$dialog = ChatDialog::updateOrCreate(['id' => $message['chatId']], ['last_time' => $message['time']]);
 
         $dialogObj = ChatDialog::getData($dialog);
-        broadcast(new IncomingMessage(strtolower($domain), $dialogObj));
+        if(!$messageObj->notified){
+	        broadcast(new IncomingMessage(strtolower($domain), $dialogObj));
+        }
         // if ($message['fromMe'] == 0) {
         //     broadcast(new IncomingMessage($domain, $dialogObj));
         // } else {

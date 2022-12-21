@@ -326,7 +326,7 @@ code {
 	left: -7px !important;
 }
 .scroll-pulls .ps__rail-y .ps__thumb-y{
-	background-color: #e4e6ef !important;
+	background-color: #fff !important;
 }
 .replyMsg{
 	cursor: pointer;
@@ -383,4 +383,16 @@ html[dir="rtl"] .pinIcon{
 }
 html[dir="ltr"] .pinIcon{
 	margin-left: -10px;
+}
+.messageItem .text-dark,
+.messageItem .text-muted{
+	direction: ltr;
+}
+html[dir="rtl"] .messageItem .text-dark,
+html[dir="rtl"] .messageItem .text-muted{
+	text-align: right;
+}
+html[dir="ltr"] .messageItem .text-dark,
+html[dir="ltr"] .messageItem .text-muted{
+	text-align: left;
 }

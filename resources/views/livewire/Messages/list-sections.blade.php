@@ -16,7 +16,7 @@
 		        		<h5 class="modal-title mb-5"> {{$section['title']}} </h5>
 		        		<div class="radio-list w-100">
 		        		@foreach($section['rows'] as $rowKey => $oneRow)
-		        		<div class="row mb-3">
+		        		<div class="w-100 mb-3">
 		        			<div class="float-left">
 		        				<label class="radio radio-outline radio-success">
 				                    <input type="radio" value="{{$oneRow['id']}}"  name="radios{{$sectionKey}}"/>

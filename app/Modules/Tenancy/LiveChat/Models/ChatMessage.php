@@ -12,7 +12,7 @@ class ChatMessage extends Model{
 
     protected $table = 'messages';
     protected $primaryKey = 'id';
-    protected $fillable = ['id','body','fromMe','isForwarded','author','time','chatId','messageNumber','type','message_type','status','senderName','chatName','caption','sending_status','deleted_by','deleted_at'];    
+    protected $fillable = ['id','body','fromMe','isForwarded','author','time','chatId','messageNumber','type','message_type','status','senderName','chatName','caption','notified','quotedMessageId','sending_status','deleted_by','deleted_at'];    
     public $timestamps = false;
     public $incrementing = false;
 
@@ -136,6 +136,12 @@ class ChatMessage extends Model{
         if(isset($source->sending_status)){
             $dataObj->sending_status = $source->sending_status ;
         }
+        if(isset($source->notified)){
+            $dataObj->notified = $source->notified ;
+        }
+        if(isset($source->metadata['quotedMessageId'])){
+            $dataObj->quotedMessageId = $source->metadata['quotedMessageId'] ;
+        }
         if( isset($source->metadata)){
             $dataObj->metadata = !empty($dataObj->metadata) ? json_encode(array_merge((array)json_decode($dataObj->metadata),(array)$source->metadata)) : json_encode($source->metadata) ;
         }
@@ -148,6 +154,7 @@ class ChatMessage extends Model{
         if( isset($source->module_order_id) && $source->module_order_id != '' && $source->module_order_id != null){
             $dataObj->module_order_id = $source->module_order_id;
         }
+
         $dataObj->save();
 
         return $dataObj;
@@ -171,6 +178,8 @@ class ChatMessage extends Model{
         $dataObj->dialog = isset($source->chatId) ? self::reformChatId($source->chatId) : '';
         $dataObj->status = self::getSenderStatus($source);
         $dataObj->message_type = $source->type;
+        $dataObj->notified = $source->notified;
+        $dataObj->quotedMessageId = $source->quotedMessageId;
         $dataObj->senderName = isset($source->senderName) && $source->senderName != null ? $source->senderName : $source->chatName ;
         $dataObj->caption = isset($source->caption) ? $source->caption : '' ;
         $dataObj->chatName = isset($source->chatName) ? $source->chatName : '' ;
