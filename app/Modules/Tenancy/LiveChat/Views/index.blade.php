@@ -54,9 +54,9 @@
 		@include('tenant.Partials.notf_messages')
 		@section('scripts')
 		<script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
-		<script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
+		<script src="{{asset('assets/tenant/js/recorder.js')}}"></script>
 		<script src="{{asset('assets/tenant/js/pages/custom/chat/chat.js')}}"></script>
-		<script src='https://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
+		<script src='{{asset('assets/tenant/js/gmaps.js')}}'></script>
 		<script src="{{ asset('/assets/tenant/js/locationpicker.jquery.js') }}"></script>
 		<script>
 		    $(function(){
@@ -69,6 +69,7 @@
 		    	});
 
 		    	Livewire.on('conversationOpened', chat => {
+		    		document.querySelector('emoji-picker').database.close()
 			    	$('#kt_scrollDown').click()
 			    	$('[data-toggle="tooltip"]').tooltip()
 			    	$('.sendMsg textarea').focus()
@@ -207,6 +208,7 @@
 				});
 		    })
 		</script>
+
 		<script src="{{mix('js/app.js')}}"></script>
 	</body>
 </html>

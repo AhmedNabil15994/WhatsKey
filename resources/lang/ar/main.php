@@ -943,5 +943,7 @@ return [
 	'viewRecCart' => 'View received cart',
 	'estTotal' => '(estimated total)',
 	'viewVotes' => 'View Votes',
+	'deletedMsg' => 'This Message Was Deleted',
+	'forwarded' => 'Forwarded',
 
 ];

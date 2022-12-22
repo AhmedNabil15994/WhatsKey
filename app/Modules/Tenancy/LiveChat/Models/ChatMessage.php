@@ -4,6 +4,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\UserChannels;
+use App\Models\Category;
 use App\Jobs\SyncProducts;
 use Nicolaslopezj\Searchable\SearchableTrait;
 
@@ -12,7 +13,7 @@ class ChatMessage extends Model{
 
     protected $table = 'messages';
     protected $primaryKey = 'id';
-    protected $fillable = ['id','body','fromMe','isForwarded','author','time','chatId','messageNumber','type','message_type','status','senderName','chatName','caption','notified','quotedMessageId','sending_status','deleted_by','deleted_at'];    
+    protected $fillable = ['id','body','fromMe','isForwarded','author','time','chatId','messageNumber','type','message_type','status','senderName','chatName','caption','notified','starred','labelled','quotedMessageId','sending_status','deleted_by','deleted_at'];    
     public $timestamps = false;
     public $incrementing = false;
 
@@ -27,8 +28,23 @@ class ChatMessage extends Model{
         ],
     ];
 
+    public function labelColors(){
+        if($this->labelled != null && $this->labelled != ''){
+            $related = $this->hasMany(Category::class);
+            $related->setQuery(
+                Category::whereIn('labelId', array_unique(explode(',',$this->labelled)))->getQuery()
+            );
+            return $related;
+        }
+        // return $this->labelled;
+    }
+
     public function Order(){
         return $this->belongsTo('App\Models\Order','id','message_id');
+    }
+
+    public function LastReaction(){
+        return $this->hasOne('App\Models\ChatMessage','quotedMessageId')->where('type','reaction')->orderBy('time','desc');
     }
 
     static function getOne($id){
@@ -37,7 +53,7 @@ class ChatMessage extends Model{
 
     static function dataList($chatId=null,$limit=null,$disDetails=null,$start=null) {
         $input = \Request::all();
-        $source = self::whereNotIn('type',['reaction','poll_vote','poll_unvote']);
+        $source = self::with(['LastReaction',])->whereNotIn('type',['reaction']);
         if (isset($input['from']) && !empty($input['from']) && isset($input['to']) && !empty($input['to'])) {
             $source->where('time','>=', strtotime($input['from'].' 00:00:00'))->where('time','<=',strtotime($input['to'].' 23:59:59'));
         }
@@ -139,6 +155,12 @@ class ChatMessage extends Model{
         if(isset($source->notified)){
             $dataObj->notified = $source->notified ;
         }
+        if(isset($source->starred)){
+            $dataObj->starred = $source->starred ;
+        }
+        if(isset($source->labelled)){
+            $dataObj->labelled = $source->labelled ;
+        }
         if(isset($source->metadata['quotedMessageId'])){
             $dataObj->quotedMessageId = $source->metadata['quotedMessageId'] ;
         }
@@ -179,6 +201,13 @@ class ChatMessage extends Model{
         $dataObj->status = self::getSenderStatus($source);
         $dataObj->message_type = $source->type;
         $dataObj->notified = $source->notified;
+        $dataObj->starred = $source->starred;
+        $dataObj->labelled = $source->labelled != null && $source->labelled != '' ? $source->labelColors : [];
+        $dataObj->reactions = [$source->LastReaction];
+        // $dataObj->reactions = self::where([
+        //     ['type','reaction'],
+        //     ['quotedMessageId',$source->id],
+        // ])->groupBy('chatId')->orderBy('time','desc')->get(['body','fromMe']);
         $dataObj->quotedMessageId = $source->quotedMessageId;
         $dataObj->senderName = isset($source->senderName) && $source->senderName != null ? $source->senderName : $source->chatName ;
         $dataObj->caption = isset($source->caption) ? $source->caption : '' ;

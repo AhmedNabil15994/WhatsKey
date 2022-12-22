@@ -4,6 +4,8 @@ namespace App\Http\Livewire;
 
 use Livewire\Component;
 use App\Models\ChatMessage;
+use App\Models\ChatDialog;
+use Session;
 
 class Chat extends Component
 {
@@ -25,10 +27,25 @@ class Chat extends Component
     }
 
     public function openMessages($chatId){
-        $this->emitTo('conversation','loadMessages',[
-            'chat' => $this->chat,
-            'messages' => ChatMessage::dataList($this->chat['id'], 30),
-        ]); 
+        if(!Session::has('selected_chat_id') || (Session::has('selected_chat_id') && Session::get('selected_chat_id') != $chatId)){
+            $this->emitTo('conversation','loadMessages',[
+                'chat' => $this->chat,
+                'messages' => ChatMessage::dataList($this->chat['id'], 30),
+            ]); 
+        }
+        // dd(ChatMessage::dataList($this->chat['id'], 30)['data']);
+        Session::put('selected_chat_id',$chatId);
+    }
+
+     public function lastUpdates($msgId,$chatId,$status,$domain){
+        $data = ChatDialog::getData(ChatDialog::getOne($chatId));
+        $chat = json_decode(json_encode($data), true);
+        if($this->chat['id'] == $chatId && $status == 6 && $chat['lastMessage']['id'] == $msgId){
+            $domainUrl = str_replace('myDomain',$domain,config('app.MY_DOMAIN'));
+            $chat['image'] = str_replace('http://localhost',$domainUrl,$chat['image']);
+            $chat['lastMessage']['deleted_at'] = date('Y-m-d H:i:s');
+            $this->chat =  $chat;
+        }
     }
 
     // public function lastUpdates($data,$domain){

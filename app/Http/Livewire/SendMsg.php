@@ -87,8 +87,7 @@ class SendMsg extends Component
     public function sendMsg($msgBody,Request $request){
         $input['type'] = $this->msgType;
         $selected = $this->selected;
-        $this->msgBody = $msgBody;
-
+        $this->msgBody = (string)$msgBody;
         $startDay = strtotime(date('Y-m-d 00:00:00'));
         $endDay = strtotime(date('Y-m-d 23:59:59'));
         $messagesCount = ChatMessage::where('fromMe', 1)->where('status', '!=', null)->where('time', '>=', $startDay)->where('time', '<=', $endDay)->count();
@@ -117,7 +116,7 @@ class SendMsg extends Component
         $bodyData = '';
 
         if($input['type'] == 1) {
-            if (!isset($this->msgBody) || empty($this->msgBody)) {
+            if (!isset($this->msgBody)) {
                 return \TraitsFunc::ErrorMessage("Message Field Is Required");
             }
 
@@ -174,7 +173,7 @@ class SendMsg extends Component
                 $metadata['filename'] = $this->originalName;
             }      
         }elseif($input['type'] == 8){
-            if (!isset($this->msgBody) || empty($this->msgBody)) {
+            if (!isset($this->msgBody)) {
                 return \TraitsFunc::ErrorMessage("Message Field Is Required");
             }
             $message_type = 'location';
@@ -186,7 +185,7 @@ class SendMsg extends Component
             $metadata['latitude'] =  $this->lat;
             $metadata['longitude'] =  $this->lng;
         }elseif($input['type'] == 9) {
-            if (!isset($this->msgBody) || empty($this->msgBody)) {
+            if (!isset($this->msgBody)) {
                 return \TraitsFunc::ErrorMessage("Message Field Is Required");
             }
 

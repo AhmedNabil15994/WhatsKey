@@ -64,7 +64,8 @@ class LiveChatControllers extends Controller
     }
 
     public function index()
-    {
+    {   
+        \Session::forget('selected_chat_id');
         return view('Tenancy.LiveChat.Views.index');
     }
 

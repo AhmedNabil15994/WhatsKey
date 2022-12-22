@@ -11,6 +11,7 @@
         <div class="card-body" style="position:relative;padding: 0 1.5rem; {{$selected ? 'background: rgb(156 167 96 / 25%)' : ''}};">
             <div class="scroll scroll-pull scroll-pulls" data-mobile-height="350">
                 <div class="messages" id="messages">
+                    <div>
                     @if($selected)
                     @foreach(array_reverse($messages) as $oneMessage)
                     @php 
@@ -20,9 +21,10 @@
                         $oneMessage['metadata'] = (array) $oneMessage['metadata']; 
                         $id = array_reverse(explode('_',$oneMessage['id']))[0];
                     @endphp
-                    <livewire:message :wire:key="time().'myMsg'.$id" :msg="$oneMessage" :chatName="$chat['name']"/>               
+                    <livewire:message :wire:key="time().$oneMessage['message_type'].$id" :msg="$oneMessage" :chatName="$chat['name']"/>               
                     @endforeach
                     @endif
+                    </div>
                     <div class="clearfix"></div>
                 </div>
             </div>
@@ -34,8 +36,10 @@
         </div>
         <div class="card-footer px-3 py-3 align-items-center" style="background:{{$selected ? '#FFF':'transparent'}}">
         @if($selected)
-        <livewire:send-msg :selected="$selected" :wire:key="time().'send'.$chat['id']"/>
+        <div >
 
+        <livewire:send-msg :selected="$selected" :wire:key="time().'send'.$chat['id']"/>
+    </div>
 
         <div class="modal fade" id="quickReply">
             <div class="modal-dialog modal-lg" role="document">

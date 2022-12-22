@@ -61,8 +61,19 @@ class Conversation extends Component
         if($msg['chatId'] == $this->selected){
             if(isset($this->messages[0]) && $this->messages[0]['id'] != $chat['lastMessage']['id']){
                 $msgs = array_reverse($this->messages);
-                if(!in_array($msg['message_type'],['reaction','poll_vote','poll_unvote'])){
+                if(!in_array($msg['message_type'],['reaction'])){
                     $msgs[]= $msg;
+                }else{
+                    $newMsgs = [];
+                    foreach ($msgs as $key => $value) {
+                        if($value['id'] == $msg['metadata']['quotedMessageId']){
+                            $value = ChatMessage::getData(ChatMessage::getOne($msg['metadata']['quotedMessageId']));
+                        }
+                        $newMsgs[] = $value;
+                    }
+                    // $msg[] = ChatMessage::getData(ChatMessage::getOne($msg['metadata']['quotedMessageId']));
+                    // dd(ChatMessage::getData(ChatMessage::getOne($msg['metadata']['quotedMessageId'])));
+                    $msgs = $newMsgs;
                 }
                 $msgs = array_reverse($msgs);
             }else{
@@ -87,14 +98,32 @@ class Conversation extends Component
         if($data['chatId'] == $this->selected){
             foreach ($this->messages as $key => $value) {
                 if($value['id'] == $data['messageId']){
-                    $value['sending_status'] = $data['statusInt'];
-                }else if ($value['fromMe'] == $incomingFromMe) {
+                    if(!in_array($data['statusInt'], ['starred','unstarred','labelled','unlabelled'])){
+                        $value['sending_status'] = $data['statusInt'];
+                    }
+                    if($data['statusInt'] == 6){
+                        $value['deleted_at'] = date('Y-m-d H:i:s'); 
+                    }
+
+                    if(isset($data['statusInt']) && in_array($data['statusInt'], ['starred','unstarred'])){
+                        $value['starred'] = $data['statusInt'] == 'starred' ? 1 : 0; 
+                    }
+
+                    if(isset($data['statusInt']) && in_array($data['statusInt'], ['labelled','unlabelled'])){
+                        $value = (array) ChatMessage::getData(ChatMessage::getOne($data['messageId']));
+                    }
+                }else if ($value['fromMe'] == $incomingFromMe && in_array($data['statusInt'], [1,2,3,])) {
                     $value['sending_status'] = $data['statusInt'];
                 }
                 $msgs[] = $value;
             }
             $this->messages = $msgs;
             $this->emit('focusInput');
+        }
+
+        if($data['chatId'] && $data['statusInt'] == 6){
+            // $this->emitTo('chats','chatsChanges',$data['message'],$data['domain']); 
+            $this->emitTo('chat','lastUpdates',$data['messageId'],$data['chatId'],$data['statusInt'],$data['domain']); 
         }
     }    
 

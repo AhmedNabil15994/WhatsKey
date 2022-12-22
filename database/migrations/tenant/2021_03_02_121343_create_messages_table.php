@@ -27,6 +27,8 @@ class CreateMessagesTable extends Migration
             $table->string('module_status')->nullable();
             $table->string('module_order_id')->nullable();
             $table->string('notified')->nullable();
+            $table->integer('starred')->default(0);
+            $table->string('labelled')->nullable();
             $table->string('quotedMessageId')->nullable();
             $table->integer('deleted_by')->nullable();
             $table->dateTime('deleted_at')->nullable();

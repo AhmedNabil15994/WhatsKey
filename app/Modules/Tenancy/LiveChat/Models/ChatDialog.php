@@ -60,9 +60,7 @@ class ChatDialog extends Model{
         }
 
         if($name != null){
-            $source = self::whereHas('Messages',function($whereHasQuery) use ($name){
-                $whereHasQuery->where('senderName','LIKE','%'.$name.'%');
-            })->with(['Messages','SenderLastMessage'])->orWhere('name','LIKE','%'.$name.'%')->orWhere('id','LIKE','%'. str_replace('+','',$name).'%')->orderBy('pinned','DESC')->orderByDesc(ChatMessage::select('time')
+            $source->where('name','LIKE','%'.$name.'%')->orWhere('id','LIKE','%'. str_replace('+','',$name).'%')->orderBy('pinned','DESC')->orderByDesc(ChatMessage::select('time')
                 ->whereColumn('messages.chatId', 'dialogs.id')
                 ->orderBy('time','DESC')
                 ->take(1)
