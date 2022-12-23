@@ -502,5 +502,5 @@ html[dir="rtl"] .right .messageItem .card-toolbar{
 	cursor: pointer;
 }
 .messageItem .body{
-	margin-top: .75rem!important;
+	margin-top: .5rem!important;
 }
