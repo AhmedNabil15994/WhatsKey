@@ -482,8 +482,15 @@ html[dir="rtl"] .left .messageItem .card-toolbar{
 html[dir="rtl"] .right .messageItem .card-toolbar{
 	left: 0;
 }
-.messageItem .card-toolbar .btn:hover{
-	background-color: #000!important;
+.chatItem .card-toolbar .btn,
+.chatItem .card-toolbar .btn:hover,
+.chatItem .card-toolbar .btn:active,
+.chatItem .card-toolbar .btn:focus,
+.messageItem .card-toolbar .btn,
+.messageItem .card-toolbar .btn:hover,
+.messageItem .card-toolbar .btn:active,
+.messageItem .card-toolbar .btn:focus{
+	background-color: transparent !important;
 }
 .messageItem .card-toolbar .btn:hover i{
 	color: #b5b5c3!important;	
@@ -495,5 +502,5 @@ html[dir="rtl"] .right .messageItem .card-toolbar{
 	cursor: pointer;
 }
 .messageItem .body{
-	margin-top: .5rem!important;
+	margin-top: .75rem!important;
 }
