@@ -402,6 +402,33 @@ class OfficialHelper
         ])->post($mainURL, $data);
     }
 
+    public function forwardMessage($data)
+    {
+        $mainURL = $this->baseUrl . 'messages/forwardMessage';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+
+    public function starMessage($data)
+    {
+        $mainURL = $this->baseUrl . 'messages/starMessage';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+
+    public function unstarMessage($data)
+    {
+        $mainURL = $this->baseUrl . 'messages/unstarMessage';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+    
     public function repeatHook($data)
     {
         $mainURL = $this->baseUrl . 'messages/repeatHook';
@@ -586,6 +613,182 @@ class OfficialHelper
     }
 
     /*----------------------------------------------------------
+    Reply Messages
+    ----------------------------------------------------------*/
+    public function sendReplyText($data)
+    {
+        $mainURL = $this->baseUrl . 'messages/textReply';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+
+    public function sendReplyFile($data)
+    {
+        $mainURL = $this->baseUrl . 'messages/fileReply';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+
+    public function sendReplyImage($data)
+    {
+        $mainURL = $this->baseUrl . 'messages/imageReply';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+
+    public function sendReplyAudio($data)
+    {
+        $mainURL = $this->baseUrl . 'messages/audioReply';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+
+    public function sendReplyVideo($data)
+    {
+        $mainURL = $this->baseUrl . 'messages/videoReply';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+
+    public function sendReplyGif($data)
+    {
+        $mainURL = $this->baseUrl . 'messages/gifReply';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+
+    public function sendReplySticker($data)
+    {
+        $mainURL = $this->baseUrl . 'messages/stickerReply';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+
+    public function sendReplyReaction($data)
+    {
+        $mainURL = $this->baseUrl . 'messages/reactionReply';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+
+    public function sendReplyContact($data)
+    {
+        $mainURL = $this->baseUrl . 'messages/contactReply';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+
+    public function sendReplyLocation($data)
+    {
+        $mainURL = $this->baseUrl . 'messages/locationReply';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+
+    public function sendReplyLink($data)
+    {
+        $mainURL = $this->baseUrl . 'messages/linkReply';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+
+    public function sendReplyMention($data)
+    {
+        $mainURL = $this->baseUrl . 'messages/mentionReply';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+
+    public function disappearingReplyText($data)
+    {
+        $mainURL = $this->baseUrl . 'messages/disappearingReply';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+    
+    public function sendReplyButtons($data)
+    {
+        $mainURL = $this->baseUrl . 'messages/buttonsReply';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+
+    public function sendReplyTemplates($data){
+        $mainURL = $this->baseUrl.'messages/templateReply';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL,$data);
+    }
+
+    public function sendReplyList($data){
+        $mainURL = $this->baseUrl.'messages/listReply';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL,$data);
+    }
+
+    public function sendReplyPoll($data){
+        $mainURL = $this->baseUrl.'messages/pollReply';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL,$data);
+    }
+
+    public function sendReplyGroupInvitation($data){
+        $mainURL = $this->baseUrl.'messages/groupInvitationReply';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL,$data);
+    }
+
+    public function sendReplyProduct($data){
+        $mainURL = $this->baseUrl.'messages/productReply';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL,$data);
+    }
+
+    public function sendReplyCatalog($data){
+        $mainURL = $this->baseUrl.'messages/catalogReply';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL,$data);
+    }
+    /*----------------------------------------------------------
     Business Profile
     ----------------------------------------------------------*/
     public function labels($data)
@@ -613,7 +816,23 @@ class OfficialHelper
         ])->post($mainURL,$data);
     }
 
+    public function labelMessage($data)
+    {
+        $mainURL = $this->baseUrl . 'business/labelMessage';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
 
+    public function unlabelMessage($data)
+    {
+        $mainURL = $this->baseUrl . 'business/unlabelMessage';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
    
 
     

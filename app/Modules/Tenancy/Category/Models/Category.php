@@ -18,7 +18,7 @@ class Category extends Model{
             ->first();
     }
 
-    static function dataList($ids=null,$labelIds=null) {
+    static function dataList($ids=null,$labelIds=null,$labelsIds=false) {
         $input = \Request::all();
 
         $source = self::NotDeleted()->where(function ($query) use ($input) {
@@ -35,6 +35,9 @@ class Category extends Model{
                         $query->where('created_at','>=', $input['from'].' 00:00:00')->where('created_at','<=',$input['to']. ' 23:59:59');
                     }
                 });
+        if($labelsIds){
+            $source->where('labelId','!=',null);
+        }
         if(isset($input['channel']) && !empty($input['channel'])){
             $source->where('channel',$input['channel']);
         }

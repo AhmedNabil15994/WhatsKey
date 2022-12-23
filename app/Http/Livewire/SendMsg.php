@@ -23,13 +23,14 @@ class SendMsg extends Component
     public $msgBody = '';
     public $msgType = 1;
     public $selected;
-    protected $listeners = ['sendMsg','uploadBlob','setReply','setContact','setLocation'];
+    protected $listeners = ['sendMsg','uploadBlob','setReply','setContact','setLocation','forwardMsg','deleteForMeMsg','deleteForAllMsg','starMsg','labelMsg','repeatHook'];
     public $file = '';
     public $dataUrl = '';
     public $originalName = '';
     public $contact = '';
     public $lat = '';
     public $lng = '';
+    public $replyMsgId;
 
     use WithFileUploads;
     public function mount($selected){
@@ -84,9 +85,17 @@ class SendMsg extends Component
         }
     }
 
-    public function sendMsg($msgBody,Request $request){
+    public function sendMsg($msgBody,$replyMsgId,Request $request){
         $input['type'] = $this->msgType;
         $selected = $this->selected;
+        if($replyMsgId){
+            $msgObj = ChatMessage::where('id','LIKE','%'.$replyMsgId)->first();
+            if($msgObj){
+                $this->replyMsgId = $msgObj->id;
+                $sendData['messageId'] = $this->replyMsgId;
+            }
+        }
+
         $this->msgBody = (string)$msgBody;
         $startDay = strtotime(date('Y-m-d 00:00:00'));
         $endDay = strtotime(date('Y-m-d 23:59:59'));
@@ -125,12 +134,20 @@ class SendMsg extends Component
                 $message_type = 'mention';
                 $sendData['mention'] = $body;
                 $bodyData = $this->msgBody;
-                $result = $mainWhatsLoopObj->sendMention($sendData);
+                if(isset($sendData['messageId']) && !empty($sendData['messageId'])){
+                    $result = $mainWhatsLoopObj->sendReplyMention($sendData);
+                }else{
+                    $result = $mainWhatsLoopObj->sendMention($sendData);
+                }
             }else{
                 $message_type = 'text';
                 $sendData['body'] = $this->msgBody;
                 $bodyData = $this->msgBody;
-                $result = $mainWhatsLoopObj->sendMessage($sendData);
+                if(isset($sendData['messageId']) && !empty($sendData['messageId'])){
+                    $result = $mainWhatsLoopObj->sendReplyText($sendData);
+                }else{
+                    $result = $mainWhatsLoopObj->sendMessage($sendData);
+                }
             }
         }elseif ($input['type'] == 2) {
             if($this->dataUrl != ''){
@@ -141,7 +158,11 @@ class SendMsg extends Component
                 }
                 $sendData['url'] = $this->dataUrl;
                 $bodyData = $this->dataUrl;
-                $result = $mainWhatsLoopObj->sendImage($sendData);
+                if(isset($sendData['messageId']) && !empty($sendData['messageId'])){
+                    $result = $mainWhatsLoopObj->sendReplyImage($sendData);
+                }else{
+                    $result = $mainWhatsLoopObj->sendImage($sendData);
+                }
                 $metadata['filename'] = $this->originalName;
             }      
         }elseif ($input['type'] == 3) {
@@ -153,7 +174,11 @@ class SendMsg extends Component
                 }
                 $sendData['url'] = $this->dataUrl;
                 $bodyData = $this->dataUrl;
-                $result = $mainWhatsLoopObj->sendVideo($sendData);
+                if(isset($sendData['messageId']) && !empty($sendData['messageId'])){
+                    $result = $mainWhatsLoopObj->sendReplyVideo($sendData);
+                }else{
+                    $result = $mainWhatsLoopObj->sendVideo($sendData);
+                }
                 $metadata['filename'] = $this->originalName;
             }      
         }elseif ($input['type'] == 4) {
@@ -161,7 +186,11 @@ class SendMsg extends Component
                 $message_type = 'audio';
                 $sendData['url'] = $this->dataUrl;
                 $bodyData = $this->dataUrl;
-                $result = $mainWhatsLoopObj->sendAudio($sendData);
+                if(isset($sendData['messageId']) && !empty($sendData['messageId'])){
+                    $result = $mainWhatsLoopObj->sendReplyAudio($sendData);
+                }else{
+                    $result = $mainWhatsLoopObj->sendAudio($sendData);
+                }
                 $metadata['filename'] = $this->originalName;
             }      
         }elseif ($input['type'] == 5) {
@@ -169,7 +198,11 @@ class SendMsg extends Component
                 $message_type = 'document';
                 $sendData['url'] = $this->dataUrl;
                 $bodyData = $this->dataUrl;
-                $result = $mainWhatsLoopObj->sendFile($sendData);
+                if(isset($sendData['messageId']) && !empty($sendData['messageId'])){
+                    $result = $mainWhatsLoopObj->sendReplyFile($sendData);
+                }else{
+                    $result = $mainWhatsLoopObj->sendFile($sendData);
+                }
                 $metadata['filename'] = $this->originalName;
             }      
         }elseif($input['type'] == 8){
@@ -180,7 +213,15 @@ class SendMsg extends Component
             $sendData['lat'] = $this->lat;
             $sendData['lng'] = $this->lng;
             $sendData['address'] = $this->msgBody;
-            $result = $mainWhatsLoopObj->sendLocation($sendData);
+            if(isset($sendData['messageId']) && !empty($sendData['messageId'])){
+                $sendData['latitude'] = $this->lat;
+                $sendData['longitude'] = $this->lng;
+                unset($sendData['lat']);
+                unset($sendData['lng']);
+                $result = $mainWhatsLoopObj->sendReplyLocation($sendData);
+            }else{
+                $result = $mainWhatsLoopObj->sendLocation($sendData);
+            }
             $bodyData = $this->msgBody;
             $metadata['latitude'] =  $this->lat;
             $metadata['longitude'] =  $this->lng;
@@ -192,41 +233,18 @@ class SendMsg extends Component
             $message_type = 'contact';
             $sendData['contactMobile'] = $this->msgBody;
             $sendData['name'] = $this->contact;
-            $result = $mainWhatsLoopObj->sendContact($sendData);
+            if(isset($sendData['messageId']) && !empty($sendData['messageId'])){
+                $sendData['contact'] = $sendData['contactMobile'];
+                unset($sendData['contactMobile']);
+                $result = $mainWhatsLoopObj->sendReplyContact($sendData);
+            }else{
+                $result = $mainWhatsLoopObj->sendContact($sendData);
+            }
             $bodyData = $this->msgBody;
             $metadata['name'] =  $this->contact;
             $metadata['phone'] =  $this->msgBody;
         }
 
-        // } elseif ($input['type'] == 5) {
-        //     if (!isset($input['contact']) || empty($input['contact'])) {
-        //         return \TraitsFunc::ErrorMessage("Contact Field Is Required");
-        //     }
-        //     $message_type = 'contact';
-        //     $whats_message_type = 'contact';
-        //     $sendData['contactMobile'] = $input['contact'];
-        //     $sendData['name'] = $input['contact'];
-        //     $result = $mainWhatsLoopObj->sendContact($sendData);
-        //     $bodyData = $input['contact'];
-        // } elseif ($input['type'] == 6) {
-        //     if (!isset($input['lat']) || empty($input['lat'])) {
-        //         return \TraitsFunc::ErrorMessage("Latitude Field Is Required");
-        //     }
-
-        //     if (!isset($input['lng']) || empty($input['lng'])) {
-        //         return \TraitsFunc::ErrorMessage("Longitude Field Is Required");
-        //     }
-
-        //     $message_type = 'location';
-        //     $whats_message_type = 'location';
-        //     $sendData['lat'] = $input['lat'];
-        //     $sendData['lng'] = $input['lng'];
-        //     $sendData['address'] = $input['address'];
-        //     $bodyData = $sendData['lat'] . ':' . $sendData['lng'];
-        //     $caption = $input['address'];
-        //     $result = $mainWhatsLoopObj->sendLocation($sendData);
-        // } 
-        
         $result = $result->json();
         // if (!str_contains($input['chatId'], '@g.us')) {
         //     $sendData['chatId'] = $sendData['phone'] . '@c.us';
@@ -250,15 +268,7 @@ class SendMsg extends Component
             $lastMessage['chatName'] = $checkMessageObj != null ? $checkMessageObj->chatName : '';
             $lastMessage['type'] = $message_type;
             $lastMessage['sending_status'] = 1;
-            $lastMessage['notified'] = $message_type == 'contact' ? 0 : 1;
-            // if (isset($quotedMessageObj)) {
-            //     $lastMessage['quotedMsgId'] = $input['replyOn'];
-            //     $lastMessage['quotedMsgBody'] = $quotedMessageObj->body;
-            //     $lastMessage['quotedMsgType'] = $quotedMessageObj->whatsAppMessageType;
-            // }
-            // if (isset($input['frontId']) && !empty($input['frontId'])) {
-            //     $lastMessage['frontId'] = $input['frontId'];
-            // }
+            $lastMessage['notified'] = $message_type == 'contact' || (isset($sendData['messageId']) && !empty($sendData['messageId'])) ? 0 : 1;
             $messageObj = ChatMessage::newMessage($lastMessage);
             $dialog = ChatDialog::getOne($selected);
             $dialog->last_time = $lastMessage['time'];
@@ -267,15 +277,17 @@ class SendMsg extends Component
             ChatMessage::where('chatId', $selected)->where('fromMe', 0)->update(['sending_status' => 3]);
             if(
                 ($message_type == 'text' && (str_contains($bodyData, 'http://') || str_contains($bodyData, 'https://'))) ||
-                ($message_type == 'contact')
+                ($message_type == 'contact') ||
+                (isset($sendData['messageId']) && !empty($sendData['messageId']))
             ){
 
             }else{
                 broadcast(new IncomingMessage($domain, $dialogObj));
             }
 
-            $this->reset(['msgBody','file','dataUrl','originalName']);
+            $this->reset(['msgBody','file','dataUrl','originalName','contact','lat','lng','replyMsgId']);
             $this->msgType = 1;
+            $replyMsgId = 0;
             Session::forget('audioName');
             Session::forget('audioDataURL');
 
@@ -289,7 +301,13 @@ class SendMsg extends Component
         }
     }
 
-    public function setReply($replyId,$type=1){
+    public function setReply($replyId,$type=1,$replyMsgId){
+        if($replyMsgId){
+            $msgObj = ChatMessage::where('id','LIKE','%'.$replyMsgId)->first();
+            if($msgObj){
+                $this->replyMsgId = $msgObj->id;
+            }
+        }
         $replyId = (int) $replyId;
         $replyObj = $type == 1 ? Reply::find($replyId) : Template::find($replyId);
         if($replyObj){
@@ -301,7 +319,13 @@ class SendMsg extends Component
         }
     }
 
-    public function setContact($replyId){
+    public function setContact($replyId,$replyMsgId){
+        if($replyMsgId){
+            $msgObj = ChatMessage::where('id','LIKE','%'.$replyMsgId)->first();
+            if($msgObj){
+                $this->replyMsgId = $msgObj->id;
+            }
+        }
         $replyId = (int) $replyId;
         $replyObj = Contact::find($replyId);
         if($replyObj){
@@ -314,12 +338,121 @@ class SendMsg extends Component
         }
     }
 
-    public function setLocation($lat,$lng,$address){
+    public function setLocation($lat,$lng,$address,$replyMsgId){
+        if($replyMsgId){
+            $msgObj = ChatMessage::where('id','LIKE','%'.$replyMsgId)->first();
+            if($msgObj){
+                $this->replyMsgId = $msgObj->id;
+            }
+        }
         $this->msgType = 8;
         $this->lat = $lat;
         $this->lng = $lng;
         $this->msgBody = $address;
         $this->emit('setMessageLocation',$address);
+    }
+
+    public function forwardMsg($contactId,$forwardedId){
+        if($forwardedId){
+            $msgObj = ChatMessage::where('id','LIKE','%'.$forwardedId)->first();
+            if($msgObj && $msgObj->fromMe == 0){
+                $msgId = $msgObj->id;
+                $contactObj = Contact::where('phone','LIKE','%'.$contactId)->first();
+                if($contactObj){
+                    $mainWhatsLoopObj = new \OfficialHelper();
+                    $result = $mainWhatsLoopObj->forwardMessage(['phone'=>$contactId,'messageId'=>$msgId]);
+                }
+            }
+        }        
+    }
+
+    public function deleteForMeMsg($msgId){
+        if($msgId){
+            $msgObj = ChatMessage::where('id','LIKE','%'.$msgId)->first();
+            if($msgObj && $msgObj->deleted_by == null){
+                $msgObj->deleted_by = Session::get('user_id');
+                $msgObj->save();
+                $this->emitTo('conversation','updateMsg', $msgObj->id,5);
+            }else if($msgObj && $msgObj->deleted_by != null){
+                $msgObj->deleted_by = null;
+                $msgObj->save();
+                $this->emitTo('conversation','updateMsg', $msgObj->id,5);
+            }
+        }        
+    }
+
+    public function deleteForAllMsg($msgId){
+        if($msgId){
+            $msgObj = ChatMessage::where('id','LIKE','%'.$msgId)->first();
+            if($msgObj && $msgObj->deleted_at == null){
+                $mainWhatsLoopObj = new \OfficialHelper();
+                $result = $mainWhatsLoopObj->deleteMessageForAll(['messageId'=>$msgObj->id]);
+                $msgObj->deleted_at = date('Y-m-d H:i:s');
+                $msgObj->deleted_by = null;
+                $msgObj->save();
+                $this->emitTo('conversation','updateMsg', $msgObj->id,6);
+            }
+        }        
+    }
+
+    public function starMsg($msgId){
+        if($msgId){
+            $msgObj = ChatMessage::where('id','LIKE','%'.$msgId)->first();
+            $mainWhatsLoopObj = new \OfficialHelper();
+            if($msgObj && !$msgObj->starred){
+                $result = $mainWhatsLoopObj->starMessage(['messageId'=>$msgObj->id]);
+                $msgObj->starred = 1;
+                $msgObj->save();
+                $this->emitTo('conversation','updateMsg', $msgObj->id,7);
+            }else if($msgObj && $msgObj->starred){
+                $result = $mainWhatsLoopObj->unstarMessage(['messageId'=>$msgObj->id]);
+                $msgObj->starred = 0;
+                $msgObj->save();
+                $this->emitTo('conversation','updateMsg', $msgObj->id,8);
+            }
+        }        
+    }
+
+    public function labelMsg($msgId,$labels){
+        if($msgId){
+            $msgObj = ChatMessage::where('id','LIKE','%'.$msgId)->first();
+            $mainWhatsLoopObj = new \OfficialHelper();
+            if($msgObj){
+                if($msgObj->labelled == null && !empty($labels)){
+                    foreach ($labels as $value) {
+                        $result = $mainWhatsLoopObj->labelMessage(['messageId'=>$msgObj->id,'labelId'=>$value]);
+                    }
+                    $msgObj->labelled = implode(',', $labels). (mb_substr(implode(',', $labels), -1) != ',' ? ',' : '');
+                    $msgObj->save();
+                }else if($msgObj->labelled != null && $msgObj->labelled != implode(',', $labels)){
+                    $oldLabels = array_unique(explode(',',$msgObj->labelled));
+                    $newLabels = array_diff($labels,$oldLabels);
+                    $removedLabels = array_diff($oldLabels,$labels);
+                    if(!empty($removedLabels)){
+                        foreach ($removedLabels as $removed) {
+                            $result = $mainWhatsLoopObj->unlabelMessage(['messageId'=>$msgObj->id,'labelId'=>$removed]);
+                        }
+                    }
+                    if(!empty($newLabels)){
+                        foreach ($newLabels as $newOne) {
+                            $result = $mainWhatsLoopObj->labelMessage(['messageId'=>$msgObj->id,'labelId'=>$newOne]);
+                        }
+                    }
+
+                    $msgObj->labelled = implode(',', $labels). (mb_substr(implode(',', $labels), -1) != ',' ? ',' : '');
+                    $msgObj->save();
+                }
+                $this->emitTo('conversation','updateMsg', $msgObj->id,9);
+            }
+        }        
+    }
+
+    public function repeatHook($msgId){
+        if($msgId){
+            $mainWhatsLoopObj = new \OfficialHelper();
+            $mainWhatsLoopObj->repeatHook(['messageId'=>$msgId,]);
+            $this->emitTo('conversation','updateMsg', $msgId,11);
+        }        
     }
 
     public function reformMessage($text,$contactName,$contactPhone){

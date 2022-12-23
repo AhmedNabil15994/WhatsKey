@@ -45,7 +45,7 @@ class SyncMessagesJob implements ShouldQueue
         if(!empty($this->messages)){
             foreach ($this->messages as $message) {
                 if(isset($message['status'])){
-                    $message['sending_status'] = $message['status'];
+                    $message['sending_status'] = $message['status'] - 1;
                     unset($message['status']);
                 }
                 ChatMessage::newMessage($message);

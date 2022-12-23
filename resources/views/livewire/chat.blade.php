@@ -47,17 +47,17 @@
         }
     @endphp
     @if($chat['lastMessage'])
-    <div class="card py-3 px-3 mb-1 chatItem {{$chat['pinned'] > 0 ? 'pinned' : ''}} " data-pin="{{$chat['pinned']}}" wire:click="openMessages('{{$chat['id']}}')">
+    <div class="card py-3 px-3 mb-1 chatItem {{$chat['pinned'] > 0 ? 'pinned' : ''}} {{$chat['archived'] > 0 ? 'hidden' : ''}}" data-pin="{{$chat['pinned']}}">
         <div class="d-flex">
             <div class="symbol symbol-circle symbol-50 mr-3">
                 <img alt="Pic" src="{{$chat['image']}}" />
             </div>
-            <div class="d-flex flex-column mx-2" style="width: 70%;">
+            <div class="d-flex flex-column mx-2" style="width: 60%;" wire:click="openMessages('{{$chat['id']}}')">
                 <a href="#" class="text-dark-75 text-hover-primary font-weight-bold font-size-lg" dir="ltr">{{$chat['name']}}</a>
                 <span class="chatMsg text-muted font-weight-bold font-size-sm">{!! $msgIcon.' '.$senderText.' '.$msgBody !!}</span>
             </div>
         </div>
-        <div class="chatDetails">
+        <div class="chatDetails mx-5">
             <span class="text-muted font-weight-bold font-size-sm d-block">{{$chat['last_time']}}</span>
             <div class="row text-center" style="margin: 0;">
                 <span class="svg-icon text-muted svg-icon-xl mt-1 d-inline-block {{$chat['archived'] > 0 ? '' : 'vhidden'}}">
@@ -69,6 +69,22 @@
                         <path fill="currentColor" d="M12.074 4.21 8.7 8.232l.116 4.233a.4.4 0 0 1-.657.318L.43 6.297a.4.4 0 0 1 .199-.702l4.196-.622L8.196.957a.63.63 0 0 1 .887-.078l2.914 2.445a.63.63 0 0 1 .077.887ZM1.294 14.229a.713.713 0 0 1-1.09-.915l2.674-3.64 1.536 1.288-3.12 3.267Z"></path>
                     </svg>
                 </span>
+            </div>
+        </div>
+        <div class="card-toolbar">
+            <div class="dropdown dropdown-inline">
+                <a href="#" class="btn btn-hover-light-primary btn-xs btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="la la-angle-down"></i>
+                </a>
+                <div class="dropdown-menu p-0 m-0 dropdown-menu-sm dropdown-menu-left" dir="ltr">
+                    <ul class="navi navi-hover">
+                        <li class="navi-item">
+                            <a href="#" class="navi-link p-2">
+                                <span class="text-dark">Read <i class="la la-reply icon-md"></i></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>

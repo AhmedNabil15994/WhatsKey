@@ -39,11 +39,21 @@ class Chat extends Component
 
      public function lastUpdates($msgId,$chatId,$status,$domain){
         $data = ChatDialog::getData(ChatDialog::getOne($chatId));
+        $msgObj = ChatMessage::getData(ChatMessage::getOne($msgId));
         $chat = json_decode(json_encode($data), true);
-        if($this->chat['id'] == $chatId && $status == 6 && $chat['lastMessage']['id'] == $msgId){
+        if($this->chat['id'] == $chatId && $chat['lastMessage']['id'] == $msgId){
             $domainUrl = str_replace('myDomain',$domain,config('app.MY_DOMAIN'));
             $chat['image'] = str_replace('http://localhost',$domainUrl,$chat['image']);
-            $chat['lastMessage']['deleted_at'] = date('Y-m-d H:i:s');
+            // if($status == 5 ){
+            //     $chat['lastMessage']['body'] = $msgObj->body;
+            // }else if($status == 6){
+            //     $chat['lastMessage']['deleted_at'] = date('Y-m-d H:i:s');
+            // }else if($status == 7){
+            //     $chat['lastMessage']['starred'] = 1;
+            // }else if($status == 8){
+            //     $chat['lastMessage']['starred'] = 0;
+            // }
+            $chat['lastMessage'] = json_decode(json_encode($msgObj), true);
             $this->chat =  $chat;
         }
     }

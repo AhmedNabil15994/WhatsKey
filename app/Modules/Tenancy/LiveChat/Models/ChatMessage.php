@@ -203,6 +203,7 @@ class ChatMessage extends Model{
         $dataObj->notified = $source->notified;
         $dataObj->starred = $source->starred;
         $dataObj->labelled = $source->labelled != null && $source->labelled != '' ? $source->labelColors : [];
+        $dataObj->labels = $source->labelled != null && $source->labelled != '' ? $source->labelled : '';
         $dataObj->reactions = [$source->LastReaction];
         // $dataObj->reactions = self::where([
         //     ['type','reaction'],

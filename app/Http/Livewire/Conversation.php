@@ -8,6 +8,7 @@ use App\Models\Reply;
 use App\Models\Template;
 use App\Models\Contact;
 use App\Models\ChatMessage;
+use App\Models\Category;
 
 class Conversation extends Component
 {
@@ -25,14 +26,16 @@ class Conversation extends Component
     public $replies = [];
     public $templates = [];
     public $contacts = [];
+    public $labels = [];
 
-    protected $listeners = ['loadMessages','loadMoreMsgs','newIncomingMsg','sendMsg','changeMessageStatus'];
+    protected $listeners = ['loadMessages','loadMoreMsgs','newIncomingMsg','sendMsg','changeMessageStatus','updateMsg'];
 
     public function mount(){
         $this->myImage = User::getData(User::find(USER_ID))->photo;
         $this->replies = Reply::dataList(1)['data'];
         $this->templates = Template::dataList(1)['data'];
         $this->contacts = Contact::dataList(1)['data'];
+        $this->labels = Category::dataList(null,null,true)['data'];
     }
 
     public function loadMessages($data){
@@ -124,6 +127,25 @@ class Conversation extends Component
         if($data['chatId'] && $data['statusInt'] == 6){
             // $this->emitTo('chats','chatsChanges',$data['message'],$data['domain']); 
             $this->emitTo('chat','lastUpdates',$data['messageId'],$data['chatId'],$data['statusInt'],$data['domain']); 
+        }
+    }    
+
+    public function updateMsg($msgId,$type){
+        $msgs = [];
+        $msgObj = ChatMessage::getOne($msgId);
+        if($msgObj->chatId == $this->selected){
+            foreach ($this->messages as $key => $value) {
+                if($value['id'] == $msgId){
+                    $value = (array) ChatMessage::getData($msgObj);
+                }
+                $msgs[] = $value;
+            }
+            $this->messages = $msgs;
+            $this->emit('focusInput');
+        }
+
+        if($msgObj->chatId){
+            $this->emitTo('chat','lastUpdates',$msgId,$msgObj->chatId,$type,\Session::get('domain')); 
         }
     }    
 

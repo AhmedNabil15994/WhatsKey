@@ -110,7 +110,7 @@
 			    $(document).on('click','.selectReply',function(e){
 					e.preventDefault()
 					var replyId=  $('#quickReply input[name="reply"]:checked').val()
-					window.livewire.emitTo('send-msg','setReply',replyId,1)
+					window.livewire.emitTo('send-msg','setReply',replyId,1,$('input[name="replyMsgId"]').val())
 			        $('#quickReply').modal('hide');
 				});
 
@@ -122,7 +122,7 @@
 				$(document).on('click','.selectTemplate',function(e){
 					e.preventDefault()
 					var replyId=  $('#templateModal input[name="template"]:checked').val()
-					window.livewire.emitTo('send-msg','setReply',replyId,2)
+					window.livewire.emitTo('send-msg','setReply',replyId,2,$('input[name="replyMsgId"]').val())
 			        $('#templateModal').modal('hide');
 				});
 
@@ -135,9 +135,8 @@
 				$(document).on('click','.selectContact',function(e){
 					e.preventDefault()
 					var replyId=  $('#contactsModal select option:selected').val()
-					window.livewire.emitTo('send-msg','setContact',replyId)
+					window.livewire.emitTo('send-msg','setContact',replyId,$('input[name="replyMsgId"]').val())
 			        $('#contactsModal').modal('hide');
-			        
 				});
 
 				window.livewire.on('showMapModal', () => {
@@ -157,7 +156,7 @@
 
 				$(document).on('click','.selectAddress',function(e){
 					e.preventDefault()
-					window.livewire.emitTo('send-msg','setLocation', $('#locationModal .selectAddress').data('lat'), $('#locationModal .selectAddress').data('lng'),$('#locationModal input[name="address"]').val())
+					window.livewire.emitTo('send-msg','setLocation', $('#locationModal .selectAddress').data('lat'), $('#locationModal .selectAddress').data('lng'),$('#locationModal input[name="address"]').val(),$('input[name="replyMsgId"]').val())
 			        $('#locationModal').modal('hide');
 			        
 				});
@@ -187,8 +186,11 @@
 			    $(document).on('keydown','.sendMsg textarea', function(e) {
 					if (e.keyCode == 13) {
 						e.preventDefault();
-						window.livewire.emitTo('send-msg','sendMsg',$(this).val())
+						window.livewire.emitTo('send-msg','sendMsg',$(this).val(),$('.msgReplyHeader').data('id'))
 						$(this).val(' ')
+						$('.msgReplyHeader').data('id','0')
+						$('input[name="replyMsgId"]').val('0')
+						$('.msgReplyHeader').slideUp(500)
 					}
 				});
 
@@ -206,6 +208,7 @@
 				$(document).on('click','.attachment',function(e){
 					$('.msgFile')[0].click()
 				});
+
 		    })
 		</script>
 

@@ -1,3 +1,3 @@
 <div>
-    <div class="text-dark">{{$msg['body']}}</div>
+    <div class="text-dark body">{{$msg['body']}}</div>
 </div>

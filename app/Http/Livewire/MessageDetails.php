@@ -8,6 +8,7 @@ class MessageDetails extends Component
 {
     public $msg = '';
     public $noMargin = '';
+    public $chatName;
     public function mount(){
 
     }

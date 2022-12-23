@@ -945,5 +945,5 @@ return [
 	'viewVotes' => 'View Votes',
 	'deletedMsg' => 'This Message Was Deleted',
 	'forwarded' => 'Forwarded',
-
+	'forward' => 'Forward Message',
 ];

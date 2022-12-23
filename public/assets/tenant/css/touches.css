@@ -276,6 +276,20 @@ code {
 
 .chatItem{
 	cursor: pointer;
+	position: relative;
+}
+.chatItem .card-toolbar{
+	position: absolute;
+	top: 0;
+}
+.chatItem .card-toolbar .text-dark{
+	direction: rtl;
+}
+html[dir="rtl"] .chatItem .card-toolbar{
+	left: 0;
+}
+html[dir="ltr"] .chatItem .card-toolbar{
+	right: 0;
 }
 .chatMsg{
 	line-break: anywhere;
@@ -479,4 +493,7 @@ html[dir="rtl"] .right .messageItem .card-toolbar{
 }
 .catLabel{
 	cursor: pointer;
+}
+.messageItem .body{
+	margin-top: .5rem!important;
 }

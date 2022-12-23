@@ -34,6 +34,19 @@
                 </span>
             </div>
         </div>
+        @if($selected)
+        <div class="msgReplyHeader p-5 bg-gray-100" style="display:none;">
+            <div class="row m-0 p-0">
+                <span class="fa-icon d-inline-block closeReplyHeader" style="cursor: pointer;">
+                    <i class="la la-times-circle icon-xl"></i>
+                </span>
+                <span class="text-dark font-weight-bolder text-left mx-2 d-inline-block replyName" dir="ltr">
+                    {{$selected}}
+                </span>
+                <span class="text-dark d-block mx-9 w-100 replyBody" style="margin-top: -5px;"></span>
+            </div>
+        </div>
+        @endif
         <div class="card-footer px-3 py-3 align-items-center" style="background:{{$selected ? '#FFF':'transparent'}}">
         @if($selected)
         <div >
@@ -135,6 +148,59 @@
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-success selectContact">{{trans('main.save')}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="labelsModal">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{trans('main.categories')}}</h5>
+                        <button class="btn" type="button" data-dismiss="modal" aria-label="Close" >
+                            <span aria-hidden="true close-btn"><i class="fa fa-times icon-xl"></i></span>
+                        </button>
+                    </div>
+                    <div class="modal-body px-10 py-10">
+                        <div class="form-group">
+                            <label>{{trans('main.category')}}</label>
+                            <select name="label[]" class="form-control" data-toggle="select2" multiple>
+                                @foreach($labels as $label)
+                                <option value="{{ $label['labelId'] }}">{{ $label['title'] }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-success selectLabels">{{trans('main.save')}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="forwardModal">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{trans('main.contacts')}}</h5>
+                        <button class="btn" type="button" data-dismiss="modal" aria-label="Close" >
+                            <span aria-hidden="true close-btn"><i class="fa fa-times icon-xl"></i></span>
+                        </button>
+                    </div>
+                    <div class="modal-body px-10 py-10">
+                        <div class="form-group">
+                            <label>{{trans('main.contact')}}</label>
+                            <select name="contact" class="form-control" data-toggle="select2">
+                                <option value="">{{ trans('main.choose') }}</option>
+                                @foreach($contacts as $contact)
+                                <option value="{{ str_replace('+','',$contact['phone']) }}">{{ $contact['name'] }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-success forwardMsg">{{trans('main.forward')}}</button>
                     </div>
                 </div>
             </div>

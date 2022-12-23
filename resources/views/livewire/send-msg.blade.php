@@ -3,6 +3,7 @@
         <textarea class="sendTextArea form-control" rows="2" wire:keydown.enter="fileUpload" placeholder="Type a message"></textarea>
 
         <input type="hidden" wire:model="msgType" value="{{$msgType}}" />
+        <input type="hidden" name="replyMsgId" wire:model="replyMsgId" value="{{$replyMsgId}}" />
 
         <input type="file" class="hidden msgFile" wire:model="file" accept=".png,.jpg,.jpeg,.gif,.bmp,.txt,.pdf,.xlsx,.wav,.mp3,.mp4,.m3u,.aac,.vorbis,.flac,.alac,.aiff,.dsd,.ogg,.oga,.ppt,.rar,.zip,.ptt" />
               
@@ -21,7 +22,6 @@
                     <button class="btn btn-icon btn-clean btn-lg hidden stopButton" type="button" data-toggle="tooltip" data-original-title="Stop"><i class="la la-stop-circle icon-2x"></i></button>
                 </div>
                 <div class="d-inline-block">
-                    
 
                     <a href="#" class="btn btn-clean btn-lg mr-1 quickReply"  onclick="Livewire.emit('showQuickReplyModal')">
                         <i class="la la-reply icon-2x"></i> {{trans('main.quickReplies')}}
@@ -148,6 +148,74 @@
                     document.querySelector('emoji-picker').database.close()
                 }
             })
+
+
+            $('.replyItem').on('click',function(e){
+                let chatName = $(this).data('name');
+                let msgId = $(this).data('id');
+                let msgText = $(this).parents('.messageItem').find('div.replyBody').html()
+                $('#kt_scrollDown').click()
+                $('.msgReplyHeader').data('id',msgId)
+                $('.msgReplyHeader .replyName').html(chatName)
+                $('.msgReplyHeader .replyBody').html(msgText)
+                $('input[name="replyMsgId"]').val(msgId)
+                $('.msgReplyHeader').slideDown(500);
+                $('.sendMsg textarea').focus()
+            });
+
+            $('.closeReplyHeader').on('click',function(){
+                $('input[name="replyMsgId"]').val(0)
+                $('.msgReplyHeader').slideUp(500);
+            })
+
+            $('.forwardItem').on('click',function(){
+                let msgId = $(this).data('id');
+                $('input[name="replyMsgId"]').val(msgId)
+                $('#forwardModal select').val('')
+                $('select[data-toggle="select2"]').select2()
+                $('#forwardModal').modal('show');
+            });
+
+            $('.forwardMsg').on('click',function(e){
+                e.preventDefault()
+                var contactId=  $('#forwardModal select option:selected').val()
+                window.livewire.emitTo('send-msg','forwardMsg',contactId,$('input[name="replyMsgId"]').val())
+                $('#forwardModal').modal('hide');
+            });
+
+            $('.deleteForMeItem').on('click',function(){
+                let msgId = $(this).data('id');
+                window.livewire.emitTo('send-msg','deleteForMeMsg',msgId)
+            });
+
+            $('.deleteForAllItem').on('click',function(){
+                let msgId = $(this).data('id');
+                window.livewire.emitTo('send-msg','deleteForAllMsg',msgId)
+            });
+
+            $('.starItem').on('click',function(){
+                let msgId = $(this).data('id');
+                window.livewire.emitTo('send-msg','starMsg',msgId)
+            });
+
+            $('.labelItem').on('click',function(){
+                let msgId = $(this).data('id');
+                let labelText = $(this).data('labels');
+                labelText = labelText.indexOf(',') > 0 ? labelText.replace(/,\s*$/, "") : labelText
+                let labels = labelText != '' ? JSON.parse("[" + labelText + "]") : '';
+                $('#labelsModal select').val(labels)
+                $('#labelsModal .selectLabels').data('id',msgId);
+                $('select[data-toggle="select2"]').select2()
+                $('#labelsModal').modal('show');
+            });
+
+            $('.selectLabels').on('click',function(e){
+                let msgId = $(this).data('id');
+                e.preventDefault()
+                var labels=  $('#labelsModal select').val()
+                window.livewire.emitTo('send-msg','labelMsg',msgId,labels)
+                $('#labelsModal').modal('hide');
+            });
         })
     </script>
 </div>
