@@ -43,8 +43,12 @@ class ChatMessage extends Model{
         return $this->belongsTo('App\Models\Order','id','message_id');
     }
 
-    public function LastReaction(){
-        return $this->hasOne('App\Models\ChatMessage','quotedMessageId')->where('type','reaction')->orderBy('time','desc');
+    public function MyLastReaction(){
+        return $this->hasOne('App\Models\ChatMessage','quotedMessageId')->where('type','reaction')->where('fromMe',1)->orderBy('time','desc');
+    }
+
+    public function OtherLastReaction(){
+        return $this->hasOne('App\Models\ChatMessage','quotedMessageId')->where('type','reaction')->where('fromMe',0)->orderBy('time','desc');
     }
 
     static function getOne($id){
@@ -53,7 +57,7 @@ class ChatMessage extends Model{
 
     static function dataList($chatId=null,$limit=null,$disDetails=null,$start=null) {
         $input = \Request::all();
-        $source = self::with(['LastReaction',])->whereNotIn('type',['reaction']);
+        $source = self::with(['MyLastReaction','OtherLastReaction'])->whereNotIn('type',['reaction']);
         if (isset($input['from']) && !empty($input['from']) && isset($input['to']) && !empty($input['to'])) {
             $source->where('time','>=', strtotime($input['from'].' 00:00:00'))->where('time','<=',strtotime($input['to'].' 23:59:59'));
         }
@@ -204,7 +208,7 @@ class ChatMessage extends Model{
         $dataObj->starred = $source->starred;
         $dataObj->labelled = $source->labelled != null && $source->labelled != '' ? $source->labelColors : [];
         $dataObj->labels = $source->labelled != null && $source->labelled != '' ? $source->labelled : '';
-        $dataObj->reactions = [$source->LastReaction];
+        $dataObj->reactions = [$source->MyLastReaction,$source->OtherLastReaction];
         // $dataObj->reactions = self::where([
         //     ['type','reaction'],
         //     ['quotedMessageId',$source->id],

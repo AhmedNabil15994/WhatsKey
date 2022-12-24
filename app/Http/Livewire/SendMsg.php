@@ -23,7 +23,7 @@ class SendMsg extends Component
     public $msgBody = '';
     public $msgType = 1;
     public $selected;
-    protected $listeners = ['sendMsg','uploadBlob','setReply','setContact','setLocation','forwardMsg','deleteForMeMsg','deleteForAllMsg','starMsg','labelMsg','repeatHook'];
+    protected $listeners = ['sendMsg','uploadBlob','setReply','setContact','setLocation','forwardMsg','deleteForMeMsg','deleteForAllMsg','starMsg','labelMsg','reactionMessage','repeatHook'];
     public $file = '';
     public $dataUrl = '';
     public $originalName = '';
@@ -445,6 +445,17 @@ class SendMsg extends Component
                 $this->emitTo('conversation','updateMsg', $msgObj->id,9);
             }
         }        
+    }
+
+    public function reactionMessage($msgId,$emoji){
+        $msgObj = ChatMessage::where('id','LIKE','%'.$msgId)->first();
+        $mainWhatsLoopObj = new \OfficialHelper();
+        if($msgObj){
+            $reactions = ChatMessage::where('quotedMessageId',$msgObj->id)->where('fromMe',1)->orderBy('time','DESC')->first();
+            $emoji = $reactions && $reactions->body == $emoji ? 'unset' : $emoji;
+            $result = $mainWhatsLoopObj->sendReaction(['messageId'=>$msgObj->id,'phone'=>str_replace('@c.us', '', $this->selected),'reaction'=>$emoji]);
+            $this->emitTo('conversation','updateMsg', $msgObj->id,12);
+        }
     }
 
     public function repeatHook($msgId){

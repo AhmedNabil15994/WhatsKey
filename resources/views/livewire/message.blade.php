@@ -140,15 +140,24 @@
             @endif
             <livewire:message-details :wire:key="'msgDetails'.time().$id" :msg="$msg" :chatName="$chatName" :noMargin="1"/>
 
-            @if(!empty($msg['reactions']) && isset($msg['reactions'][0]['id']))
+            @if(count($msg['reactions']) > 0 && !empty($msg['reactions']) && isset($msg['reactions'][0]['id']) && $msg['reactions'][0]['body'] != null)
             <div class="reactions">
                 @foreach($msg['reactions'] as $oneReaction)
-                <div class="reaction text-center pt-2" data-toggle="tooltip" data-original-title="{{$oneReaction['fromMe'] ? trans('main.you') : $chatName}}">
+                @if(!empty($oneReaction) && isset($oneReaction['fromMe']) && $oneReaction['body'] != '')
+                <div class="reaction text-center pt-2" data-toggle="tooltip" data-original-title="{{ $oneReaction['fromMe'] ? trans('main.you') : $chatName}}">
                     <span class="fa-icon"> {{$oneReaction['body']}} </span>
                 </div>
+                @endif
                 @endforeach
             </div>
             @endif
+
+            <div class="msgEmoji">
+                <a href="#" class="btn btn-secondary btn-icon btn-sm emojiItem">
+                    <i class="far fa-smile icon-md text-muted"></i>
+                </a>
+                <emoji-picker class="hidden"></emoji-picker>
+            </div>
         </div>
     </div>
 </div>

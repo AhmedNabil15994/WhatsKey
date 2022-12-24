@@ -60,6 +60,20 @@
 		<script src="{{ asset('/assets/tenant/js/locationpicker.jquery.js') }}"></script>
 		<script>
 		    $(function(){
+		    	$(document).on('click','.emojiItem',function(e){
+		    		e.preventDefault();
+                	$(this).siblings('emoji-picker').toggleClass('hidden')
+                	$(this).parents('.messageItem').toggleClass('emojied')
+		    	});
+
+		    	$('.messageItem emoji-picker').unbind('emoji-click');
+            	$(document).on('emoji-click','.messageItem emoji-picker',event => {
+            		let emoji = event.detail.unicode
+            		let msgId = $('.messageItem.emojied').attr('id');
+            		$('.messageItem.emojied .emojiItem').click();
+            		window.livewire.emitTo('send-msg','reactionMessage',msgId,emoji)
+            	})
+
 				window.livewire.emit('loadDialogs')
 		    	$('#kt_chat_aside .scroll').on('scroll',function(){
 		    		if(this.scrollTop == (this.scrollHeight - this.offsetHeight)) {

@@ -136,19 +136,18 @@
 
             $('.emoji').on('click',function(e){
                 e.preventDefault();
-                $('emoji-picker').toggleClass('hidden')
+                $(this).siblings('emoji-picker').toggleClass('hidden')
             });
 
-            $('emoji-picker').unbind('emoji-click');
-            $('emoji-picker').on('emoji-click',event => $('.sendTextArea').val($('.sendTextArea').val() + event.detail.unicode))
+            $('.sendMsg emoji-picker').unbind('emoji-click');
+            $('.sendMsg emoji-picker').on('emoji-click',event => $('.sendTextArea').val($('.sendTextArea').val() + event.detail.unicode))
 
             $('.sendTextArea,a.btn-clean:not(.emoji),.btn-primary,.card-body').on('click',function(){
-                if(!$('emoji-picker').hasClass('hidden')){
-                    $('emoji-picker').addClass('hidden')
+                if(!$('.sendMsg emoji-picker').hasClass('hidden')){
+                    $('.sendMsg emoji-picker').addClass('hidden')
                     document.querySelector('emoji-picker').database.close()
                 }
             })
-
 
             $('.replyItem').on('click',function(e){
                 let chatName = $(this).data('name');
