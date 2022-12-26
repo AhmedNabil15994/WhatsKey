@@ -75,6 +75,9 @@
                 @foreach($chat['labelsArr'] as $labelObj)
                 <span class="catLabel mt-1 d-inline-block fa-icon" data-toggle="tooltip" data-original-title="{{$labelObj['name_ar']}}"> <i class="icon-md fas fa-tag label-cat{{$labelObj['color_id']}}"></i></span>
                 @endforeach
+                @if(str_contains($chat['id'], '@g.us'))
+                <span class="mt-1 d-inline-block fa-icon" data-toggle="tooltip" data-original-title="{{trans('main.groupChat')}}"> <i class="icon-md la la-users"></i></span>
+                @endif
             </div>
         </div>
         <div class="card-toolbar">

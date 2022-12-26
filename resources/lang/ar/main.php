@@ -959,4 +959,5 @@ return [
 	'newContacts' => 'أرقام جديدة',
 	'unBlock' => 'الغاء الحظر',
 	'blockedUser' => 'الارقام المحظورة',
+	'groupChat' => 'مجموعة',
 ];
