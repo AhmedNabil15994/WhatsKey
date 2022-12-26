@@ -65,8 +65,15 @@ class LiveChatControllers extends Controller
 
     public function index()
     {   
+        $varObj = Variable::getVar('ME');
+        $business = 0;
+        if($varObj && json_decode($varObj)->isBussines){
+            $business = 1;
+        }
         \Session::forget('selected_chat_id');
-        return view('Tenancy.LiveChat.Views.index');
+        \Session::put('BUSINESS',$business);
+        $data['contacts'] = Contact::dataList(1)['data'];
+        return view('Tenancy.LiveChat.Views.index')->with('data',(object)$data);
     }
 
     public function dialogs(Request $request)

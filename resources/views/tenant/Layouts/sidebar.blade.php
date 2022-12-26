@@ -239,7 +239,10 @@
                     </div>
                 </li>
                 @endif
-
+                @php 
+                $varObj = \App\Models\Variable::getVar('ME');
+                @endphp
+                @if($varObj && json_decode($varObj)->isBussines)
                 @if(\Helper::checkRules('list-categories,list-businessInfo,list-quick-replies,list-collections,list-products,list-orders') || IS_ADMIN)
                 <li class="menu-item menu-item-submenu {{Active(URL::to('/categories*'),'menu-item-open')}}" aria-haspopup="true" data-menu-toggle="hover">
                     <a href="javascript:;" class="menu-link menu-toggle">
@@ -326,6 +329,7 @@
                         </ul>
                     </div>
                 </li>
+                @endif
                 @endif
 
                 @if(\Helper::checkRules('list-templates'))

@@ -118,7 +118,11 @@ class SendMsg extends Component
         $senderStatus = ucwords(Session::get('name'));
 
         $mainWhatsLoopObj = new \OfficialHelper();
-        $sendData['phone'] = str_replace('@c.us', '', $selected);
+        if(str_contains($selected, 'g.us')){
+            $sendData['chat'] = $selected;
+        }else{
+            $sendData['phone'] = str_replace('@c.us', '', $selected);
+        }
         $caption = '';
         $metadata = [];
         $message_type = '';

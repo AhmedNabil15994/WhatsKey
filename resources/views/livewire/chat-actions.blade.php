@@ -16,14 +16,22 @@
                 <button type="button" class="btn btn-clean btn-sm btn-icon btn-icon-md" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="ki ki-bold-more-hor icon-md"></i>
                 </button>
-                <div class="dropdown-menu p-0 m-0 dropdown-menu-left dropdown-menu-md">
-                    <ul class="navi navi-hover py-5">
-                        <li class="navi-item">
-                            <a href="#" class="navi-link">
-                                <span class="navi-icon">
-                                    <i class="flaticon2-drop"></i>
+                <div class="dropdown-menu p-0 m-0 dropdown-menu-right dropdown-menu-sm">
+                    <ul class="navi navi-hover">
+                        <li class="navi-item newMessageItem">
+                            <a href="#" class="navi-link p-2">
+                                <span class="text-dark w-100 d-block text-right">
+                                    New Message
+                                    <i class="la la-envelope-open icon-xl"></i>
                                 </span>
-                                <span class="navi-text">New Group</span>
+                            </a>
+                        </li>
+                        <li class="navi-item newGroupItem">
+                            <a href="#" class="navi-link p-2">
+                                <span class="text-dark w-100 d-block text-right">
+                                    New Group
+                                    <i class="la la-users icon-xl"></i>
+                                </span>
                             </a>
                         </li>
                     </ul>

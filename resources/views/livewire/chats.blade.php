@@ -1,6 +1,6 @@
 <div>
     @foreach($chats as $oneChat)
-    @php $oneChat = (array) $oneChat; @endphp
+    @php $oneChat  = json_decode(json_encode($oneChat), true); @endphp
     <livewire:chat :chat="$oneChat" :wire:key="time().'chat'.$oneChat['id']"/>
     @endforeach
     <div class="spinContainer py-5 text-center hidden">

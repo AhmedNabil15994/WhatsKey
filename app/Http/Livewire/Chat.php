@@ -37,26 +37,28 @@ class Chat extends Component
         Session::put('selected_chat_id',$chatId);
     }
 
-     public function lastUpdates($msgId,$chatId,$status,$domain){
+    public function lastUpdates($msgId,$chatId,$status,$domain){
         $data = ChatDialog::getData(ChatDialog::getOne($chatId));
         $msgObj = ChatMessage::getData(ChatMessage::getOne($msgId));
         $chat = json_decode(json_encode($data), true);
         if($this->chat['id'] == $chatId && $chat['lastMessage']['id'] == $msgId){
             $domainUrl = str_replace('myDomain',$domain,config('app.MY_DOMAIN'));
             $chat['image'] = str_replace('http://localhost',$domainUrl,$chat['image']);
-            // if($status == 5 ){
-            //     $chat['lastMessage']['body'] = $msgObj->body;
-            // }else if($status == 6){
-            //     $chat['lastMessage']['deleted_at'] = date('Y-m-d H:i:s');
-            // }else if($status == 7){
-            //     $chat['lastMessage']['starred'] = 1;
-            // }else if($status == 8){
-            //     $chat['lastMessage']['starred'] = 0;
-            // }
             $chat['lastMessage'] = json_decode(json_encode($msgObj), true);
             $this->chat =  $chat;
         }
     }
+
+    // public function changeDialogStatus($chatId){
+    //     $data = ChatDialog::getData(ChatDialog::getOne($chatId));
+    //     $data = json_decode(json_encode($data), true);
+    //     $domain = \Session::get('domain');
+    //     if(isset($data) && isset($data['id']) && $this->chat['id'] == $data['id']){
+    //         $domainUrl = str_replace('myDomain',$domain,config('app.MY_DOMAIN'));
+    //         $data['image'] = str_replace('http://localhost',$domainUrl,$data['image']);
+    //         $this->chat =  $data;
+    //     }
+    // }
 
     // public function lastUpdates($data,$domain){
     //     $chat = json_decode(json_encode($data), true);

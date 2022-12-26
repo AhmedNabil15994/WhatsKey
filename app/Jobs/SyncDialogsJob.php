@@ -35,9 +35,18 @@ class SyncDialogsJob implements ShouldQueue
     public function handle()
     {
         if(!empty($this->dialogs)){
+            
+            $mainWhatsLoopObj = new \OfficialHelper();
+            $groupsResult = $mainWhatsLoopObj->groups();
+            $groups = $groupsResult->json();
+            if(isset($groups['data'])){
+                foreach ($groups['data'] as $group) {
+                    ChatDialog::newDialog($group);
+                }
+            }
+
             foreach ($this->dialogs as $dialog) {
                 ChatDialog::newDialog($dialog);
-                // Contact::newPhone($dialog['id'],$dialog['name']);
             }
         }
     }

@@ -174,7 +174,7 @@ class MessagesWebhook extends ProcessWebhookJob
         } else {
             $message['message_type'] = $message['type'];
         }
-        $message['sending_status'] = 2;
+        $message['sending_status'] = 1;
         $message['time'] = $message['time'];
         $checkMessageObj = ChatMessage::where('chatId', $message['chatId'])->where('chatName', '!=', null)->orderBy('time', 'DESC')->first();
         
@@ -220,7 +220,7 @@ class MessagesWebhook extends ProcessWebhookJob
         $botObj = Bot::getData($botObj, $tenantId);
         $botObj->file = str_replace('localhost', $domain . '.whatskey.net', $botObj->file);
         // For Local
-        $botObj->file = str_replace('newdomain1.whatskey.net/', '4f8e-197-40-8-22.ngrok.io', $botObj->file);
+        $botObj->file = str_replace('newdomain1.whatskey.net/', '047c-156-219-111-19.ngrok.io', $botObj->file);
         $myMessage = $botObj->reply;
         $message_type = '';
         $sendData['phone'] = str_replace('@c.us', '', $sender);
@@ -316,7 +316,7 @@ class MessagesWebhook extends ProcessWebhookJob
             $lastMessage['body'] = $sendData['body'];
             $lastMessage['chatName'] = $checkMessageObj != null ? $checkMessageObj->chatName : '';
             $lastMessage['message_type'] = $message_type;
-            $lastMessage['sending_status'] = 2;
+            $lastMessage['sending_status'] = 1;
             $lastMessage['caption'] = $message['caption'];
             $lastMessage['type'] = $message_type;
             if(isset($result['data']['metadata'])){
@@ -354,7 +354,7 @@ class MessagesWebhook extends ProcessWebhookJob
             }
             if($botObj->image != ''){
         		$botObj->image = str_replace('localhost', $domain . '.whatskey.net', $botObj->image);
-        		$botObj->image = str_replace('newdomain1.whatskey.net/', '4f8e-197-40-8-22.ngrok.io', $botObj->image);
+        		$botObj->image = str_replace('newdomain1.whatskey.net/', '047c-156-219-111-19.ngrok.io', $botObj->image);
 	            $sendData['image'] = $botObj->image;
             }
             $sendData['footer'] = $botObj->footer;

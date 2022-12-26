@@ -16,7 +16,7 @@
                     <a href="#" class="btn btn-clean btn-icon btn-lg emoji">
                         <i class="far fa-smile icon-xl"></i>
                     </a>
-                    <emoji-picker class="hidden"></emoji-picker>
+                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                     <button class="btn btn-icon btn-clean btn-lg recordButton" type="button" data-toggle="tooltip" data-original-title="Record"><i class="la la-microphone icon-2x"></i></button>
                     <button class="btn btn-icon btn-clean btn-lg hidden pauseButton" type="button" data-toggle="tooltip" data-original-title="Pause"><i class="la la-pause-circle icon-2x"></i></button>
                     <button class="btn btn-icon btn-clean btn-lg hidden stopButton" type="button" data-toggle="tooltip" data-original-title="Stop"><i class="la la-stop-circle icon-2x"></i></button>
@@ -48,6 +48,41 @@
     <script>
 
         $(function(){
+            $('.emoji').on('click',function(e){
+                e.preventDefault();
+                $(this).siblings('emoji-picker').toggleClass('hidden')
+            });
+
+            $('.sendMsg emoji-picker').unbind('emoji-click');
+            $('.sendMsg emoji-picker').on('emoji-click',event => $('.sendTextArea').val($('.sendTextArea').val() + event.detail.unicode))
+
+            $('.sendTextArea,a.btn-clean:not(.emoji),.btn-primary,.card-body').on('click',function(){
+                if(!$('.sendMsg emoji-picker').hasClass('hidden')){
+                    $('.sendMsg emoji-picker').addClass('hidden')
+                    document.querySelector('emoji-picker').database.close()
+                }
+            })
+
+            $('.emojiItem').on('click',function(e){
+                e.preventDefault();
+                if($(this).parents('.messageItem').hasClass('emojied')){
+                    $(this).siblings('emoji-picker').remove()
+                    $(this).parents('.messageItem').removeClass('emojied')
+                }else{
+                    $(this).parent('.msgEmoji').append('<emoji-picker></emoji-picker>');
+                    $(this).parents('.messageItem').addClass('emojied')
+                }
+               
+            });
+
+            $('.messageItem emoji-picker').unbind('emoji-click');
+            $(document).on('emoji-click','.messageItem emoji-picker',event => {
+                let emoji = event.detail.unicode
+                let msgId = $('.messageItem.emojied').attr('id');
+                $('.messageItem.emojied .emojiItem').click();
+                window.livewire.emitTo('send-msg','reactionMessage',msgId,emoji)
+            })
+
             URL = window.URL || window.webkitURL;
             var gumStream;
             var rec;
@@ -134,21 +169,6 @@
                 stopRecording();
             });
 
-            $('.emoji').on('click',function(e){
-                e.preventDefault();
-                $(this).siblings('emoji-picker').toggleClass('hidden')
-            });
-
-            $('.sendMsg emoji-picker').unbind('emoji-click');
-            $('.sendMsg emoji-picker').on('emoji-click',event => $('.sendTextArea').val($('.sendTextArea').val() + event.detail.unicode))
-
-            $('.sendTextArea,a.btn-clean:not(.emoji),.btn-primary,.card-body').on('click',function(){
-                if(!$('.sendMsg emoji-picker').hasClass('hidden')){
-                    $('.sendMsg emoji-picker').addClass('hidden')
-                    document.querySelector('emoji-picker').database.close()
-                }
-            })
-
             $('.replyItem').on('click',function(e){
                 let chatName = $(this).data('name');
                 let msgId = $(this).data('id');
@@ -203,17 +223,10 @@
                 labelText = labelText.indexOf(',') > 0 ? labelText.replace(/,\s*$/, "") : labelText
                 let labels = labelText != '' ? JSON.parse("[" + labelText + "]") : '';
                 $('#labelsModal select').val(labels)
-                $('#labelsModal .selectLabels').data('id',msgId);
+                $('#labelsModal .selectLabels').attr('data-id',msgId);
+                $('#labelsModal .selectLabels').attr('data-type',1);
                 $('select[data-toggle="select2"]').select2()
                 $('#labelsModal').modal('show');
-            });
-
-            $('.selectLabels').on('click',function(e){
-                let msgId = $(this).data('id');
-                e.preventDefault()
-                var labels=  $('#labelsModal select').val()
-                window.livewire.emitTo('send-msg','labelMsg',msgId,labels)
-                $('#labelsModal').modal('hide');
             });
         })
     </script>

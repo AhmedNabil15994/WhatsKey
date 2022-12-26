@@ -946,4 +946,17 @@ return [
 	'deletedMsg' => 'This Message Was Deleted',
 	'forwarded' => 'Forwarded',
 	'forward' => 'Forward Message',
+	'muteChat' => 'Mute Chat',
+
+
+	'singleMsg' => 'رسالة فردية',
+	'groupMsg' => 'رسالة جماعية',
+
+	'newGroup' => 'مجموعة جديدة',
+	'newMessage' => 'رسالة جديدة',
+	'onlyMe' => 'بدون مشتركين',
+	'numbers' => 'الارقام',
+	'newContacts' => 'أرقام جديدة',
+	'unBlock' => 'الغاء الحظر',
+	'blockedUser' => 'الارقام المحظورة',
 ];

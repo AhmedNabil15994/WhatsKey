@@ -6,12 +6,24 @@ class ChatDialog extends Model{
 
     protected $table = 'dialogs';
     protected $primaryKey = 'id';
-    protected $fillable = ['id','name','image','metadata','pinned','archived','unreadCount','unreadMentionCount','notSpam','readOnly','modsArr'];    
+    protected $fillable = ['id','name','image','metadata','pinned','archived','unreadCount','unreadMentionCount','notSpam','readOnly','blocked','modsArr','muted','muted_until','labels','creation','owner','group_restrict','announce','participants'];  
+
     public $timestamps = false;
     public $incrementing = false;
 
     static function getOne($id){
         return self::where('id', $id)->first();
+    }
+
+    public function labelColors(){
+        if($this->labels != null && $this->labels != ''){
+            $related = $this->hasMany(Category::class);
+            $related->setQuery(
+                Category::whereIn('labelId', array_unique(explode(',',$this->labels)))->getQuery()
+            );
+            return $related;
+        }
+        // return $this->labels;
     }
 
     public function LastMessage(){
@@ -144,6 +156,24 @@ class ChatDialog extends Model{
         if( isset($source->name) && $source->name != null){
             $dataObj->name = $source->name;
         }
+        if( isset($source->subject) && $source->subject != null){
+            $dataObj->name = $source->subject;
+        }
+        if( isset($source->creation) && $source->creation != null){
+            $dataObj->creation = $source->creation;
+        }
+        if( isset($source->owner) && $source->owner != null){
+            $dataObj->owner = str_replace('s.whatsapp.net','c.us',$source->owner);
+        }
+        if( isset($source->restrict) && $source->restrict != null){
+            $dataObj->group_restrict = $source->restrict;
+        }
+        if( isset($source->announce) && $source->announce != null){
+            $dataObj->announce = $source->announce;
+        }
+        if( isset($source->participants) && $source->participants != null){
+            $dataObj->participants = json_encode($source->participants);
+        }
         if(isset($source->image) && !empty($source->image)){
             $path = $source->image;
             $type = pathinfo(
@@ -161,6 +191,7 @@ class ChatDialog extends Model{
         $dataObj->unreadMentionCount = isset($source->unreadMentionCount) ? $source->unreadMentionCount : 0;
         $dataObj->notSpam = isset($source->notSpam) ? $source->notSpam : 0;
         $dataObj->readOnly = isset($source->readOnly) ? $source->readOnly : 0;
+        $dataObj->blocked = isset($source->blocked) ? $source->blocked : 0;
         $dataObj->save();
         return $dataObj;
     }
@@ -172,6 +203,7 @@ class ChatDialog extends Model{
             $dataObj->id = $source->id;
             $dataObj->phone = str_replace('@c.us','',$source->id);
             $dataObj->name = $source->name != "" ? ( strpos($source->name, '@c.us') !== false && $source->SenderLastMessage != null ? $source->SenderLastMessage->senderName : $source->name ) : self::reformChatId($source->id,"");
+            $dataObj->name = str_replace('+','',$dataObj->name);
             $dataObj->chatName = self::reformChatId($source->id,$dataObj->name);
             $dataObj->image = isset($source->image) ? mb_convert_encoding($source->image, 'UTF-8', 'UTF-8') : asset('assets/tenant/images/def_user.svg');
             $dataObj->metadata = isset($source->metadata) ? unserialize($source->metadata) : [];
@@ -184,6 +216,17 @@ class ChatDialog extends Model{
             $dataObj->readOnly = $source->readOnly;
 
             $dataObj->modsArr = $source->modsArr != null ? unserialize($source->modsArr) : [];
+            $dataObj->blocked = $source->blocked;
+            $dataObj->labels = $source->labels;
+            $dataObj->labelsArr = $source->labels != null && $source->labels != '' ? $source->labelColors : [];
+            $dataObj->muted = $source->muted;
+            $dataObj->muted_until = $source->muted_until;
+            $dataObj->creation = $source->creation;
+            $dataObj->owner = $source->owner;
+            $dataObj->group_restrict = $source->group_restrict;
+            $dataObj->announce = $source->announce;
+            $dataObj->participants = $source->participants;
+
             if($metaData == false){
                 // $cats = ContactLabel::where('contact',str_replace('@c.us', '', $source->id))->pluck('category_id');
                 // $cats = reset($cats);

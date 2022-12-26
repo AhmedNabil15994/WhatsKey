@@ -154,6 +154,32 @@ class OfficialHelper
         ])->get($mainURL, $data);
     }
 
+    public function blockList()
+    {
+        $mainURL = $this->baseUrl . 'users/blockList';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->get($mainURL);
+    }
+
+    public function blockUser($data)
+    {
+        $mainURL = $this->baseUrl . 'users/blockUser';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+
+    public function unblockUser($data)
+    {
+        $mainURL = $this->baseUrl . 'users/unblockUser';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
     /*----------------------------------------------------------
     Chats
     ----------------------------------------------------------*/
@@ -186,7 +212,7 @@ class OfficialHelper
 
     public function pinChat($data)
     {
-        $mainURL = $this->baseUrl . 'dialogs/pinChat';
+        $mainURL = $this->baseUrl . 'chats/pinChat';
         return Http::withToken($this->authToken)->withHeaders([
             'CHANNELID' => $this->instanceId,
             'CHANNELTOKEN' => $this->token,
@@ -195,7 +221,61 @@ class OfficialHelper
 
     public function unpinChat($data)
     {
-        $mainURL = $this->baseUrl . 'dialogs/unpinChat';
+        $mainURL = $this->baseUrl . 'chats/unpinChat';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+
+    public function archiveChat($data)
+    {
+        $mainURL = $this->baseUrl . 'chats/archiveChat';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+
+    public function unarchiveChat($data)
+    {
+        $mainURL = $this->baseUrl . 'chats/unarchiveChat';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+
+    public function muteChat($data)
+    {
+        $mainURL = $this->baseUrl . 'chats/muteChat';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+
+    public function unmuteChat($data)
+    {
+        $mainURL = $this->baseUrl . 'chats/unmuteChat';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+
+    public function deleteChat($data)
+    {
+        $mainURL = $this->baseUrl . 'chats/deleteChat';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+
+    public function clearChat($data)
+    {
+        $mainURL = $this->baseUrl . 'chats/clearChat';
         return Http::withToken($this->authToken)->withHeaders([
             'CHANNELID' => $this->instanceId,
             'CHANNELTOKEN' => $this->token,
@@ -834,11 +914,45 @@ class OfficialHelper
         ])->post($mainURL, $data);
     }
    
+    public function labelChat($data)
+    {
+        $mainURL = $this->baseUrl . 'business/labelChat';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
 
+    public function unlabelChat($data)
+    {
+        $mainURL = $this->baseUrl . 'business/unlabelChat';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
     
 
-    
+    /*----------------------------------------------------------
+    Groups
+    ----------------------------------------------------------*/
+    public function groups()
+    {
+        $mainURL = $this->baseUrl . 'groups';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->get($mainURL);
+    }
 
+    public function createGroup($data)
+    {
+        $mainURL = $this->baseUrl . 'groups/createGroup';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
     
 
    

@@ -13,7 +13,7 @@ class Chats extends Component
     public $page = 1;
     public $page_size = 20;
     public $chats;
-    protected $listeners = ['loadMore','searchAllChats','chatsChanges','changeDialogStatus'];
+    protected $listeners = ['loadMore','searchAllChats','chatsChanges','changeDialogStatus','readChat','pinChat','archiveChat','deleteChat','muteChat','labelChat','blockChat'];
 
     public function mount(){
         $data['limit'] = $this->page_size;
@@ -169,8 +169,162 @@ class Chats extends Component
             usort($notPinned, function($a, $b) {
                 return ((int) $b->lastMessage->time) - ((int) $a->lastMessage->time);
             });
+            $pinned = json_decode(json_encode($pinned), true);
+            $notPinned = json_decode(json_encode($notPinned), true);
             // $this->emitTo('chat','changeDialogStatus',$chatObj,$data['domain']);
-            $this->chats = array_merge($pinned,$notPinned);
+            $this->chats = json_decode(json_encode(array_merge($pinned,$notPinned)), true);
         }
     }
+
+    public function readChat($chatId){
+        $chatObj = ChatDialog::getOne($chatId);
+        if($chatObj){
+            $mainWhatsLoopObj = new \OfficialHelper();
+            if($chatObj->unreadCount == -1){
+                $result = $mainWhatsLoopObj->readChat(['phone'=>$chatId]);
+                $chatObj->unreadCount = 0;
+                $chatObj->save();
+            }else{
+                $result = $mainWhatsLoopObj->unreadChat(['phone'=>$chatId]);
+                $chatObj->unreadCount = -1;
+                $chatObj->save();
+            }
+        }
+    }
+
+    public function pinChat($chatId){
+        $chatObj = ChatDialog::getOne($chatId);
+        if($chatObj){
+            $chatId = str_replace('@c.us','',$chatId);
+            $mainWhatsLoopObj = new \OfficialHelper();
+            if($chatObj->pinned == 0){
+                $result = $mainWhatsLoopObj->pinChat(['phone'=>$chatId]);
+                $chatObj->pinned = 1;
+                $chatObj->save();
+            }else{
+                $result = $mainWhatsLoopObj->unpinChat(['phone'=>$chatId]);
+                $chatObj->pinned = 0;
+                $chatObj->save();
+            }
+        }
+    }
+
+    public function archiveChat($chatId){
+        $chatObj = ChatDialog::getOne($chatId);
+        if($chatObj){
+            $mainWhatsLoopObj = new \OfficialHelper();
+            if($chatObj->archived == 0){
+                $result = $mainWhatsLoopObj->archiveChat(['phone'=>$chatId]);
+                $chatObj->archived = 1;
+                $chatObj->save();
+            }else{
+                $result = $mainWhatsLoopObj->unarchiveChat(['phone'=>$chatId]);
+                $chatObj->archived = 0;
+                $chatObj->save();
+            }
+        }
+    }
+
+    public function deleteChat($chatId){
+        $chatObj = ChatDialog::getOne($chatId);
+        if($chatObj){
+            $newChats = [];
+            $mainWhatsLoopObj = new \OfficialHelper();
+            $result = $mainWhatsLoopObj->deleteChat(['phone'=>$chatId]);
+            $chatObj->delete();
+            foreach($this->chats as $key => $chat){
+                if($chat['id'] != $chatId){
+                    $newChats[] = $chat;
+                }
+            }
+            $this->chats = $newChats;
+        }
+    }
+
+    public function blockChat($chatId){
+        $chatObj = ChatDialog::getOne($chatId);
+        if($chatObj){
+            $newChats = [];
+            $mainWhatsLoopObj = new \OfficialHelper();
+            if($chatObj->blocked == 0){
+                $result = $mainWhatsLoopObj->blockUser(['phone'=>$chatId]);
+                $chatObj->blocked = 1;
+                $chatObj->save();
+            }else{
+                $result = $mainWhatsLoopObj->unblockUser(['phone'=>$chatId]);
+                $chatObj->blocked = 0;
+                $chatObj->save();
+            }
+            foreach($this->chats as $key => $chat){
+                if($chat['id'] == $chatId){
+                    $chat['blocked'] = $chatObj->blocked;
+                }
+                $newChats[] = $chat;
+            }
+            $this->chats = $newChats;
+            $this->emitTo('conversation','updateChat',$chatId);
+        }
+    }
+
+    public function muteChat($chatId,$duration){
+        $chatObj = ChatDialog::getOne($chatId);
+        if($chatObj){
+            $newChats = [];
+            $mainWhatsLoopObj = new \OfficialHelper();
+            if($chatObj->muted == 0){
+                $result = $mainWhatsLoopObj->muteChat(['phone'=>$chatId,'duration' => $duration*3600]);
+                $chatObj->muted = 1;
+                $chatObj->muted_until = date('Y-m-d H:i:s',strtotime('+'.$duration.' day',strtotime(date('Y-m-d H:i:s'))));
+                $chatObj->save();
+            }else{
+                $result = $mainWhatsLoopObj->unmuteChat(['phone'=>$chatId,]);
+                $chatObj->muted = 0;
+                $chatObj->muted_until = null;
+                $chatObj->save();
+            }
+            foreach($this->chats as $key => $chat){
+                if($chat['id'] == $chatId){
+                    $chat['muted'] = $chatObj->muted;
+                }
+                $newChats[] = $chat;
+            }
+            $this->chats = $newChats;
+            $this->emitTo('conversation','updateChat',$chatId);
+        }
+    }
+
+    public function labelChat($chatId,$labels){
+        if($chatId){
+            $chatObj = ChatDialog::getOne($chatId);
+            $mainWhatsLoopObj = new \OfficialHelper();
+            if($chatObj){
+                if($chatObj->labels == null && !empty($labels)){
+                    foreach ($labels as $value) {
+                        $result = $mainWhatsLoopObj->labelChat(['phone'=>$chatId,'labelId'=>$value]);
+                    }
+                    $chatObj->labels = implode(',', $labels). (mb_substr(implode(',', $labels), -1) != ',' ? ',' : '');
+                    $chatObj->save();
+                }else if($chatObj->labels != null && $chatObj->labels != implode(',', $labels)){
+                    $oldLabels = array_unique(explode(',',$chatObj->labels));
+                    $newLabels = array_unique(array_diff($labels,$oldLabels));
+                    $removedLabels = array_unique(array_diff($oldLabels,$labels));
+                    if(!empty($removedLabels)){
+                        foreach ($removedLabels as $removed) {
+                            $result = $mainWhatsLoopObj->unlabelChat(['phone'=>$chatId,'labelId'=>$removed]);
+                        }
+                    }
+                    if(!empty($newLabels)){
+                        foreach ($newLabels as $newOne) {
+                            $result = $mainWhatsLoopObj->labelChat(['phone'=>$chatId,'labelId'=>$newOne]);
+                        }
+                    }
+                    $updates = implode(',', $labels). (mb_substr(implode(',', $labels), -1) != ',' ? ',' : '');
+                    $chatObj->labels = $updates == ',' ? null : $updates;
+                    $chatObj->save();
+                }
+                $this->emitTo('conversation','updateChat', $chatId);
+            }
+        }        
+    }
+
 }

@@ -4,7 +4,7 @@
         $id = array_reverse(explode('_',$msg['id']))[0];
     @endphp
     <div class="messageItem d-flex flex-column mb-5 align-items-{{$msg['fromMe'] == 1 ? 'end' : 'start'}}" id="{{$id}}">
-        <div class="mt-2 rounded p-3 bg-{{$msg['fromMe'] == 1 ? 'white' : 'light-success'}} text-dark-50 font-weight-bold font-size-lg text-{{$msg['fromMe'] == 1 ? 'right' : 'left'}} max-w-400px" style="position:relative;{{$msg['message_type'] == 'disappearing' ? "position: relative;" : ''}}">
+        <div class="mt-2 rounded p-3 bg-{{$msg['fromMe'] == 1 ? 'white' : 'light-success'}} text-dark-50 font-weight-bold font-size-lg text-{{$msg['fromMe'] == 1 ? 'right' : 'left'}} max-w-400px" style="position:relative; {{ $msg['message_type'] == 'disappearing' ? 'position: relative;' : ''}}">
 
             @if($msg['deleted_at'] != null || $msg['sending_status'] == 6)
             <livewire:messages.deleted-msg :msg="$msg" :wire:key="'msg'.time().$id" :chatName="$chatName"/>
@@ -45,11 +45,15 @@
                                     </a>
                                 </li>
                                 @endif
+
+                                @if(\Session::get('BUSINESS') == 1)
                                 <li class="navi-item labelItem" data-id="{{$id}}" data-labels="{{isset($msg['labels']) && $msg['labels'] != ',' ? $msg['labels'] : ''}}">
                                     <a href="#" class="navi-link p-2">
                                         <span class="text-dark">Label <i class="la la-tag icon-md"></i> </span>
                                     </a>
                                 </li>
+                                @endif
+
                                 <li class="navi-item starItem" data-id="{{$id}}">
                                     <a href="#" class="navi-link p-2">
                                         <span class="text-dark">{{$msg['starred'] ? 'UnStar' : 'Star'}} <i class="la la-star icon-md"></i> </span>
@@ -156,7 +160,7 @@
                 <a href="#" class="btn btn-secondary btn-icon btn-sm emojiItem">
                     <i class="far fa-smile icon-md text-muted"></i>
                 </a>
-                <emoji-picker class="hidden"></emoji-picker>
+                {{-- <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker> --}}
             </div>
         </div>
     </div>

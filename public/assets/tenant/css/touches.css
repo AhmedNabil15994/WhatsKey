@@ -544,3 +544,62 @@ html[dir="rtl"] .right .messageItem emoji-picker{
 .messageItem:hover .msgEmoji{
 	display: inline-block;
 }
+.newGroup textarea,
+.newMessage textarea{
+    height: 150px;
+}
+.newGroup,
+.newGroup .form-group[data-id],
+.newMessage,
+.newMessage .form-group[data-id],
+.newMessage [data-select="2"]{
+	display: none;
+}
+.textWrap{
+	position:relative;
+}
+.newMessage .newMsg-icon{
+	cursor: pointer;
+	position: absolute;
+	bottom: 0;
+	left:0;
+}
+.newMessage .newMSG{
+	position:absolute;
+	bottom:0;
+}
+html[dir="rtl"] .newMessage .newMsg-icon{
+	left:5px;
+}
+html[dir="rtl"] .newMessage .newMSG{
+	left: 30px;
+}
+html[dir="ltr"] .newMessage .newMsg-icon{
+	right:5px;
+}
+html[dir="ltr"] .newMessage .newMSG{
+	right: 30px;
+}
+.newGroup .newGroup-icon{
+	cursor: pointer;
+	position: absolute;
+	bottom: 5px;
+	left:0;
+}
+.newGroup emoji-picker{
+	position:absolute;
+	top:0;
+	z-index: 999;
+}
+html[dir="rtl"] .newGroup .newGroup-icon{
+	left:5px;
+}
+html[dir="rtl"] .newGroup emoji-picker{
+	left: 30px;
+}
+html[dir="ltr"] .newGroup .newGroup-icon{
+	right:5px;
+}
+html[dir="ltr"] .newGroup emoji-picker{
+	right: 30px;
+}

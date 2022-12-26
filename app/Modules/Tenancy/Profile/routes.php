@@ -20,6 +20,7 @@ Route::group(['prefix' => '/profile'] , function () {
     Route::group(['prefix' => '/subscription'] , function () {
         $controller2 = \App\Http\Controllers\WAAccountController::class;
         Route::get('/', [$controller2,'subscription']);
+        Route::get('/unBlock/{chatId}', [$controller2,'unBlock']);
         Route::get('/screenshot', [$controller2,'screenshot']);
         Route::get('/syncAll', [$controller2,'syncAll']);
         Route::get('/closeConn', [$controller2,'closeConn']);

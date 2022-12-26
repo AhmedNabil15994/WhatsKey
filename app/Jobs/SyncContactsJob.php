@@ -35,6 +35,14 @@ class SyncContactsJob implements ShouldQueue
     public function handle()
     {
         if(!empty($this->contacts)){
+            $mainWhatsLoopObj = new \OfficialHelper();
+            $blockResult = $mainWhatsLoopObj->blockList();
+            $block = $blockResult->json();
+            $blockChats = [];
+            if(isset($block['data'])){
+                $blockChats = $block['data'];
+            }
+
             foreach ($this->contacts as $contact) {
                 $contactName = isset($contact['notify']) ? $contact['notify'] : $contact['name'];
                 Contact::newPhone($contact['id'], $contactName);
@@ -44,7 +52,11 @@ class SyncContactsJob implements ShouldQueue
                 ])->orWhere([
                     ['id' , '=' , $contact['id']],
                     ['name' , '=' , null],
-                ])->update(['name' => $contactName]);
+                ])->update([
+                    'name' => $contactName,
+                ]);
+
+                ChatDialog::where('id',$contact['id'])->update(['blocked' => in_array($contact['id'],$blockChats) ? 1 : 0]);
             }
         }
 

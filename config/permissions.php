@@ -83,6 +83,7 @@ return [
     'WAAccountController@screenshot' => 'subscription',
     'WAAccountController@syncAll' => 'subscription',
     'WAAccountController@closeConn' => 'subscription',
+    'WAAccountController@unBlock' => 'subscription',
     'WAAccountController@read' => 'subscription',
     'WAAccountController@syncDialogs' => 'subscription',
     'WAAccountController@syncContacts' => 'subscription',

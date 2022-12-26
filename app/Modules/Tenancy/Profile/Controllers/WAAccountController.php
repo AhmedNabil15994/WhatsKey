@@ -95,16 +95,40 @@ class WAAccountController extends Controller
             $data['queuedMessages'] = $queueResult['data']['messages'];
         }
 
+        $list = [];
+        $blockedList = $mainWhatsLoopObj->blockList();
+        $blockResult = $blockedList->json();
+        if ($blockResult && isset($blockResult['data'])) {
+            $list = $blockResult['data'];
+        }
+
         $data['allDialogs'] = ChatDialog::count();
         $data['sentMessages'] = ChatMessage::where('fromMe',1)->where([
             ['time' , '>=', strtotime(date('Y-m-d'). ' 00:00:00')],
             ['time' , '<=', strtotime(date('Y-m-d'). ' 23:59:59')],
         ])->count();
         $data['messages'] = ChatMessage::count();
+        $data['blockList'] = $list;
         $data['contactsCount'] = Contact::NotDeleted()->whereHas('NotDeletedGroup')->count();
         $data['channel'] = $channelObj ? CentralChannel::getData(CentralChannel::getOne(Session::get('channel'))) : null;
         $data['contactsCount'] = Contact::NotDeleted()->count();
         return view('Tenancy.Profile.Views.subscription')->with('data', (object) $data);
+    }
+
+    public function unBlock($chatId)
+    {
+        $chatObj = ChatDialog::getOne($chatId);
+        if($chatObj){
+            $newChats = [];
+            $mainWhatsLoopObj = new \OfficialHelper();
+            if($chatObj->blocked == 1){
+                $result = $mainWhatsLoopObj->unblockUser(['phone'=>$chatId]);
+                $chatObj->blocked = 0;
+                $chatObj->save();
+            }
+        }
+        Session::flash('success', trans('main.syncInProgress'));
+        return redirect()->back();
     }
 
     public function screenshot()
@@ -268,7 +292,7 @@ class WAAccountController extends Controller
             'sendDelay' => '0',
             'webhooks' => [
                 'messageNotifications' => str_replace('://', '://'.$domain.'.', config('app.BASE_URL')).'/services/webhooks/messages-webhook',
-                'ackNotifications' => str_replace('://', '://'.$domain.'.', config('app.BASE_URL')).'/services/acks/messages-webhook',
+                'ackNotifications' => str_replace('://', '://'.$domain.'.', config('app.BASE_URL')).'/services/webhooks/acks-webhook',
             ],
             'ignoreOldMessages' => 1,
         ];

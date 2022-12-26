@@ -21,6 +21,15 @@ class CreateDialogsTable extends Migration
             $table->string('readOnly')->nullable();
             $table->text('modsArr')->nullable();
             $table->string('last_time')->nullable();
+            $table->integer('blocked')->default(0);
+            $table->integer('muted')->default(0);
+            $table->string('muted_until')->nullable();
+            $table->string('labels')->nullable();
+            $table->string('creation')->nullable();
+            $table->string('owner')->nullable();
+            $table->integer('announce')->default(0);
+            $table->integer('group_restrict')->default(0);
+            $table->text('participants')->nullable();
         });
     }
 

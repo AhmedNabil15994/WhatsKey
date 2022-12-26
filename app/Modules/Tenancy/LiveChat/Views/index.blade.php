@@ -35,10 +35,94 @@
 							<div class="flex-row-auto offcanvas-mobile w-400px w-xl-500px" id="kt_chat_aside">
 								<div class="card card-custom">
 									<div class="card-body px-3 bg-gray-100" style="padding-top: .5rem; border-radius:5px;">
-										<livewire:search-chats :wire:key="searchChats"/>
-										<div class="mt-2 scroll scroll-pull">
-											<livewire:chats :wire:key="viewChats"/>
-						    			</div>
+										<div class="newMessage p-5 bg-white">
+											<h4 class="card-title"> <i class="la la-envelope-open icon-xl"></i> {{trans('main.newMessage')}}</h4>
+											<div class="form-group">
+												<label>{{trans('main.replyType')}}</label>
+												<select name="message_type" class="form-control" data-toggle="select2">
+													<option value="1">{{trans('main.singleMsg')}}</option>
+													<option value="2">{{trans('main.groupMsg')}}</option>
+												</select>
+											</div>
+											<div data-select="1">
+												<div class="form-group">
+				                                    <label> {{ trans('main.phone') }}</label>
+				                                    <input type="hidden" name="phone">
+				                                    <input type="tel" id="telephone" class="form-control" placeholder="{{ trans('main.phone') }}">
+				                                </div>
+											</div>
+											<div data-select="2">
+												<div class="form-group">
+													<label>{{trans('main.numbers')}}</label>
+													<select name="types" class="form-control" data-toggle="select2">
+														<option value="">{{trans('main.choose')}}</option>
+														<option value="1">{{trans('main.contacts')}}</option>
+														<option value="2">{{trans('main.newContacts')}}</option>
+													</select>
+												</div>
+												<div class="form-group" data-id="1">
+													<label>{{trans('main.numbers')}}</label>
+													<select name="newContacts[]" class="form-control" data-toggle="select2" multiple>
+														@foreach($data->contacts as $contact)
+														<option value="{{ str_replace('+','',$contact->phone) }}">{{ $contact->name }}</option>
+														@endforeach
+													</select>
+												</div>
+												<div class="form-group" data-id="2">
+													<label>{{trans('main.numbers')}}</label>
+	                            					<textarea class="form-control" name="newPhones" placeholder="{{ trans('main.whatsappNos2') }}"></textarea>
+												</div>
+											</div>
+											<div class="form-group textWrap">
+												<label>{{trans('main.message')}}</label>
+												<textarea class="form-control" rows="2" name="message" placeholder="Type a message"></textarea>
+												<i class="la la-smile icon-xl newMsg-icon"></i>
+												<emoji-picker class="hidden newMSG" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
+											</div>	
+											<div class="w-100 text-right">
+												<button type="button" class="btn btn-primary mr-2 addNewMessage">{{trans('main.send')}}</button>
+                								<a href="#" class="btn btn-secondary closeNewMessage">{{trans('main.back')}}</a>
+											</div>	
+										</div>
+										<div class="newGroup p-5 bg-white">
+											<h4 class="card-title"><i class="la la-users icon-xl"></i> {{trans('main.newGroup')}}</h4>
+											<div class="form-group textWrap">
+												<label>{{trans('main.name')}}</label>
+												<input type="text" name="groupName" class="form-control" placeholder="{{trans('main.name')}}">
+												<i class="la la-smile icon-xl newGroup-icon"></i>
+												<emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
+											</div>
+											<div class="form-group">
+												<label>{{trans('main.numbers')}}</label>
+												<select name="numbers" class="form-control" data-toggle="select2">
+													<option value="1">{{trans('main.onlyMe')}}</option>
+													<option value="2">{{trans('main.contacts')}}</option>
+													<option value="3">{{trans('main.newContacts')}}</option>
+												</select>
+											</div>
+											<div class="form-group" data-id="2">
+												<label>{{trans('main.numbers')}}</label>
+												<select name="contactsPhone[]" class="form-control" data-toggle="select2" multiple>
+													@foreach($data->contacts as $contact)
+													<option value="{{ str_replace('+','',$contact->phone) }}">{{ $contact->name }}</option>
+													@endforeach
+												</select>
+											</div>
+											<div class="form-group" data-id="3">
+												<label>{{trans('main.numbers')}}</label>
+                            					<textarea class="form-control" name="phones" placeholder="{{ trans('main.whatsappNos2') }}"></textarea>
+											</div>
+											<div class="w-100 text-right">
+												<button type="button" class="btn btn-primary mr-2 addNewWAGroup">{{trans('main.add')}}</button>
+                								<a href="#" class="btn btn-secondary closeNewGroup">{{trans('main.back')}}</a>
+											</div>	
+										</div>
+										<div class="allChats">
+											<livewire:search-chats :wire:key="searchChats"/>
+											<div class="mt-2 scroll scroll-pull">
+												<livewire:chats :wire:key="viewChats"/>
+							    			</div>
+							    		</div>
 									</div>
 								</div>
 							</div>
@@ -53,179 +137,12 @@
 		@include('tenant.Layouts.scripts')
 		@include('tenant.Partials.notf_messages')
 		@section('scripts')
-		<script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+		<script type="module" src="{{asset('assets/tenant/js/emojiIndex.js')}}"></script>
 		<script src="{{asset('assets/tenant/js/recorder.js')}}"></script>
 		<script src="{{asset('assets/tenant/js/pages/custom/chat/chat.js')}}"></script>
 		<script src='{{asset('assets/tenant/js/gmaps.js')}}'></script>
-		<script src="{{ asset('/assets/tenant/js/locationpicker.jquery.js') }}"></script>
-		<script>
-		    $(function(){
-		    	$(document).on('click','.emojiItem',function(e){
-		    		e.preventDefault();
-                	$(this).siblings('emoji-picker').toggleClass('hidden')
-                	$(this).parents('.messageItem').toggleClass('emojied')
-		    	});
-
-		    	$('.messageItem emoji-picker').unbind('emoji-click');
-            	$(document).on('emoji-click','.messageItem emoji-picker',event => {
-            		let emoji = event.detail.unicode
-            		let msgId = $('.messageItem.emojied').attr('id');
-            		$('.messageItem.emojied .emojiItem').click();
-            		window.livewire.emitTo('send-msg','reactionMessage',msgId,emoji)
-            	})
-
-				window.livewire.emit('loadDialogs')
-		    	$('#kt_chat_aside .scroll').on('scroll',function(){
-		    		if(this.scrollTop == (this.scrollHeight - this.offsetHeight)) {
-				      	$('.spinContainer').removeClass('hidden')
-				    	window.livewire.emit('loadMore')
-				    }
-		    	});
-
-		    	Livewire.on('conversationOpened', chat => {
-		    		document.querySelector('emoji-picker').database.close()
-			    	$('#kt_scrollDown').click()
-			    	$('[data-toggle="tooltip"]').tooltip()
-			    	$('.sendMsg textarea').focus()
-			    });
-
-		    	$('#kt_scrollDown').on('click',function(){
-			    	$('#kt_scrollDown').addClass('hidden')
-			    	$('.scroll-pulls').scrollTop(1000000);
-		    	});
-
-			    $('.scroll-pulls').on('scroll',function(){
-		    		if(this.scrollTop == 0) {
-				    	window.livewire.emit('loadMoreMsgs')
-				    }
-				    $('#kt_scrollDown').removeClass('hidden')
-		    	});
-
-			    window.livewire.on('showModal', () => {
-			        $('#listSections').modal('show');
-			    });
-
-			    $(document).on('change','[name="radios"]',function(){
-			    	if($(this).is(':checked')){
-			    		$('p.score').html(0);
-			    		$('.progress-bar').data('aria-valuenow',0);
-			    		$('.progress-bar').css('width','0%');
-			    		$(this).parents('.float-left').siblings('div.float-right').children('p.score').html(1);
-			    		$(this).parents('.w-100').find('.progress-bar').data('aria-valuenow',100);
-			    		$(this).parents('.w-100').find('.progress-bar').css('width','100%');
-			    	}
-			    });
-
-			    window.livewire.on('showQuickReplyModal', () => {
-			    	$('#quickReply input[name="reply"]').prop('checked',false)
-			        $('#quickReply').modal('show');
-			    });
-
-			    $(document).on('click','.selectReply',function(e){
-					e.preventDefault()
-					var replyId=  $('#quickReply input[name="reply"]:checked').val()
-					window.livewire.emitTo('send-msg','setReply',replyId,1,$('input[name="replyMsgId"]').val())
-			        $('#quickReply').modal('hide');
-				});
-
-				window.livewire.on('showTemplateModal', () => {
-			    	$('#templateModal input[name="template"]').prop('checked',false)
-			        $('#templateModal').modal('show');
-			    });
-
-				$(document).on('click','.selectTemplate',function(e){
-					e.preventDefault()
-					var replyId=  $('#templateModal input[name="template"]:checked').val()
-					window.livewire.emitTo('send-msg','setReply',replyId,2,$('input[name="replyMsgId"]').val())
-			        $('#templateModal').modal('hide');
-				});
-
-				window.livewire.on('showContactModal', () => {
-			    	$('#contactsModal select').val('')
-					$('select[data-toggle="select2"]').select2()
-			        $('#contactsModal').modal('show');
-			    });
-
-				$(document).on('click','.selectContact',function(e){
-					e.preventDefault()
-					var replyId=  $('#contactsModal select option:selected').val()
-					window.livewire.emitTo('send-msg','setContact',replyId,$('input[name="replyMsgId"]').val())
-			        $('#contactsModal').modal('hide');
-				});
-
-				window.livewire.on('showMapModal', () => {
-			        $('#locationModal').modal('show');
-				    $('#locationModal #somecomponent').locationpicker({
-				        location: {
-				            latitude:  21.5362381,
-				            longitude: 39.1706268
-				        },
-				        onchanged: function (currentLocation, radius, isMarkerDropped) {
-				            var addressComponents = $(this).locationpicker('map').location.addressComponents;
-				            $('#locationModal .selectAddress').attr('data-lat',currentLocation.latitude);
-				            $('#locationModal .selectAddress').attr('data-lng',currentLocation.longitude);
-				        },
-				    });
-			    });
-
-				$(document).on('click','.selectAddress',function(e){
-					e.preventDefault()
-					window.livewire.emitTo('send-msg','setLocation', $('#locationModal .selectAddress').data('lat'), $('#locationModal .selectAddress').data('lng'),$('#locationModal input[name="address"]').val(),$('input[name="replyMsgId"]').val())
-			        $('#locationModal').modal('hide');
-			        
-				});
-
-				Livewire.on('setMessageText', chat => {
-			    	$('.sendMsg textarea').val(chat)
-			    });
-
-				Livewire.on('setMessageContact', chat => {
-			    	$('.sendMsg textarea').val(chat)
-					$('.sendMsg .btn-primary').trigger('click');
-			    });
-
-				Livewire.on('setMessageLocation', chat => {
-			    	$('.sendMsg textarea').val(chat)
-					$('.sendMsg .btn-primary').trigger('click');
-			    });
-
-			    Livewire.on('playAudio', chat => {
-			    	new Audio("{{ asset('assets/tenant/swiftly1.mp3') }}").play();
-			    });
-
-			    Livewire.on('focusInput', chat => {
-			    	$('.sendMsg textarea').focus()
-			    });
-
-			    $(document).on('keydown','.sendMsg textarea', function(e) {
-					if (e.keyCode == 13) {
-						e.preventDefault();
-						window.livewire.emitTo('send-msg','sendMsg',$(this).val(),$('.msgReplyHeader').data('id'))
-						$(this).val(' ')
-						$('.msgReplyHeader').data('id','0')
-						$('input[name="replyMsgId"]').val('0')
-						$('.msgReplyHeader').slideUp(500)
-					}
-				});
-
-				$(document).on('click','.sendMsg .btn-primary', function(e) {
-					let myEvent = $.Event('keydown');
-					myEvent.keyCode = 13;
-					$('.sendMsg textarea').trigger(myEvent)
-				});				
-
-				$(document).on('click','.replyMsg',function(e){
-					let id = $(this).data('id');
-			    	$('.scroll-pulls').scrollTop($(this).parents('.messages').find('#'+id)[0].offsetTop);
-				});
-
-				$(document).on('click','.attachment',function(e){
-					$('.msgFile')[0].click()
-				});
-
-		    })
-		</script>
-
+		<script src="{{asset('/assets/tenant/js/locationpicker.jquery.js')}}"></script>
+		<script src="{{asset('assets/tenant/components/livechat.js')}}"></script>
 		<script src="{{mix('js/app.js')}}"></script>
 	</body>
 </html>

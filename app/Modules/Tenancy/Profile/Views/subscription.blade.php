@@ -134,6 +134,41 @@
 </div>
 @endif
 
+@if(isset($data->blockList) && $data->blockList > 0)
+<div class="card card-custom mb-5">
+    <div class="card-header">
+        <h3 class="card-title">{{ trans('main.blockedUser') }} ({{count($data->blockList)}})</h3>
+        {{-- <div class="card-toolbar">
+            <a href="{{ URL::to('/profile/subscription/clearMessagesQueue') }}" class="btn btn-sm btn-danger font-weight-bold">
+            <i class="la la-trash-alt"></i>{{ trans('main.delete') }}</a>
+        </div> --}}
+    </div>
+    <div class="card-body">
+        <table class="datatable datatable-bordered datatable-head-custom" id="kt_datatable">
+            <thead>
+                <tr>
+                    <th title="Field #1">{{ trans('main.id') }}</th>
+                    <th title="Field #2">{{ trans('main.phone') }}</th>
+                    <th title="Field #3">{{ trans('main.status') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($data->blockList as $key => $user)
+                <tr>
+                    <td>{{$key+1}}</td>
+                    <td>{{str_replace('@c.us','',$user)}}</td>
+                    <td>
+                        <a href="{{ URL::to('/profile/subscription/unBlock/'.$user) }}" class="btn btn-sm btn-success font-weight-bold">
+                            <i class="la la-ban"></i>{{ trans('main.unBlock') }}</a>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
+@endif
+
 <div class="card card-custom gutter-b mb-5">
     <div class="card-header">
         <h3 class="card-title"> {{ trans('main.currentPackage') }}</h3>

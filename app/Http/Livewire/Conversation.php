@@ -8,6 +8,7 @@ use App\Models\Reply;
 use App\Models\Template;
 use App\Models\Contact;
 use App\Models\ChatMessage;
+use App\Models\ChatDialog;
 use App\Models\Category;
 
 class Conversation extends Component
@@ -28,7 +29,7 @@ class Conversation extends Component
     public $contacts = [];
     public $labels = [];
 
-    protected $listeners = ['loadMessages','loadMoreMsgs','newIncomingMsg','sendMsg','changeMessageStatus','updateMsg'];
+    protected $listeners = ['loadMessages','loadMoreMsgs','newIncomingMsg','sendMsg','changeMessageStatus','updateMsg','updateChat'];
 
     public function mount(){
         $this->myImage = User::getData(User::find(USER_ID))->photo;
@@ -58,6 +59,7 @@ class Conversation extends Component
     }
 
     public function newIncomingMsg($data){
+        $data = json_decode(json_encode($data), true);
         $chat = $data['message'];
         $chat['lastMessage'] = (array) $chat['lastMessage'];
         $msg = $chat['lastMessage'];
@@ -84,7 +86,7 @@ class Conversation extends Component
             }
             $this->messages = $msgs;
             $this->emit('conversationOpened');
-            if($chat['lastMessage']['fromMe'] == 0){
+            if($chat['lastMessage']['fromMe'] == 0 && !$chat['muted']){
                 $this->emit('playAudio');
             }
         }
@@ -149,4 +151,12 @@ class Conversation extends Component
         }
     }    
 
+    public function updateChat($chatId)
+    {
+        $chatObj = ChatDialog::getOne($chatId);
+        if($chatObj && $chatId == $this->selected){
+            $data = ChatDialog::getData($chatObj);
+            $this->chat = json_decode(json_encode($data), true);
+        }
+    }
 }
