@@ -13,7 +13,7 @@ class Chats extends Component
     public $page = 1;
     public $page_size = 20;
     public $chats;
-    protected $listeners = ['loadMore','searchAllChats','chatsChanges','changeDialogStatus','readChat','pinChat','archiveChat','deleteChat','muteChat','labelChat','blockChat'];
+    protected $listeners = ['loadMore','searchAllChats','chatsChanges','changeDialogStatus','readChat','pinChat','archiveChat','deleteChat','muteChat','labelChat','blockChat','leaveGroup'];
 
     public function mount(){
         $data['limit'] = $this->page_size;
@@ -24,29 +24,7 @@ class Chats extends Component
 
     public function render()
     {   
-        $input = Request::all();
-        // if ((!isset($input['mine']) || empty($input['mine'])) && !\Helper::checkRules('list-livechat')) {
-        //     $dataList['data'] = 'disabled';
-        //     $dataList['status'] = \TraitsFunc::SuccessMessage();
-        //     return Response::json((object) $dataList);
-        // }
-
-        $data['limit'] = isset($input['limit']) && !empty($input['limit']) ? $input['limit'] : $this->page_size;
-        $data['name'] = isset($input['name']) && !empty($input['name']) ? $input['name'] : null;
-
-        // if(!IS_ADMIN && !\Helper::checkRules('list-dialogs')){
-        //     $request->merge(['mine' => "USER_ID"]);
-        // }
-
-        $dialogs = ChatDialog::dataList($data['limit'], $data['name']);
-        // $dataList = $dialogs;
-        // if ($data['name'] == null && IS_ADMIN ) {
-        //     $dataList['pinnedConvs'] = ChatDialog::getPinned()['data'];
-        // }
-        
-
-        // $data['chats'] = $dialogs['data'];
-        return view('livewire.chats');//->with('chats',(object) $dialogs['data']);
+        return view('livewire.chats');
     }
 
     public function loadMore(){
@@ -61,10 +39,12 @@ class Chats extends Component
         $this->page += 1;
         $chats = array_merge($this->chats,ChatDialog::generateObj($dialogs,0)['data']);
         $this->chats = json_decode(json_encode($chats), true);
+        $this->emit('refreshDesign');
     }
 
     public function searchAllChats($chats){
         $this->chats = $chats['chats'];
+        $this->emit('refreshDesign');
     }
 
     // public function chatsChanges($chat,$domain){
@@ -173,6 +153,7 @@ class Chats extends Component
             $notPinned = json_decode(json_encode($notPinned), true);
             // $this->emitTo('chat','changeDialogStatus',$chatObj,$data['domain']);
             $this->chats = json_decode(json_encode(array_merge($pinned,$notPinned)), true);
+            $this->emit('refreshDesign');
         }
     }
 
@@ -181,14 +162,15 @@ class Chats extends Component
         if($chatObj){
             $mainWhatsLoopObj = new \OfficialHelper();
             if($chatObj->unreadCount == -1){
-                $result = $mainWhatsLoopObj->readChat(['phone'=>$chatId]);
+                $result = $mainWhatsLoopObj->readChat(str_contains($chatId, '@g.us') ? ['chat'=>$chatId] : ['phone'=>$chatId]);
                 $chatObj->unreadCount = 0;
                 $chatObj->save();
             }else{
-                $result = $mainWhatsLoopObj->unreadChat(['phone'=>$chatId]);
+                $result = $mainWhatsLoopObj->unreadChat(str_contains($chatId, '@g.us') ? ['chat'=>$chatId] : ['phone'=>$chatId]);
                 $chatObj->unreadCount = -1;
                 $chatObj->save();
             }
+            $this->emit('refreshDesign');
         }
     }
 
@@ -198,14 +180,15 @@ class Chats extends Component
             $chatId = str_replace('@c.us','',$chatId);
             $mainWhatsLoopObj = new \OfficialHelper();
             if($chatObj->pinned == 0){
-                $result = $mainWhatsLoopObj->pinChat(['phone'=>$chatId]);
+                $result = $mainWhatsLoopObj->pinChat(str_contains($chatId, '@g.us') ? ['chat'=>$chatId] : ['phone'=>$chatId]);
                 $chatObj->pinned = 1;
                 $chatObj->save();
             }else{
-                $result = $mainWhatsLoopObj->unpinChat(['phone'=>$chatId]);
+                $result = $mainWhatsLoopObj->unpinChat(str_contains($chatId, '@g.us') ? ['chat'=>$chatId] : ['phone'=>$chatId]);
                 $chatObj->pinned = 0;
                 $chatObj->save();
             }
+            $this->emit('refreshDesign');
         }
     }
 
@@ -214,14 +197,15 @@ class Chats extends Component
         if($chatObj){
             $mainWhatsLoopObj = new \OfficialHelper();
             if($chatObj->archived == 0){
-                $result = $mainWhatsLoopObj->archiveChat(['phone'=>$chatId]);
+                $result = $mainWhatsLoopObj->archiveChat(str_contains($chatId, '@g.us') ? ['chat'=>$chatId] : ['phone'=>$chatId]);
                 $chatObj->archived = 1;
                 $chatObj->save();
             }else{
-                $result = $mainWhatsLoopObj->unarchiveChat(['phone'=>$chatId]);
+                $result = $mainWhatsLoopObj->unarchiveChat(str_contains($chatId, '@g.us') ? ['chat'=>$chatId] : ['phone'=>$chatId]);
                 $chatObj->archived = 0;
                 $chatObj->save();
             }
+            $this->emit('refreshDesign');
         }
     }
 
@@ -230,7 +214,7 @@ class Chats extends Component
         if($chatObj){
             $newChats = [];
             $mainWhatsLoopObj = new \OfficialHelper();
-            $result = $mainWhatsLoopObj->deleteChat(['phone'=>$chatId]);
+            $result = $mainWhatsLoopObj->deleteChat(str_contains($chatId, '@g.us') ? ['chat'=>$chatId] : ['phone'=>$chatId]);
             $chatObj->delete();
             foreach($this->chats as $key => $chat){
                 if($chat['id'] != $chatId){
@@ -238,6 +222,7 @@ class Chats extends Component
                 }
             }
             $this->chats = $newChats;
+            $this->emit('refreshDesign');
         }
     }
 
@@ -263,6 +248,7 @@ class Chats extends Component
             }
             $this->chats = $newChats;
             $this->emitTo('conversation','updateChat',$chatId);
+            $this->emit('refreshDesign');
         }
     }
 
@@ -272,12 +258,12 @@ class Chats extends Component
             $newChats = [];
             $mainWhatsLoopObj = new \OfficialHelper();
             if($chatObj->muted == 0){
-                $result = $mainWhatsLoopObj->muteChat(['phone'=>$chatId,'duration' => $duration*3600]);
+                $result = $mainWhatsLoopObj->muteChat(str_contains($chatId, '@g.us') ? ['chat'=>$chatId,'duration' => $duration*3600] : ['phone'=>$chatId,'duration' => $duration*3600]);
                 $chatObj->muted = 1;
                 $chatObj->muted_until = date('Y-m-d H:i:s',strtotime('+'.$duration.' day',strtotime(date('Y-m-d H:i:s'))));
                 $chatObj->save();
             }else{
-                $result = $mainWhatsLoopObj->unmuteChat(['phone'=>$chatId,]);
+                $result = $mainWhatsLoopObj->unmuteChat(str_contains($chatId, '@g.us') ? ['chat'=>$chatId] : ['phone'=>$chatId]);
                 $chatObj->muted = 0;
                 $chatObj->muted_until = null;
                 $chatObj->save();
@@ -290,6 +276,7 @@ class Chats extends Component
             }
             $this->chats = $newChats;
             $this->emitTo('conversation','updateChat',$chatId);
+            $this->emit('refreshDesign');
         }
     }
 
@@ -300,7 +287,7 @@ class Chats extends Component
             if($chatObj){
                 if($chatObj->labels == null && !empty($labels)){
                     foreach ($labels as $value) {
-                        $result = $mainWhatsLoopObj->labelChat(['phone'=>$chatId,'labelId'=>$value]);
+                        $result = $mainWhatsLoopObj->labelChat(str_contains($chatId, '@g.us') ? ['chat'=>$chatId,'labelId'=>$value] : ['phone'=>$chatId,'labelId'=>$value]);
                     }
                     $chatObj->labels = implode(',', $labels). (mb_substr(implode(',', $labels), -1) != ',' ? ',' : '');
                     $chatObj->save();
@@ -310,12 +297,12 @@ class Chats extends Component
                     $removedLabels = array_unique(array_diff($oldLabels,$labels));
                     if(!empty($removedLabels)){
                         foreach ($removedLabels as $removed) {
-                            $result = $mainWhatsLoopObj->unlabelChat(['phone'=>$chatId,'labelId'=>$removed]);
+                            $result = $mainWhatsLoopObj->unlabelChat( str_contains($chatId, '@g.us') ? ['chat'=>$chatId,'labelId'=>$removed] : ['phone'=>$chatId,'labelId'=>$removed] );
                         }
                     }
                     if(!empty($newLabels)){
                         foreach ($newLabels as $newOne) {
-                            $result = $mainWhatsLoopObj->labelChat(['phone'=>$chatId,'labelId'=>$newOne]);
+                            $result = $mainWhatsLoopObj->labelChat(str_contains($chatId, '@g.us') ? ['chat'=>$chatId,'labelId'=>$newOne] : ['phone'=>$chatId,'labelId'=>$newOne]);
                         }
                     }
                     $updates = implode(',', $labels). (mb_substr(implode(',', $labels), -1) != ',' ? ',' : '');
@@ -323,8 +310,16 @@ class Chats extends Component
                     $chatObj->save();
                 }
                 $this->emitTo('conversation','updateChat', $chatId);
+                $this->emit('refreshDesign');
             }
         }        
+    }
+
+    public function leaveGroup($chatId){
+        if($chatId){
+            $mainWhatsLoopObj = new \OfficialHelper();
+            return $mainWhatsLoopObj->leaveGroup(['groupId'=>$chatId]);
+        }
     }
 
 }

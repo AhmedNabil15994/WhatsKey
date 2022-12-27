@@ -60,11 +60,11 @@
         <div class="chatDetails mx-5">
             <span class="text-muted font-weight-bold font-size-sm d-block">{{$chat['last_time']}}</span>
             <div class="row text-right d-block" style="margin: 0;">
-                <span class="svg-icon text-muted svg-icon-md mt-1 d-inline-block {{$chat['archived'] > 0 ? '' : 'hidden'}}">
+                <span class="svg-icon text-muted svg-icon-md mt-1 d-inline-block {{$chat['archived'] > 0 ? '' : 'hidden'}}" data-toggle="tooltip" data-original-title="Archived">
                     <i class="icon-md text-muted la la-archive"></i>
                 </span>
-                <span class="label label-md label-success mt-1 mx-1 font-weight-bold d-inline-block font-size-h6 {{$chat['unreadCount'] > 0 ? '' : 'hidden'}}" style="padding: 1px 0">{{$chat['unreadCount']}}</span>
-                <span class="svg-icon text-muted svg-icon-md mt-2 pinIcon d-inline-block {{$chat['pinned'] > 0 ? '' : 'hidden'}}">
+                <span class="label label-md label-success mt-1 mx-1 font-weight-bold d-inline-block font-size-h6 {{$chat['unreadCount'] > 0 ? '' : 'hidden'}}" style="padding: 1px 6px">{{$chat['unreadCount']}}</span>
+                <span class="svg-icon text-muted svg-icon-md mt-2 pinIcon d-inline-block {{$chat['pinned'] > 0 ? '' : 'hidden'}}" data-toggle="tooltip" data-original-title="Pinned">
                     <svg height="15" width="15" preserveAspectRatio="xMidYMid meet" class="">
                         <path fill="currentColor" d="M12.074 4.21 8.7 8.232l.116 4.233a.4.4 0 0 1-.657.318L.43 6.297a.4.4 0 0 1 .199-.702l4.196-.622L8.196.957a.63.63 0 0 1 .887-.078l2.914 2.445a.63.63 0 0 1 .077.887ZM1.294 14.229a.713.713 0 0 1-1.09-.915l2.674-3.64 1.536 1.288-3.12 3.267Z"></path>
                     </svg>
@@ -76,8 +76,11 @@
                 <span class="catLabel mt-1 d-inline-block fa-icon" data-toggle="tooltip" data-original-title="{{$labelObj['name_ar']}}"> <i class="icon-md fas fa-tag label-cat{{$labelObj['color_id']}}"></i></span>
                 @endforeach
                 @if(str_contains($chat['id'], '@g.us'))
-                <span class="mt-1 d-inline-block fa-icon" data-toggle="tooltip" data-original-title="{{trans('main.groupChat')}}"> <i class="icon-md la la-users"></i></span>
+                <span class="mt-1 d-inline-block fa-icon" data-toggle="tooltip" data-original-title="{{trans('main.groupChat')}}"> <i class="icon-lg la la-users"></i></span>
                 @endif
+                @foreach($chat['moderatos'] as $moderator)
+                <span class="catLabel mt-1 d-inline-block fa-icon" data-toggle="tooltip" data-original-title="{{ucwords($moderator['name'])}}"> <i class="icon-md fas fa-user"></i></span>
+                @endforeach
             </div>
         </div>
         <div class="card-toolbar">
@@ -150,6 +153,17 @@
                                 </span>
                             </a>
                         </li> --}}
+                        @if(str_contains($chat['id'], '@g.us'))
+                        <li class="navi-item" onclick="Livewire.emitTo('chats','leaveGroup','{{$chat['id']}}')">
+                            <a href="#" class="navi-link p-2" onclick="">
+                                <span class="text-dark">
+                                    <i class="flaticon-logout icon-md"></i> Leave Group 
+                                </span>
+                            </a>
+                        </li>
+                        @endif
+
+                        @if(str_contains($chat['id'], '@c.us'))
                         <li class="navi-item" onclick="Livewire.emitTo('chats','blockChat','{{$chat['id']}}')">
                             <a href="#" class="navi-link p-2" onclick="">
                                 <span class="text-dark">
@@ -157,6 +171,7 @@
                                 </span>
                             </a>
                         </li>
+                        @endif
                         <li class="navi-item" onclick="Livewire.emitTo('chats','deleteChat','{{$chat['id']}}')">
                             <a href="#" class="navi-link p-2" onclick="">
                                 <span class="text-dark">

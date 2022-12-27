@@ -6,20 +6,28 @@
         <input type="hidden" name="replyMsgId" wire:model="replyMsgId" value="{{$replyMsgId}}" />
 
         <input type="file" class="hidden msgFile" wire:model="file" accept=".png,.jpg,.jpeg,.gif,.bmp,.txt,.pdf,.xlsx,.wav,.mp3,.mp4,.m3u,.aac,.vorbis,.flac,.alac,.aiff,.dsd,.ogg,.oga,.ppt,.rar,.zip,.ptt" />
-              
+        
         <div class="d-flex align-items-center justify-content-between mt-5">
-            <div class="mr-3" style="position: relative;">
+            <div class="mr-3 row m-0" style="position: relative;">
                 <div class="d-inline-block">
-                    <a href="#" class="btn btn-clean btn-icon btn-lg mr-1 attachment">
+                    <a href="#" class="btn btn-clean btn-icon btn-lg mr-1 attachment float-left">
                         <i class="la la-paperclip icon-2x"></i>
                     </a>
-                    <a href="#" class="btn btn-clean btn-icon btn-lg emoji">
+                    <a href="#" class="btn btn-clean btn-icon btn-lg emoji float-left">
                         <i class="far fa-smile icon-xl"></i>
                     </a>
                     <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
-                    <button class="btn btn-icon btn-clean btn-lg recordButton" type="button" data-toggle="tooltip" data-original-title="Record"><i class="la la-microphone icon-2x"></i></button>
-                    <button class="btn btn-icon btn-clean btn-lg hidden pauseButton" type="button" data-toggle="tooltip" data-original-title="Pause"><i class="la la-pause-circle icon-2x"></i></button>
-                    <button class="btn btn-icon btn-clean btn-lg hidden stopButton" type="button" data-toggle="tooltip" data-original-title="Stop"><i class="la la-stop-circle icon-2x"></i></button>
+                    <button class="btn btn-icon btn-clean btn-lg recordButton float-left" type="button" data-toggle="tooltip" data-original-title="Record"><i class="la la-microphone icon-2x"></i></button>
+                    <div class="recordAnimation hidden float-left">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>  
+                    <button class="btn btn-icon btn-clean btn-lg hidden pauseButton float-left" type="button" data-toggle="tooltip" data-original-title="Pause"><i class="la la-pause-circle icon-2x"></i></button>
+                    <button class="btn btn-icon btn-clean btn-lg hidden stopButton float-left" type="button" data-toggle="tooltip" data-original-title="Stop"><i class="la la-stop-circle icon-2x"></i></button>
+                    <div class="clearfix"></div>
                 </div>
                 <div class="d-inline-block">
 
@@ -41,13 +49,62 @@
                 </div>
             </div>
             <div>
-                <button type="submit" class="btn btn-primary btn-md text-uppercase font-weight-bold chat-send py-2 px-6">{{trans('main.send')}}</button>
+                <button type="submit" id="kt_btn_1" class="btn btn-primary btn-md text-uppercase font-weight-bold chat-send py-2 px-6">{{trans('main.send')}}</button>
             </div>
         </div>
     </form>
     <script>
 
         $(function(){
+
+            $(document).on('click','.attachment',function(e){
+                $('.msgFile')[0].click()
+            });
+
+            $(document).on('change','.msgFile',function(e){
+                let file = $(this)[0].files[0]
+                var sizeLabel = "bytes";
+                var filesize = file.size;
+                if (filesize > 1024){
+                    filesize = filesize / 1024;
+                    sizeLabel = "kb";
+                    if(filesize > 1024){
+                        filesize = filesize / 1024;
+                        sizeLabel = "MB";
+                    }
+                }
+                let fileName = file.name+' ('+ Math.round(filesize, 2) +' '+sizeLabel+')';
+                $('.uppy-thumbnail-container .uppy-thumbnail-label').text(fileName)
+                $('.uppy-thumbnail').empty();
+                if(file.type.includes('image')){
+                    var url = URL.createObjectURL(file);
+                    $('.uppy-thumbnail').append('<img width="50" height="50" src="'+url+'">');
+                }else if(file.type.includes('video')){
+                    $('.uppy-thumbnail').append('<i class="la la-play icon-xl mt-4"></i>');
+                }else if(file.type.includes('audio')){
+                    $('.uppy-thumbnail').append('<i class="la la-headphones icon-xl mt-4"></i>');
+                }else if(file.type.includes('application') || file.type.includes('text')){
+                    $('.uppy-thumbnail').append('<i class="la la-file icon-xl mt-4"></i>');
+                }
+                $('.uppy-thumbnails.hidden').removeClass('hidden')
+                $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+            });
+
+            $(document).on('click','.uppy-remove-thumbnail',function(){
+                $('.uppy-thumbnails').addClass('hidden')
+                $('.msgFile').val('')
+                window.livewire.emitTo('send-msg','removeFile')
+            })
+
+            var btn = KTUtil.getById("kt_btn_1");
+            KTUtil.addEvent(btn, "click", function() {
+                KTUtil.btnWait(btn, "spinner spinner-right spinner-white pr-15", "Please wait");
+
+                setTimeout(function() {
+                    KTUtil.btnRelease(btn);
+                }, 1000);
+            });
+
             $('.emoji').on('click',function(e){
                 e.preventDefault();
                 $(this).siblings('emoji-picker').toggleClass('hidden')
@@ -104,7 +161,7 @@
                         }) 
                         rec.record()
                     }).catch(function(err) {});
-                    $('.pauseButton,.stopButton').toggleClass('hidden')
+                    $('.pauseButton,.stopButton,.recordAnimation').toggleClass('hidden')
                 }else{
                     rec.stop();
                 }
@@ -128,7 +185,7 @@
                 rec.stop();
                 gumStream.getAudioTracks()[0].stop();
                 rec.exportWAV(createDownloadLink);
-                $('.pauseButton,.stopButton').addClass('hidden')
+                $('.pauseButton,.stopButton,.recordAnimation').addClass('hidden')
             }
 
             function createDownloadLink(blob) {

@@ -25,5 +25,6 @@ class SearchChats extends Component
         $this->emitTo('chats','searchAllChats',[
             'chats' => $chats,
         ]); 
+        $this->emit('refreshDesign');
     }
 }

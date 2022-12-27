@@ -3,7 +3,9 @@ $(function(){
 	$('#kt_chat_aside .scroll').on('scroll',function(){
 		if(this.scrollTop == (this.scrollHeight - this.offsetHeight)) {
 	      	$('.spinContainer').removeClass('hidden')
-	    	window.livewire.emit('loadMore')
+			setTimeout(function(){
+	    		window.livewire.emit('loadMore')
+			},500)
 	    }
 	});
 
@@ -15,15 +17,23 @@ $(function(){
     });
 
 	$('#kt_scrollDown').on('click',function(){
-    	$('#kt_scrollDown').addClass('hidden')
+    	$(this).addClass('hidden')
     	$('.scroll-pulls').scrollTop(1000000);
 	});
 
     $('.scroll-pulls').on('scroll',function(){
 		if(this.scrollTop == 0) {
-	    	window.livewire.emit('loadMoreMsgs')
+			$('.spinMsgContainer').removeClass('hidden')
+			setTimeout(function(){
+	    		window.livewire.emit('loadMoreMsgs')
+			},500)
 	    }
-	    $('#kt_scrollDown').removeClass('hidden')
+
+	    if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight){
+    		$('#kt_scrollDown').addClass('hidden')
+	    }else{
+    		$('#kt_scrollDown').removeClass('hidden')
+	    }
 	});
 
     window.livewire.on('showModal', () => {
@@ -114,17 +124,39 @@ $(function(){
     });
 
     Livewire.on('playAudio', chat => {
-    	new Audio("{{ asset('assets/tenant/swiftly.mp3') }}").play();
+    	new Audio("assets/tenant/swiftly.mp3").play();
     });
 
     Livewire.on('focusInput', chat => {
     	$('.sendMsg textarea').focus()
     });
 
+    Livewire.on('refreshDesign', chat => {
+    	$('[data-toggle="tooltip"').tooltip();
+    	$('[data-toggle="select2"]').select2()
+		var avatar5 = new KTImageInput('kt_image_5');
+		const demo = document.querySelector('.scroll-pulld');
+		const ps = new PerfectScrollbar(demo);
+		ps.update()
+    });        
+
+
+    Livewire.on('errorMsg', error => {
+    	errorNotification(error)
+    });
+
     $(document).on('keydown','.sendMsg textarea', function(e) {
 		if (e.keyCode == 13) {
 			e.preventDefault();
+
+			var btn = KTUtil.getById("kt_btn_1");
+		   	KTUtil.btnWait(btn, "spinner spinner-right spinner-white pr-15", "Please wait");
+	        setTimeout(function() {
+	            KTUtil.btnRelease(btn);
+	        }, 1000);
+
 			window.livewire.emitTo('send-msg','sendMsg',$(this).val(),$('.msgReplyHeader').data('id'))
+
 			$(this).val(' ')
 			$('.msgReplyHeader').data('id','0')
 			$('input[name="replyMsgId"]').val('0')
@@ -141,10 +173,6 @@ $(function(){
 	$(document).on('click','.replyMsg',function(e){
 		let id = $(this).data('id');
     	$('.scroll-pulls').scrollTop($(this).parents('.messages').find('#'+id)[0].offsetTop);
-	});
-
-	$(document).on('click','.attachment',function(e){
-		$('.msgFile')[0].click()
 	});
 
 	window.livewire.on('showMuteModal', ($id,$muted) => {
@@ -277,16 +305,10 @@ $(function(){
     $('.newGroup emoji-picker').unbind('emoji-click');
     $('.newGroup emoji-picker').on('emoji-click',event => $('input[name="groupName"]').val($('input[name="groupName"]').val() + event.detail.unicode))
 
-    $('.card-body').on('click',function(){
-        if(!$('.newMessage emoji-picker').hasClass('hidden')){
-            $('.newMessage emoji-picker').addClass('hidden')
-            document.querySelector('emoji-picker').database.close()
-        }
-        if(!$('.newGroup emoji-picker').hasClass('hidden')){
-            $('.newGroup emoji-picker').addClass('hidden')
-            document.querySelector('emoji-picker').database.close()
-        }
-    })
+    // $('.card-body').on('click',function(){
+    //     $('emoji-picker').addClass('hidden')
+    //     document.querySelector('emoji-picker').database.close()
+    // })
 
     $(document).on('click','.addNewMessage',function(e){
     	e.preventDefault()
@@ -324,4 +346,89 @@ $(function(){
         	$('.closeNewMessage').click()
 	    }
     })
+
+    $(document).on('click','.contactDetails',function(e){
+    	e.preventDefault()
+    	$('.contactInfo').show(250)
+    })
+
+    $(document).on('click','.contactInfo .close',function(e){
+    	e.preventDefault()
+    	$('.contactInfo').hide(250)
+    })
+
+    $(document).on('click','.emoji-icon',function(){
+    	$(this).siblings('emoji-picker').toggleClass('hidden')
+    })
+
+	$('.contactInfo emoji-picker').unbind('emoji-click');
+	$(document).on('emoji-click','.contactInfo emoji-picker',event => {
+		$(event.currentTarget).siblings('.form-control').val($(event.currentTarget).siblings('.form-control').val() + event.detail.unicode)
+	})
+
+	$(document).on('click','.updateDetails',function(e){
+		e.preventDefault();
+		var formdata = new FormData();
+		let background = $('input[name="profile_avatar"]')[0].files[0]
+		let disable_read = $('input[name="disable_read"]').is(":checked") ? 1 : 0;
+
+        formdata.append('background', background);
+        formdata.append('name', $('.contactInfo input[name="name"]').val());
+        formdata.append('email', $('.contactInfo input[name="email"]').val());
+        formdata.append('city', $('.contactInfo input[name="city"]').val());
+        formdata.append('country', $('.contactInfo input[name="country"]').val());
+        formdata.append('notes', $('.contactInfo textarea[name="notes"]').val());
+        formdata.append('mods', JSON.stringify($('.contactInfo select[name="mods[]"]').val()));
+        formdata.append('disable_read',disable_read)
+        
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $.ajax({
+            type: 'POST',
+            url: '/livechat/updateContact',
+            data: formdata,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+               	if(data.status.status == 1){
+	                successNotification(data.status.message);
+	            }else{
+	                errorNotification(data.status.message);
+	            } 
+            },                         
+        });
+	})
+
+	$(document).on('change','select[name="participants_type"]',function(){
+		$(this).parents('.form-group').siblings('[data-id="'+$(this).val()+'"]').show(250).siblings('.form-group[data-id]').hide(250)
+	})
+        	// window.livewire.emitTo('chat-actions','newMessage',msg,numbers,JSON.stringify(phones))
+
+	$(document).on('click','.addParticipants',function(){
+		let type = $('select[name="participants_type"]').val();
+    	let phones = [];
+		if(type == 1){
+			phones = $('select[name="participantsPhone[]"]').val();
+		}else{
+			phones = $('textarea[name="participants"]').val()
+		}
+        window.livewire.emitTo('contact-details','addGroupParticipants',type,JSON.stringify(phones))
+	})
+
+	new ClipboardJS('[data-clipboard=true]').on('success', function(e) {
+	   e.clearSelection();
+	});
+
+	$(document).on('click','.updateSettings',function(){
+		let send_messages = $('select[name="send_messages"]').val();
+		let edit_info = $('select[name="edit_info"]').val();
+		let groupDescription = $('textarea[name="groupDescription"]').val();
+		let groupName = $('textarea[name="groupName"]').val();
+        window.livewire.emitTo('contact-details','updateGroupSettings',groupName,send_messages,edit_info,groupDescription)
+	});
+
 })

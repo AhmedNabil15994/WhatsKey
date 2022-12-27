@@ -53,4 +53,5 @@ class ChatActions extends Component
         }
         return 1;
     }
+    
 }

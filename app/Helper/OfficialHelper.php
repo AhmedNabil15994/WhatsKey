@@ -954,8 +954,85 @@ class OfficialHelper
         ])->post($mainURL, $data);
     }
     
-
+    public function leaveGroup($data)
+    {
+        $mainURL = $this->baseUrl . 'groups/leaveGroup';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
    
+    public function addParticipants($data)
+    {
+        $mainURL = $this->baseUrl . 'groups/addParticipants';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
 
+    public function removeParticipants($data)
+    {
+        $mainURL = $this->baseUrl . 'groups/removeParticipants';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+
+    public function promoteParticipants($data)
+    {
+        $mainURL = $this->baseUrl . 'groups/promoteParticipants';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+
+    public function demoteParticipants($data)
+    {
+        $mainURL = $this->baseUrl . 'groups/demoteParticipants';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+
+    public function getInviteCode($data)
+    {
+        $mainURL = $this->baseUrl . 'groups/getInviteCode';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+
+    public function updateSetting($data)
+    {
+        $mainURL = $this->baseUrl . 'groups/updateSetting';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+
+    public function updateDescription($data)
+    {
+        $mainURL = $this->baseUrl . 'groups/updateDescription';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
+    
+    public function renameGroup($data)
+    {
+        $mainURL = $this->baseUrl . 'groups/renameGroup';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
 
 }

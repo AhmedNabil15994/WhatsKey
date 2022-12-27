@@ -55,7 +55,6 @@ class Contact extends Model{
 
     static function newPhone($phone,$name){
         $phone = str_replace('@c.us', '', $phone);
-        $phone = str_replace('@g.us', '', $phone);
         $contactObj = self::where('phone',$phone)->first();
         if($contactObj == null){
             $contactObj = new self;
@@ -93,7 +92,7 @@ class Contact extends Model{
     static function dataList($status=null,$id=null,$group_id=null,$withMessageStatus=null) {
         $input = \Request::all();
 
-        $source = self::NotDeleted()->whereHas('NotDeletedGroup')->with(['Group'])->where(function ($query) use ($input) {
+        $source = self::NotDeleted()->whereHas('NotDeletedGroup')->with(['Group'])->where('phone','NOT LIKE','%@g.us')->where(function ($query) use ($input) {
             if (isset($input['id']) && !empty($input['id'])) {
                 $query->where('id', $input['id']);
             } 

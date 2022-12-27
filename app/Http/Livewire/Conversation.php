@@ -44,6 +44,7 @@ class Conversation extends Component
         $this->chat = $data['chat'];
         $this->selected = $data['chat']['id'];
         $this->emit('conversationOpened');
+        $this->emit('refreshDesign');
     }
 
     public function loadMoreMsgs(){
@@ -51,6 +52,7 @@ class Conversation extends Component
         $msgs = ChatMessage::where('chatId',$this->chat['id'])->orderBy('time','DESC')->skip($start)->take($this->page_size);
         $this->page += 1;
         $this->messages = json_decode(json_encode(array_merge($this->messages,ChatMessage::generateObj($msgs,0)['data'])), true);
+        $this->emit('refreshDesign');
     }
 
     public function render()
@@ -76,8 +78,6 @@ class Conversation extends Component
                         }
                         $newMsgs[] = $value;
                     }
-                    // $msg[] = ChatMessage::getData(ChatMessage::getOne($msg['metadata']['quotedMessageId']));
-                    // dd(ChatMessage::getData(ChatMessage::getOne($msg['metadata']['quotedMessageId'])));
                     $msgs = $newMsgs;
                 }
                 $msgs = array_reverse($msgs);
@@ -85,10 +85,10 @@ class Conversation extends Component
                 $msgs[] = $msg;
             }
             $this->messages = $msgs;
-            $this->emit('conversationOpened');
             if($chat['lastMessage']['fromMe'] == 0 && !$chat['muted']){
                 $this->emit('playAudio');
             }
+            $this->emit('refreshDesign');
         }
         // if(isset($chat['lastMessage']) && isset($chat['lastMessage']['id']) && isset($this->messages) && isset($this->messages[0]) && $this->messages[0]['id'] != $chat['lastMessage']['id']){
         //     $this->emitTo('chats','chatsChanges',$data['message'],$data['domain']); 
@@ -117,7 +117,7 @@ class Conversation extends Component
                     if(isset($data['statusInt']) && in_array($data['statusInt'], ['labelled','unlabelled'])){
                         $value = (array) ChatMessage::getData(ChatMessage::getOne($data['messageId']));
                     }
-                }else if ($value['fromMe'] == $incomingFromMe && in_array($data['statusInt'], [1,2,3,])) {
+                }else if ($value['fromMe'] == $incomingFromMe && in_array($data['statusInt'], [3,])) {
                     $value['sending_status'] = $data['statusInt'];
                 }
                 $msgs[] = $value;
@@ -125,6 +125,7 @@ class Conversation extends Component
             $this->messages = $msgs;
             $this->emit('focusInput');
         }
+        $this->emit('refreshDesign');
 
         if($data['chatId'] && $data['statusInt'] == 6){
             // $this->emitTo('chats','chatsChanges',$data['message'],$data['domain']); 
@@ -145,6 +146,7 @@ class Conversation extends Component
             $this->messages = $msgs;
             $this->emit('focusInput');
         }
+        $this->emit('refreshDesign');
 
         if($msgObj->chatId){
             $this->emitTo('chat','lastUpdates',$msgId,$msgObj->chatId,$type,\Session::get('domain')); 
@@ -158,5 +160,6 @@ class Conversation extends Component
             $data = ChatDialog::getData($chatObj);
             $this->chat = json_decode(json_encode($data), true);
         }
+        $this->emit('refreshDesign');
     }
 }

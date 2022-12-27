@@ -32,7 +32,7 @@
 						])
 						@section('pageName',trans('main.livechat'))
 						<div class="d-flex flex-row px-5">
-							<div class="flex-row-auto offcanvas-mobile w-400px w-xl-500px" id="kt_chat_aside">
+							<div class="flex-row-auto offcanvas-mobile w-300px w-xl-400px" id="kt_chat_aside">
 								<div class="card card-custom">
 									<div class="card-body px-3 bg-gray-100" style="padding-top: .5rem; border-radius:5px;">
 										<div class="newMessage p-5 bg-white">
@@ -128,6 +128,7 @@
 							</div>
 
 							<livewire:conversation :wire:key="viewConversation"/>
+							<livewire:contact-details :wire:key="viewDetails"/>
 						</div>
 					</div>
 				</div>
@@ -143,6 +144,7 @@
 		<script src='{{asset('assets/tenant/js/gmaps.js')}}'></script>
 		<script src="{{asset('/assets/tenant/js/locationpicker.jquery.js')}}"></script>
 		<script src="{{asset('assets/tenant/components/livechat.js')}}"></script>
+		<script src="{{asset('assets/tenant/plugins/custom/uppy/uppy.bundle.js')}}"></script>
 		<script src="{{mix('js/app.js')}}"></script>
 	</body>
 </html>

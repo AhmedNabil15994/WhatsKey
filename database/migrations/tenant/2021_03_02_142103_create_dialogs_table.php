@@ -30,6 +30,11 @@ class CreateDialogsTable extends Migration
             $table->integer('announce')->default(0);
             $table->integer('group_restrict')->default(0);
             $table->text('participants')->nullable();
+            $table->integer('disable_read')->default(0);
+            $table->text('background')->nullable();
+            $table->string('send_messages')->nullable();
+            $table->string('edit_info')->nullable();
+            $table->text('group_description')->nullable();
         });
     }
 

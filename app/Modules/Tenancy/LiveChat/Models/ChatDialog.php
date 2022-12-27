@@ -6,7 +6,8 @@ class ChatDialog extends Model{
 
     protected $table = 'dialogs';
     protected $primaryKey = 'id';
-    protected $fillable = ['id','name','image','metadata','pinned','archived','unreadCount','unreadMentionCount','notSpam','readOnly','blocked','modsArr','muted','muted_until','labels','creation','owner','group_restrict','announce','participants'];  
+    protected $fillable = ['id','name','image','metadata','pinned','archived','unreadCount','unreadMentionCount','notSpam','readOnly','blocked','modsArr','muted','muted_until','labels','creation','owner','group_restrict','announce','participants','disable_read','background','send_messages','edit_info','group_description'];  
+
 
     public $timestamps = false;
     public $incrementing = false;
@@ -26,11 +27,22 @@ class ChatDialog extends Model{
         // return $this->labels;
     }
 
+    public function moderatos(){
+        if($this->modsArr != null && $this->modsArr != ''){
+            $related = $this->hasMany(User::class);
+            $related->setQuery(
+                User::whereIn('id', array_unique(unserialize($this->modsArr)))->getQuery()
+            );
+            return $related;
+        }
+        // return $this->labels;
+    }
+
     public function LastMessage(){
         return $this->hasOne(ChatMessage::class,'chatId','id')->ofMany([
             'time' => 'max',
         ], function ($query) {
-            $query->where('time', '!=', null);
+            $query->where('time', '!=', null)->where('type','!=','reaction');
         });
     }
 
@@ -38,7 +50,7 @@ class ChatDialog extends Model{
         return $this->hasOne(ChatMessage::class,'chatId','id')->ofMany([
             'time' => 'max',
         ], function ($query) {
-            $query->where('fromMe',0)->where('time', '!=', null);
+            $query->where('fromMe',0)->where('time', '!=', null)->where('type','!=','reaction');
         });
     }
 
@@ -216,7 +228,10 @@ class ChatDialog extends Model{
             $dataObj->readOnly = $source->readOnly;
 
             $dataObj->modsArr = $source->modsArr != null ? unserialize($source->modsArr) : [];
+            $dataObj->moderatos = $source->modsArr != null && $source->modsArr != '' ? $source->moderatos : [];
             $dataObj->blocked = $source->blocked;
+            $dataObj->disable_read = $source->disable_read;
+            $dataObj->background = $source->background;
             $dataObj->labels = $source->labels;
             $dataObj->labelsArr = $source->labels != null && $source->labels != '' ? $source->labelColors : [];
             $dataObj->muted = $source->muted;
@@ -224,8 +239,12 @@ class ChatDialog extends Model{
             $dataObj->creation = $source->creation;
             $dataObj->owner = $source->owner;
             $dataObj->group_restrict = $source->group_restrict;
+            $dataObj->send_messages = $source->send_messages;
+            $dataObj->edit_info = $source->edit_info;
+            $dataObj->group_description = $source->group_description;
             $dataObj->announce = $source->announce;
-            $dataObj->participants = $source->participants;
+            $dataObj->participants = $source->participants != null && $source->participants != '' ? json_decode($source->participants) : [];
+            $dataObj->reformedPhone = str_contains($source->id, '@g.us') && $source->participants != null ? 'Group '. count(json_decode($source->participants)) .' participants' : self::reformNumber(str_replace('@c.us','',$source->id));
 
             if($metaData == false){
                 // $cats = ContactLabel::where('contact',str_replace('@c.us', '', $source->id))->pluck('category_id');
@@ -279,6 +298,12 @@ class ChatDialog extends Model{
         if($name != null && $name != ''){
             return $name;
         }
+        $chatId = '+'.$chatId;
+        $parts=sscanf($chatId,'%4c%2c%3c%4c');
+        return $parts[0].' '.$parts[1].' '.$parts[2].' '.$parts[3];
+    }
+
+    static function reformNumber($chatId){
         $chatId = '+'.$chatId;
         $parts=sscanf($chatId,'%4c%2c%3c%4c');
         return $parts[0].' '.$parts[1].' '.$parts[2].' '.$parts[3];

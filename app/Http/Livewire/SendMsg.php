@@ -23,7 +23,7 @@ class SendMsg extends Component
     public $msgBody = '';
     public $msgType = 1;
     public $selected;
-    protected $listeners = ['sendMsg','uploadBlob','setReply','setContact','setLocation','forwardMsg','deleteForMeMsg','deleteForAllMsg','starMsg','labelMsg','reactionMessage','repeatHook'];
+    protected $listeners = ['sendMsg','uploadBlob','setReply','setContact','setLocation','forwardMsg','deleteForMeMsg','deleteForAllMsg','starMsg','labelMsg','reactionMessage','repeatHook','removeFile'];
     public $file = '';
     public $dataUrl = '';
     public $originalName = '';
@@ -42,7 +42,19 @@ class SendMsg extends Component
         return view('livewire.send-msg');
     }
 
+    public function removeFile(){
+        $this->msgType = 1;
+        $this->dataUrl = '';
+        $this->file = '';
+        $this->originalName = '';
+    }
+
     public function uploadBlob(){
+        if (session()->has('errorMsg')) {
+            $msg = session()->get('errorMsg');
+            session()->forget('errorMsg');
+            return $this->emit('errorMsg',$msg);
+        }
         $this->msgType = 4;
         $this->dataUrl = Session::get('audioDataURL');
         $this->originalName = Session::get('audioName');
@@ -56,20 +68,8 @@ class SendMsg extends Component
             $file_size = $file_size / (1024 * 1024);
             $file_size = number_format($file_size, 2);
             $this->originalName = $image->getClientOriginalName();
-
-            $uploadedSize = \Helper::getFolderSize(public_path() . '/uploads/' . Session::get('tenant_id') . '/');
-            $totalStorage = Session::get('storageSize');
-            $extraQuotas = UserExtraQuota::getOneForUserByType(Session::get('global_id'), 3);
-            if ($totalStorage + $extraQuotas < (doubleval($uploadedSize) + $file_size) / 1024) {
-                return \TraitsFunc::ErrorMessage(trans('main.storageQuotaError'));
-            }
-
             $myType = explode('/', $image->getMimeType())[1];
-            $message_type = \ImagesHelper::checkChatExtensionType($myType);        
-            $fileName = \ImagesHelper::uploadFileFromRequest('chats', $image, $message_type);
-            if ($image == false || $fileName == false) {
-                return \TraitsFunc::ErrorMessage("Upload Files Failed !!", 400);
-            }
+            $message_type = \ImagesHelper::checkChatExtensionType($myType);     
 
             if($message_type == 'image'){
                 $this->msgType = 2;
@@ -79,6 +79,19 @@ class SendMsg extends Component
                 $this->msgType = 4;
             }elseif ($message_type == 'document') {
                 $this->msgType = 5;
+            }
+
+            $uploadedSize = \Helper::getFolderSize(public_path() . '/uploads/' . Session::get('tenant_id') . '/');
+            $totalStorage = Session::get('storageSize');
+            $extraQuotas = UserExtraQuota::getOneForUserByType(Session::get('global_id'), 3);
+            if ($totalStorage + $extraQuotas < (doubleval($uploadedSize) + $file_size) / 1024) {
+                return $this->emit('errorMsg',trans('main.storageQuotaError'));
+            }
+
+               
+            $fileName = \ImagesHelper::uploadFileFromRequest('chats', $image, $message_type);
+            if ($image == false || $fileName == false) {
+                return $this->emit('errorMsg',"Upload Files Failed !!");
             }
 
             $this->dataUrl = config('app.BASE_URL')  . '/uploads/' . Session::get('tenant_id') . '/chats/' . $fileName;
@@ -104,13 +117,13 @@ class SendMsg extends Component
         $extraQuotas = UserExtraQuota::getOneForUserByType(Session::get('global_id'), 1);
 
         if ($dailyCount + $extraQuotas <= $messagesCount) {
-            return \TraitsFunc::ErrorMessage('Messages Quota Per Day Exceeded!!!');
+            return $this->emit('errorMsg','Messages Quota Per Day Exceeded!!!');
         }
         if (!isset($input['type']) || empty($input['type'])) {
-            return \TraitsFunc::ErrorMessage("Type Field Is Required");
+            return $this->emit('errorMsg',"Type Field Is Required");
         }
         if (!isset($selected) || empty($selected)) {
-            return \TraitsFunc::ErrorMessage("Chat ID Field Is Required");
+            return $this->emit('errorMsg',"Chat ID Field Is Required");
         }
 
         $centralUser = CentralUser::find(User::first()->id);
@@ -130,7 +143,7 @@ class SendMsg extends Component
 
         if($input['type'] == 1) {
             if (!isset($this->msgBody)) {
-                return \TraitsFunc::ErrorMessage("Message Field Is Required");
+                return $this->emit('errorMsg',"Message Field Is Required");
             }
 
             if(mb_substr($this->msgBody, 0, 1) == '@' && ! preg_match('/\s/',$this->msgBody)){
@@ -168,7 +181,9 @@ class SendMsg extends Component
                     $result = $mainWhatsLoopObj->sendImage($sendData);
                 }
                 $metadata['filename'] = $this->originalName;
-            }      
+            }else{
+                return $this->emit('errorMsg','Invalid File!!!');
+            }
         }elseif ($input['type'] == 3) {
             if($this->dataUrl != ''){
                 $message_type = 'video';
@@ -184,7 +199,9 @@ class SendMsg extends Component
                     $result = $mainWhatsLoopObj->sendVideo($sendData);
                 }
                 $metadata['filename'] = $this->originalName;
-            }      
+            } else{
+                return $this->emit('errorMsg','Invalid File!!!');
+            }     
         }elseif ($input['type'] == 4) {
             if($this->dataUrl != ''){
                 $message_type = 'audio';
@@ -196,7 +213,9 @@ class SendMsg extends Component
                     $result = $mainWhatsLoopObj->sendAudio($sendData);
                 }
                 $metadata['filename'] = $this->originalName;
-            }      
+            }else{
+                return $this->emit('errorMsg','Invalid File!!!');
+            }    
         }elseif ($input['type'] == 5) {
             if($this->dataUrl != ''){
                 $message_type = 'document';
@@ -208,10 +227,12 @@ class SendMsg extends Component
                     $result = $mainWhatsLoopObj->sendFile($sendData);
                 }
                 $metadata['filename'] = $this->originalName;
-            }      
+            }else{
+                return $this->emit('errorMsg','Invalid File!!!');
+            }   
         }elseif($input['type'] == 8){
             if (!isset($this->msgBody)) {
-                return \TraitsFunc::ErrorMessage("Message Field Is Required");
+                return $this->emit('errorMsg',"Message Field Is Required");
             }
             $message_type = 'location';
             $sendData['lat'] = $this->lat;
@@ -231,7 +252,7 @@ class SendMsg extends Component
             $metadata['longitude'] =  $this->lng;
         }elseif($input['type'] == 9) {
             if (!isset($this->msgBody)) {
-                return \TraitsFunc::ErrorMessage("Message Field Is Required");
+                return $this->emit('errorMsg',"Message Field Is Required");
             }
 
             $message_type = 'contact';
@@ -250,11 +271,6 @@ class SendMsg extends Component
         }
 
         $result = $result->json();
-        // if (!str_contains($input['chatId'], '@g.us')) {
-        //     $sendData['chatId'] = $sendData['phone'] . '@c.us';
-        // } else {
-        //     $sendData['chatId'] = $input['chatId'];
-        // }
         $sendData['chatId'] = $selected;
 
         if (isset($result['data']) && isset($result['data']['id'])) {
@@ -272,7 +288,7 @@ class SendMsg extends Component
             $lastMessage['chatName'] = $checkMessageObj != null ? $checkMessageObj->chatName : '';
             $lastMessage['type'] = $message_type;
             $lastMessage['sending_status'] = 1;
-            $lastMessage['notified'] = $message_type == 'contact' || (isset($sendData['messageId']) && !empty($sendData['messageId'])) ? 0 : 1;
+            $lastMessage['notified'] = $message_type == 'contact' || (isset($sendData['messageId']) && !empty($sendData['messageId']) || ($message_type == 'text' && (str_contains($bodyData, 'http://') || str_contains($bodyData, 'https://'))) ) ? 0 : 1;
             $messageObj = ChatMessage::newMessage($lastMessage);
             $dialog = ChatDialog::getOne($selected);
             $dialog->last_time = $lastMessage['time'];

@@ -1,5 +1,5 @@
 <div class="flex-row-fluid ml-lg-8" id="kt_chat_content">
-    <div class="card card-custom" style="height: 100%; background: url({{asset('assets/tenant/images/bg-chat.png')}});">
+    <div class="card card-custom" style="height: 100%; background: url({{ ($selected && $chat['background'] ? $chat['background'] : asset('assets/tenant/images/bg-chat.png'))}});">
         <div class="card-header px-1 py-1" style="display: block;min-height: 45px;background:{{$selected ? '#FFF':'transparent'}}"> 
         @if($selected)
         @php
@@ -11,6 +11,9 @@
         <div class="card-body" style="position:relative;padding: 0 1.5rem; {{$selected ? 'background: rgb(156 167 96 / 25%)' : ''}};">
             <div class="scroll scroll-pull scroll-pulls" data-mobile-height="350">
                 <div class="messages" id="messages">
+                    <div class="spinMsgContainer py-3 text-center hidden">
+                        <div class="spinner spinner-track spinner-lg spinner-success mr-15 text-center" style="display: initial;"></div>
+                    </div>
                     <div>
                     @if($selected)
                     @foreach(array_reverse($messages) as $oneMessage)
@@ -28,7 +31,7 @@
                     <div class="clearfix"></div>
                 </div>
             </div>
-            <div id="kt_scrollDown" class="scrollDown text-right float-right hidden">
+            <div id="kt_scrollDown" class="scrollDown text-right float-right {{ !$selected ? 'hidden' : ''}}">
                 <span class="fa-icon fa-icon-xl">
                     <i class="la la-angle-double-down text-white"></i>
                 </span>
@@ -306,6 +309,15 @@
                         <div class="modal-footer">
                             <button class="btn btn-success selectDuration">{{trans('main.save')}}</button>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="uppy">
+                <div class="d-flex uppy-thumbnails hidden">
+                    <div class="uppy-thumbnail-container w-300px">
+                        <div class="uppy-thumbnail"></div> 
+                        <span class="uppy-thumbnail-label"></span>
+                        <span class="uppy-remove-thumbnail"><i class="flaticon2-cancel-music"></i></span>
                     </div>
                 </div>
             </div>

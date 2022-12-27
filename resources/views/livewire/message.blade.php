@@ -68,7 +68,9 @@
                         </div>
                     </div>
                 </div>
-
+                @if(str_contains($msg['chatId'], '@g.us'))
+                <span class="text-muted mb-2 d-block">{{str_replace('@c.us','',$msg['author'])}}</span>
+                @endif
                 <livewire:message-reply :wire:key="'msgReply'.time().$id" :msg="$msg" :chatName="$chatName"/>
                 @if($msg['message_type'] == 'text')
                 <livewire:messages.text-msg :msg="$msg" :wire:key="'msg'.time().$id" :chatName="$chatName"/>

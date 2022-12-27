@@ -18,7 +18,6 @@ class Chat extends Component
     {
         $chat = json_decode(json_encode($chat), true);
         $this->chat = $chat;
-        // dd($this->chat);
     }
 
     public function render()
@@ -28,10 +27,16 @@ class Chat extends Component
 
     public function openMessages($chatId){
         if(!Session::has('selected_chat_id') || (Session::has('selected_chat_id') && Session::get('selected_chat_id') != $chatId)){
+            if(!$this->chat['disable_read']){
+                $mainWhatsLoopObj = new \OfficialHelper();
+                $result = $mainWhatsLoopObj->readChat(str_contains($this->chat['id'], '@g.us') ? ['chat'=>$this->chat['id']] : ['phone'=>$this->chat['id']]);
+            }
             $this->emitTo('conversation','loadMessages',[
                 'chat' => $this->chat,
                 'messages' => ChatMessage::dataList($this->chat['id'], 30),
             ]); 
+
+            $this->emitTo('contact-details','setSelected',(array) $this->chat);
         }
         // dd(ChatMessage::dataList($this->chat['id'], 30)['data']);
         Session::put('selected_chat_id',$chatId);
@@ -47,6 +52,7 @@ class Chat extends Component
             $chat['lastMessage'] = json_decode(json_encode($msgObj), true);
             $this->chat =  $chat;
         }
+        $this->emit('refreshDesign');
     }
 
     // public function changeDialogStatus($chatId){

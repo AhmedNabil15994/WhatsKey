@@ -28,10 +28,10 @@
 
     <div class="replyBody hidden">
         @if($msg['message_type'] == 'video')
-        <span class="text-dark-50 font-weight-bold mb-1"><i class="icon-xl la la-video"></i> {{($msg['caption'] != '' ? $msg['caption'] : $msg['file_name']) . ' ('.$msg['metadata']['seconds'].' '.trans('main.second').')'}}</span>
+        <span class="text-dark-50 font-weight-bold mb-1"><i class="icon-xl la la-video"></i> {{($msg['caption'] != '' ? $msg['caption'] : $msg['file_name']) . ' ('.@$msg['metadata']['seconds'].' '.trans('main.second').')'}}</span>
 
         @elseif($msg['message_type'] == 'audio')
-        <span class="text-dark-50 font-weight-bold mb-1"><i class="icon-xl la la-headphones"></i> {{@$msg['file_name'] . ' ('.$msg['metadata']['seconds'].' '.trans('main.second').')'}}</span>
+        <span class="text-dark-50 font-weight-bold mb-1"><i class="icon-xl la la-headphones"></i> {{@$msg['file_name'] . ' ('.@$msg['metadata']['seconds'].' '.trans('main.second').')'}}</span>
 
         @elseif($msg['message_type'] == 'image')
         <span class="text-dark-50 font-weight-bold mb-1"><i class="icon-xl la la-camera"></i> {{$msg['caption'] != '' ? $msg['caption'] : $msg['file_name']}}</span>

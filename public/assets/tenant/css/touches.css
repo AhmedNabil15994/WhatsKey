@@ -363,6 +363,19 @@ html[dir="ltr"] .chatItem .card-toolbar{
 .scroll-pulls .ps__rail-y .ps__thumb-y{
 	background-color: #fff !important;
 }
+
+.scroll-pulld:hover .ps__rail-y{
+	opacity: 1 !important;	
+}
+.scroll-pulld .ps__rail-y{
+	display: block;
+	right: auto !important;
+	left: 14px !important;
+	width: 4px !important;
+}
+.scroll-pulld .ps__rail-y .ps__thumb-y{
+	background-color: #e4e6ef !important;
+}
 .replyMsg{
 	cursor: pointer;
 }
@@ -602,4 +615,73 @@ html[dir="ltr"] .newGroup .newGroup-icon{
 }
 html[dir="ltr"] .newGroup emoji-picker{
 	right: 30px;
+}
+.contactInfo{
+/*	display: none;*/
+}
+
+
+.emoji-icon{
+	cursor: pointer;
+	position: absolute;
+	bottom: 7px;
+	left:3px;
+}
+.form-group.textWrap emoji-picker{
+	position:absolute;
+	top:0;
+	z-index: 999;
+}
+
+.recordAnimation{
+  	position: relative;
+  	width: 50px;
+    height: 25px;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.recordAnimation span {
+  display: block;
+  bottom: 0px;
+  width: 9px;
+  height: 5px;
+  background: #ddd;
+  position: absolute;
+  animation: audio-wave 1.5s infinite ease-in-out;
+}
+
+.recordAnimation span:nth-child(1) {
+	left: 0;
+	animation-delay: 0.0s;
+}
+
+.recordAnimation span:nth-child(2) {
+	left: 11px;
+	animation-delay: 0.2s;
+}
+
+.recordAnimation span:nth-child(3) {
+	left: 22px;
+	animation-delay: 0.4s;
+}
+
+.recordAnimation span:nth-child(4) {
+	left: 33px;
+	animation-delay: 0.6s;
+}
+
+.recordAnimation span:nth-child(5) {
+	left: 44px;
+	animation-delay: 0.8s;
+}
+
+@keyframes audio-wave {
+    0% {height:5px;transform:translateY(0px);background:#ddd;}
+    25% {height:20px;transform:translateY(10px);background:#ccc;}
+/*effect is to animate the height of each span from 5px to 30px*/
+/*translateY makes Y axis move down to give the effect that it is growing from the center*/
+
+    50% {height:5px;transform:translateY(0px);background:#ddd;}
+    100% {height:5px;transform:translateY(0px);background:#ddd;}
 }
