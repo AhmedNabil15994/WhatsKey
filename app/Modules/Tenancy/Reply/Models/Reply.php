@@ -8,7 +8,7 @@ class Reply extends Model{
     use \TraitsFunc;
 
     protected $table = 'quick_replies';
-    protected $fillable = ['id','channel','name_ar','name_en','description_ar','description_en','status','created_by','created_at'];    
+    protected $fillable = ['id','channel','name_ar','name_en','description_ar','description_en','reply_id','status','created_by','created_at'];    
     protected $primaryKey = 'id';
     public $timestamps = false;
 
@@ -18,7 +18,7 @@ class Reply extends Model{
             ->first();
     }
 
-    static function dataList($status=null) {
+    static function dataList($status=null,$noUserReplies=0) {
         $input = \Request::all();
 
         $source = self::NotDeleted()->where(function ($query) use ($input) {
@@ -36,6 +36,11 @@ class Reply extends Model{
                     }
         
                 });
+        if($noUserReplies == 1){
+            $source->where('reply_id',null);
+        }else if($noUserReplies == 2){
+            $source->where('reply_id','!=',null);
+        }
         if($status != null){
             $source->where('status',$status);
         }
@@ -71,9 +76,10 @@ class Reply extends Model{
         $data->description_ar = $source->description_ar;
         $data->description_en = $source->description_en;
         $data->description = $source->{'description_'.(defined(LANGUAGE_PREF) ? LANGUAGE_PREF : 'ar')};
+        $data->reply_id = $source->reply_id;
         $data->status = $source->status;
         $data->sort = $source->sort;
-        $data->created_at = \Helper::formatDate($source->created_at);
+        $data->created_at = $source->created_at != null ? \Helper::formatDate($source->created_at) : \Helper::formatDate($source->updated_at);
         return $data;
     }
 

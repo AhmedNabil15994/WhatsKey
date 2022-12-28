@@ -88,6 +88,10 @@ return [
     'WAAccountController@syncDialogs' => 'subscription',
     'WAAccountController@syncContacts' => 'subscription',
     'WAAccountController@syncLabels' => 'subscription',
+    'WAAccountController@syncProducts' => 'subscription',
+    'WAAccountController@syncCollections' => 'subscription',
+    'WAAccountController@syncReplies' => 'subscription',
+    'WAAccountController@syncOrders' => 'subscription',
     'WAAccountController@restoreAccountSettings' => 'subscription',
     'WAAccountController@clearMessagesQueue' => 'subscription',
 
@@ -110,15 +114,6 @@ return [
     'TicketControllers@deleteImage' => 'deleteImage-ticket',
     'TicketControllers@addComment' => 'addComment-ticket',
     'TicketControllers@removeComment' => 'deleteComment-ticket',
-
-    'CategoryControllers@index' => 'list-categories',
-    'CategoryControllers@edit' => 'edit-category',
-    'CategoryControllers@update' => 'edit-category',
-    'CategoryControllers@fastEdit' => 'edit-category',
-    'CategoryControllers@add' => 'add-category',
-    'CategoryControllers@create' => 'add-category',
-    'CategoryControllers@delete' => 'delete-category',
-    'CategoryControllers@syncLabels' => 'sync-categories',
 
     'UserStorageControllers@index' => 'list-storage',
     'UserStorageControllers@bots' => 'list-storage',
@@ -200,7 +195,39 @@ return [
     'TemplateMsgControllers@copy' => 'copy-template-message',
     'TemplateMsgControllers@delete' => 'delete-template-message',
 
+    // ********************* Business ************************** //
+    'CategoryControllers@index' => 'list-categories',
+    'CategoryControllers@edit' => 'edit-category',
+    'CategoryControllers@update' => 'edit-category',
+    'CategoryControllers@fastEdit' => 'edit-category',
+    'CategoryControllers@add' => 'add-category',
+    'CategoryControllers@create' => 'add-category',
+    'CategoryControllers@delete' => 'delete-category',
+    'CategoryControllers@syncLabels' => 'sync-categories',
 
+    'QuickRepliesControllers@index' => 'list-quickReplies',
+    'QuickRepliesControllers@edit' => 'edit-quickReply',
+    'QuickRepliesControllers@update' => 'edit-quickReply',
+    'QuickRepliesControllers@delete' => 'delete-quickReply',
+
+    'WACollectionControllers@index' => 'list-collections',
+
+    'ProductControllers@index' => 'list-products',
+    'ProductControllers@edit' => 'edit-product',
+    'ProductControllers@update' => 'edit-product',
+    'ProductControllers@fastEdit' => 'edit-product',
+    'ProductControllers@view' => 'view-product',
+    'ProductControllers@add' => 'add-product',
+    'ProductControllers@create' => 'add-product',
+    'ProductControllers@delete' => 'delete-product',
+    'ProductControllers@uploadImage' => 'add-product',
+    'ProductControllers@deleteImage' => 'deleteImage-product',
+
+    'OrderControllers@index' => 'list-orders',
+    'OrderControllers@view' => 'view-order',
+
+
+    /************************** In Review ********************/
     'SubscriptionControllers@packages' => 'general',
     'SubscriptionControllers@updateSubscription' => 'general',
     'SubscriptionControllers@postBundle' => 'general',

@@ -140,6 +140,7 @@ class CategoryControllers extends Controller {
             return Datatables::of($data['data'])->make(true);
         }
         $data['designElems'] = $this->getData();
+        $data['disAdd'] = 1;
         return view('Tenancy.Template.Views.index')->with('data', (object) $data);
     }
 

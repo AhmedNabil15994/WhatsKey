@@ -22,6 +22,7 @@ class CreateQuickRepliesTable extends Migration
             $table->text('description_en')->nullable();
             $table->integer('status')->nullable();
             $table->integer('sort')->nullable();
+            $table->string('reply_id')->nullable();
             $table->integer('created_by')->nullable();
             $table->dateTime('created_at')->nullable();
             $table->integer('updated_by')->nullable();

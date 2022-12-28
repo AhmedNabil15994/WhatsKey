@@ -43,7 +43,7 @@
 <input type="hidden" name="tenant" value="1">
 @endif
 
-@if($data->designElems['mainData']['url'] == 'groupMsgs' || $data->designElems['mainData']['url'] == 'tickets' || $data->designElems['mainData']['url'] == 'invoices' || $data->designElems['mainData']['name'] == 'whatsapp-bankTransfers')
+@if($data->designElems['mainData']['url'] == 'groupMsgs' || $data->designElems['mainData']['url'] == 'tickets' || $data->designElems['mainData']['url'] == 'invoices' || $data->designElems['mainData']['name'] == 'orders' || $data->designElems['mainData']['name'] == 'products')
 <input type="hidden" name="data-tab" value="{{ \Helper::checkRules('view-'.$data->designElems['mainData']['nameOne']) }}">
 @endif
 
@@ -145,7 +145,7 @@ $varObj = \App\Models\Variable::getVar('ME');
             <!--end::Dropdown-->
             @if(!isset($data->dis) || $data->dis != true)
 
-            @if(\Helper::checkRules('add-'.$data->designElems['mainData']['nameOne']))
+            @if(\Helper::checkRules('add-'.$data->designElems['mainData']['nameOne']) && (!isset($data->disAdd) || $data->disAdd != true))
             <!--begin::Button-->
             <a class="btn btn-light-success font-weight-bolder mr-2" href="{{ URL::to('/'.$data->designElems['mainData']['url'].'/add') }}">
                 <span class="svg-icon svg-icon-md">
@@ -160,7 +160,7 @@ $varObj = \App\Models\Variable::getVar('ME');
             <!--end::Button-->
             @endif
 
-            @if(\Helper::checkRules('edit-'.$data->designElems['mainData']['nameOne']) && $data->designElems['mainData']['url'] != 'groupMsgs')
+            @if(\Helper::checkRules('edit-'.$data->designElems['mainData']['nameOne']) && $data->designElems['mainData']['url'] != 'groupMsgs'  && (!isset($data->disFastEdit) || $data->disFastEdit != true))
                 <a href="#" class="edit quickEdit btn btn-icon btn-light-warning btn-md mr-2" data-toggle="tooltip" data-original-title="{{ trans('main.fastEdit') }}"><i class="flaticon2-edit"></i></a>
             @endif
 

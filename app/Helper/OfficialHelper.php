@@ -871,13 +871,67 @@ class OfficialHelper
     /*----------------------------------------------------------
     Business Profile
     ----------------------------------------------------------*/
-    public function labels($data)
+    public function collections()
+    {
+        $mainURL = $this->baseUrl . 'business/collections';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL);
+    }
+
+    public function orders()
+    {
+        $mainURL = $this->baseUrl . 'business/orders';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL);
+    }
+
+    public function products()
+    {
+        $mainURL = $this->baseUrl . 'business/products';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL);
+    }
+
+    public function replies()
+    {
+        $mainURL = $this->baseUrl . 'business/replies';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->get($mainURL);
+    }
+
+    public function updateReply($data)
+    {
+        $mainURL = $this->baseUrl . 'business/replies/update';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL,$data);
+    }
+
+    public function deleteReply($data)
+    {
+        $mainURL = $this->baseUrl . 'business/replies/delete';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL,$data);
+    }
+
+    public function labels()
     {
         $mainURL = $this->baseUrl . 'business/labels';
         return Http::withToken($this->authToken)->withHeaders([
             'CHANNELID' => $this->instanceId,
             'CHANNELTOKEN' => $this->token,
-        ])->get($mainURL, $data);
+        ])->get($mainURL);
     }
 
     public function sendProduct($data){

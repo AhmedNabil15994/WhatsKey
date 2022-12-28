@@ -10,20 +10,16 @@ class CreateOrdersTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string('channel')->nullable();
             $table->string('order_id');
-            $table->double('subtotal');
-            $table->double('tax');
-            $table->double('total');
-            $table->string('message_id');
-            $table->text('products');
-            $table->string('client_id');
-            $table->integer('products_count')->nullable();
-            $table->integer('payment_type')->nullable();
-            $table->string('coupon')->nullable();
-            $table->string('total_after_discount')->nullable();
-            $table->integer('status');
-            $table->string('created_at')->nullable();
+            $table->text('token')->nullable();
+            $table->string('title')->nullable();
+            $table->string('sellerJid')->nullable();
+            $table->integer('itemCount')->nullable();
+            $table->string('price')->nullable();
+            $table->string('currency')->nullable();
+            $table->string('time')->nullable();
+            $table->string('chatId')->nullable();
+            $table->text('products')->nullable();
         });
     }
 

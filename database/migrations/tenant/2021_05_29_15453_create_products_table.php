@@ -13,8 +13,12 @@ class CreateProductsTable extends Migration
             $table->string('product_id');
             $table->string('name');
             $table->string('currency');
-            $table->double('price');
-            $table->integer('category_id')->nullable();
+            $table->string('price');
+            $table->string('collection_id')->nullable();
+            $table->text('description')->nullable();
+            $table->string('availability')->nullable();
+            $table->string('review_status')->nullable();
+            $table->integer('is_hidden')->nullable();
             $table->text('images');
         });
     }

@@ -5,6 +5,11 @@ use App\Jobs\SyncDialogsJob;
 use App\Jobs\SyncLabelsJob;
 use App\Jobs\SyncContactsJob;
 use App\Jobs\SyncMessagesJob;
+use App\Jobs\SyncRepliesJob;
+use App\Jobs\SyncOrdersJob;
+use App\Jobs\SyncProductsJob;
+use App\Jobs\SyncCollectionsJob;
+
 use App\Models\Addons;
 use App\Models\BankAccount;
 use App\Models\Category;
@@ -262,16 +267,99 @@ class WAAccountController extends Controller
 
     public function syncLabels()
     {
-        $data = ['page'=>1,'page_size'=>1000000];
         $varObj = Variable::getVar('ME');
         if($varObj && json_decode($varObj)->isBussines){
             $mainWhatsLoopObj = new \OfficialHelper();
-            $updateResult = $mainWhatsLoopObj->labels($data);
+            $updateResult = $mainWhatsLoopObj->labels();
             $updateResult = $updateResult->json();
             if (isset($updateResult['data']) && !empty($updateResult['data'])) {
                 try {
                     // dispatch(new SyncLabelsJob($updateResult['data']))->onConnection('cjobs');
                     dispatch(new SyncLabelsJob($updateResult['data']))->onConnection('database');
+                } catch (Exception $e) {
+
+                }
+            }
+        }
+
+        Session::flash('success', trans('main.inPrgo'));
+        return redirect()->back();
+    }
+
+    public function syncReplies()
+    {
+        $varObj = Variable::getVar('ME');
+        if($varObj && json_decode($varObj)->isBussines){
+            $mainWhatsLoopObj = new \OfficialHelper();
+            $updateResult = $mainWhatsLoopObj->replies();
+            $updateResult = $updateResult->json();
+            if (isset($updateResult['data']) && !empty($updateResult['data'])) {
+                try {
+                    // dispatch(new SyncRepliesJob($updateResult['data']))->onConnection('cjobs');
+                    dispatch(new SyncRepliesJob($updateResult['data']))->onConnection('database');
+                } catch (Exception $e) {
+
+                }
+            }
+        }
+
+        Session::flash('success', trans('main.inPrgo'));
+        return redirect()->back();
+    }
+
+    public function syncOrders()
+    {
+        $varObj = Variable::getVar('ME');
+        if($varObj && json_decode($varObj)->isBussines){
+            $mainWhatsLoopObj = new \OfficialHelper();
+            $updateResult = $mainWhatsLoopObj->orders();
+            $updateResult = $updateResult->json();
+            if (isset($updateResult['data']) && !empty($updateResult['data'])) {
+                try {
+                    // dispatch(new SyncOrdersJob($updateResult['data']))->onConnection('cjobs');
+                    dispatch(new SyncOrdersJob($updateResult['data']))->onConnection('database');
+                } catch (Exception $e) {
+
+                }
+            }
+        }
+
+        Session::flash('success', trans('main.inPrgo'));
+        return redirect()->back();
+    }
+
+    public function syncProducts()
+    {
+        $varObj = Variable::getVar('ME');
+        if($varObj && json_decode($varObj)->isBussines){
+            $mainWhatsLoopObj = new \OfficialHelper();
+            $updateResult = $mainWhatsLoopObj->products();
+            $updateResult = $updateResult->json();
+            if (isset($updateResult['data']) && !empty($updateResult['data'])) {
+                try {
+                    // dispatch(new SyncProductsJob($updateResult['data']))->onConnection('cjobs');
+                    dispatch(new SyncProductsJob($updateResult['data']))->onConnection('database');
+                } catch (Exception $e) {
+
+                }
+            }
+        }
+
+        Session::flash('success', trans('main.inPrgo'));
+        return redirect()->back();
+    }
+
+    public function syncCollections()
+    {
+        $varObj = Variable::getVar('ME');
+        if($varObj && json_decode($varObj)->isBussines){
+            $mainWhatsLoopObj = new \OfficialHelper();
+            $updateResult = $mainWhatsLoopObj->collections();
+            $updateResult = $updateResult->json();
+            if (isset($updateResult['data']) && !empty($updateResult['data'])) {
+                try {
+                    // dispatch(new SyncCollectionsJob($updateResult['data']))->onConnection('cjobs');
+                    dispatch(new SyncCollectionsJob($updateResult['data']))->onConnection('database');
                 } catch (Exception $e) {
 
                 }

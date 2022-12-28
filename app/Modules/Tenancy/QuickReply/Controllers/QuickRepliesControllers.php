@@ -10,16 +10,16 @@ use DataTables;
 use Storage;
 
 
-class RepliesControllers extends Controller {
+class QuickRepliesControllers extends Controller {
 
     use \TraitsFunc;
 
     public function getData(){
         $data['mainData'] = [
-            'title' => trans('main.replies'),
-            'url' => 'replies',
-            'name' => 'replies',
-            'nameOne' => 'reply',
+            'title' => trans('main.quickReplies'),
+            'url' => 'quickReplies',
+            'name' => 'quickReplies',
+            'nameOne' => 'quickReply',
             'modelName' => 'Reply',
             'icon' => ' far fa-comment-alt',
             'sortName' => 'name_'.LANGUAGE_PREF,
@@ -37,13 +37,7 @@ class RepliesControllers extends Controller {
                 'type' => 'text',
                 'class' => 'form-control datatable-input',
                 'index' => '1',
-                'label' => trans('main.titleAr'),
-            ],
-            'name_en' => [
-                'type' => 'text',
-                'class' => 'form-control datatable-input',
-                'index' => '2',
-                'label' => trans('main.titleEn'),
+                'label' => trans('main.title'),
             ],
         ];
 
@@ -56,17 +50,17 @@ class RepliesControllers extends Controller {
                 'anchor-class' => '',
             ],
             'name_ar' => [
-                'label' => trans('main.titleAr'),
+                'label' => trans('main.title'),
                 'type' => '',
                 'className' => 'edits',
                 'data-col' => 'name_ar',
                 'anchor-class' => 'editable',
             ],
-            'name_en' => [
-                'label' => trans('main.titleEn'),
+            'description_ar' => [
+                'label' => trans('main.description'),
                 'type' => '',
                 'className' => 'edits',
-                'data-col' => 'name_en',
+                'data-col' => 'description_ar',
                 'anchor-class' => 'editable',
             ],
             'actions' => [
@@ -82,29 +76,16 @@ class RepliesControllers extends Controller {
             'name_ar' => [
                 'type' => 'text',
                 'class' => 'form-control',
-                'label' => trans('main.titleAr'),
+                'label' => trans('main.title'),
                 'specialAttr' => '',
                 'required' => true,
-            ],
-            'name_en' => [
-                'type' => 'text',
-                'class' => 'form-control',
-                'label' => trans('main.titleEn'),
-                'specialAttr' => '',
             ],
             'description_ar' => [
                 'type' => 'textarea',
                 'class' => 'form-control',
-                'label' => trans('main.descriptionAr'),
+                'label' => trans('main.description'),
                 'specialAttr' => '',
             ],
-            'description_en' => [
-                'type' => 'textarea',
-                'class' => 'form-control',
-                'label' => trans('main.descriptionEn'),
-                'specialAttr' => '',
-            ],
-            
         ];
         return $data;
     }
@@ -127,10 +108,12 @@ class RepliesControllers extends Controller {
 
     public function index(Request $request) {
         if($request->ajax()){
-            $data = Reply::dataList(null,1);
+            $data = Reply::dataList(null,2);
             return Datatables::of($data['data'])->make(true);
         }
         $data['designElems'] = $this->getData();
+        $data['disAdd'] = 1;
+        $data['disFastEdit'] = 1;
         return view('Tenancy.Template.Views.index')->with('data', (object) $data);
     }
 
@@ -165,69 +148,41 @@ class RepliesControllers extends Controller {
             return redirect()->back();
         }
 
+        if($dataObj->reply_id){
+            $mainWhatsLoopObj = new \OfficialHelper();
+            $updateResult = $mainWhatsLoopObj->updateReply([
+                'reply_id' => $dataObj->reply_id,
+                'message' => $input['description_ar'],
+                'shortcut' => $input['name_ar']
+            ]);
+            $updateResult = $updateResult->json();
+            if(!isset($updateResult) || !isset($updateResult['data']) || !isset($updateResult['data']['id'])){
+                Session::flash('error', $updateResult['status']['message']);
+                return \Redirect::back()->withInput();
+            }
+        }
+
         $dataObj->channel = Session::get('channelCode');
         $dataObj->name_ar = $input['name_ar'];
-        $dataObj->name_en = $input['name_en'];
+        $dataObj->name_en = $input['name_ar'];
         $dataObj->description_ar = $input['description_ar'];
-        $dataObj->description_en = $input['description_en'];
+        $dataObj->description_en = $input['description_ar'];
         $dataObj->updated_at = DATE_TIME;
         $dataObj->updated_by = USER_ID;
         $dataObj->save();
-
         Session::flash('success', trans('main.editSuccess'));
         return \Redirect::back()->withInput();
-    }
-
-    public function add() {
-        $data['designElems'] = $this->getData();
-        $data['designElems']['mainData']['title'] = trans('main.add') . ' '.trans('main.replies') ;
-        $data['designElems']['mainData']['icon'] = 'fa fa-plus';
-        return view('Tenancy.Template.Views.add')->with('data', (object) $data);
-    }
-
-    public function create() {
-        $input = \Request::all();
-        
-        $validate = $this->validateInsertObject($input);
-        if($validate->fails()){
-            Session::flash('error', $validate->messages()->first());
-            return redirect()->back()->withInput();
-        }
-        
-
-        $dataObj = new Reply;
-        $dataObj->channel = Session::get('channelCode');
-        $dataObj->name_ar = $input['name_ar'];
-        $dataObj->name_en = !empty($input['name_en']) ? $input['name_en'] : ' ';
-        $dataObj->description_ar = $input['description_ar'];
-        $dataObj->description_en = $input['description_en'];
-        $dataObj->sort = Reply::newSortIndex();
-        $dataObj->status = 1;
-        $dataObj->created_at = DATE_TIME;
-        $dataObj->created_by = USER_ID;
-        $dataObj->save();
-
-        Session::flash('success', trans('main.addSuccess'));
-        return redirect()->to($this->getData()['mainData']['url'].'/');
     }
 
     public function delete($id) {
         $id = (int) $id;
         $dataObj = Reply::getOne($id);
-        return \Helper::globalDelete($dataObj);
-    }
-
-    public function fastEdit() {
-        $input = \Request::all();
-        foreach ($input['data'] as $item) {
-            $col = $item[1];
-            $dataObj = Reply::find($item[0]);
-            $dataObj->$col = $item[2];
-            $dataObj->updated_at = DATE_TIME;
-            $dataObj->updated_by = USER_ID;
-            $dataObj->save();
+        if($dataObj && $dataObj->reply_id){
+            $mainWhatsLoopObj = new \OfficialHelper();
+            $updateResult = $mainWhatsLoopObj->deleteReply([
+                'reply_id' => $dataObj->reply_id,
+            ]);
+            return \Helper::globalDelete($dataObj);
         }
-
-        return \TraitsFunc::SuccessResponse(trans('main.editSuccess'));
     }
 }

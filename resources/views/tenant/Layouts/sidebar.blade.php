@@ -243,8 +243,8 @@
                 $varObj = \App\Models\Variable::getVar('ME');
                 @endphp
                 @if($varObj && json_decode($varObj)->isBussines)
-                @if(\Helper::checkRules('list-categories,list-businessInfo,list-quick-replies,list-collections,list-products,list-orders') || IS_ADMIN)
-                <li class="menu-item menu-item-submenu {{Active(URL::to('/categories*'),'menu-item-open')}}" aria-haspopup="true" data-menu-toggle="hover">
+                @if(\Helper::checkRules('list-categories,list-businessInfo,list-quickReplies,list-collections,list-products,list-orders') || IS_ADMIN)
+                <li class="menu-item menu-item-submenu {{Active(URL::to('/categories*'),'menu-item-open')}} {{Active(URL::to('/quickReplies*'),'menu-item-open')}} {{Active(URL::to('/orders*'),'menu-item-open')}} {{Active(URL::to('/collections*'),'menu-item-open')}} {{Active(URL::to('/products*'),'menu-item-open')}} {{Active(URL::to('/businessProfile*'),'menu-item-open')}}" aria-haspopup="true" data-menu-toggle="hover">
                     <a href="javascript:;" class="menu-link menu-toggle">
                         <span class="fa-icon fa-icon-2x">
                             <i class="icon-2x la la-group text-primary"></i>
@@ -262,7 +262,7 @@
                             </li>
 
                             @if(\Helper::checkRules('list-businessInfo') || IS_ADMIN)
-                            <li class="menu-item {{ Active(URL::to('/businessProfile'),'menu-item-active') }}" aria-haspopup="true">
+                            <li class="menu-item {{ Active(URL::to('/businessProfile*'),'menu-item-active') }}" aria-haspopup="true">
                                 <a href="{{URL::to('/businessProfile')}}" class="menu-link">
                                     <i class="menu-bullet menu-bullet-dot">
                                         <span></span>
@@ -273,7 +273,7 @@
                             @endif
 
                             @if(\Helper::checkRules('list-categories') || IS_ADMIN)
-                            <li class="menu-item {{ Active(URL::to('/categories'),'menu-item-active') }}" aria-haspopup="true">
+                            <li class="menu-item {{ Active(URL::to('/categories*'),'menu-item-active') }}" aria-haspopup="true">
                                 <a href="{{URL::to('/categories')}}" class="menu-link">
                                     <i class="menu-bullet menu-bullet-dot">
                                         <span></span>
@@ -283,8 +283,8 @@
                             </li>
                             @endif
 
-                            @if(\Helper::checkRules('list-quick-replies') || IS_ADMIN)
-                            <li class="menu-item {{ Active(URL::to('/quickReplies'),'menu-item-active') }}" aria-haspopup="true">
+                            @if(\Helper::checkRules('list-quickReplies') || IS_ADMIN)
+                            <li class="menu-item {{ Active(URL::to('/quickReplies*'),'menu-item-active') }}" aria-haspopup="true">
                                 <a href="{{URL::to('/quickReplies')}}" class="menu-link">
                                     <i class="menu-bullet menu-bullet-dot">
                                         <span></span>
@@ -295,7 +295,7 @@
                             @endif
                             
                             @if(\Helper::checkRules('list-collections') || IS_ADMIN)
-                            <li class="menu-item {{ Active(URL::to('/collections'),'menu-item-active') }}" aria-haspopup="true">
+                            <li class="menu-item {{ Active(URL::to('/collections*'),'menu-item-active') }}" aria-haspopup="true">
                                 <a href="{{URL::to('/collections')}}" class="menu-link">
                                     <i class="menu-bullet menu-bullet-dot">
                                         <span></span>
@@ -306,7 +306,7 @@
                             @endif
 
                             @if(\Helper::checkRules('list-products') || IS_ADMIN)
-                            <li class="menu-item {{ Active(URL::to('/products'),'menu-item-active') }}" aria-haspopup="true">
+                            <li class="menu-item {{ Active(URL::to('/products*'),'menu-item-active') }}" aria-haspopup="true">
                                 <a href="{{URL::to('/products')}}" class="menu-link">
                                     <i class="menu-bullet menu-bullet-dot">
                                         <span></span>
@@ -317,7 +317,7 @@
                             @endif
 
                             @if(\Helper::checkRules('list-orders') || IS_ADMIN)
-                            <li class="menu-item {{ Active(URL::to('/orders'),'menu-item-active') }}" aria-haspopup="true">
+                            <li class="menu-item {{ Active(URL::to('/orders*'),'menu-item-active') }}" aria-haspopup="true">
                                 <a href="{{URL::to('/orders')}}" class="menu-link">
                                     <i class="menu-bullet menu-bullet-dot">
                                         <span></span>

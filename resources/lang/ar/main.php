@@ -401,7 +401,8 @@ return [
 	'syncAll' => 'مزامنة جميع الرسائل',
 	'syncContacts' => 'مزامنة جهات الاتصال',
 	'syncDialogs' => 'مزامنة المحادثات',
-	'syncOrdersProducts' => 'مزامنة كتالوج ومنتجات واتساب',
+	'syncCatalog' => 'مزامنة كتالوج واتساب',
+	'syncProducts' => 'مزامنة منتجات واتساب',
 	'restoreAccountSettings' => 'مسح جميع البيانات',
 	'reestablish' => 'معاودة الاتصال',
 	'closeConn' => 'اغلاق الاتصال',
@@ -748,6 +749,7 @@ return [
 	'resubscribe_b2' => 'تغيير الاشتراك',
 
 	'products_count' => 'عدد المنتجات في السلة: ',
+	'productsCount' => 'عدد المنتجات',
 
 	'specsMemb' => 'يمكنك انشاء باقتك المخصصة بمميزات متعددة وأسعار مناسبة',
 	'startsFrom' => 'ابتداء من',
@@ -926,6 +928,7 @@ return [
 	'businessInfo' => 'معلومات الحساب التجاري',
 	'quickReplies' => 'الردود السريعة',
 	'collections' => 'تصنيفات المنتجات',
+	'collection' => 'تصنيف المنتجات',
 	'you' => 'انت',
 	'audio' => 'ملف صوتي',
 	'sticker' => 'Sticker',
@@ -949,6 +952,19 @@ return [
 	'chatBackground' => 'خلفية المحادثة',
 	'groupName' => 'اسم المجموعة',
 	'groupDescription' => 'وصف المجموعة',
+	'syncReplies' => 'مزامنة الردود السريعة',
+	'syncOrders' => 'مزامنة الطلبات',
+	'order_id' => 'رقم الطلب',
+	'order_token' => 'رقم المرجع',
+	'order_date' => 'تاريخ الطلب',
+	'order_details' => 'تفاصيل الطلب',
+	'unitPrice' => 'سعر القطعة',
+	'productId' => 'Product Id',
+	'availability' => 'حالة التوافر',
+	'review_status' => 'حالة المراجعة',
+	'addNewProduct' => 'اضافة منتج جديد',
+	'isHidden' => 'عرض المنتج',
+
 
 	'groupChatInvite' => 'Group Chat Invite',
 	'viewGroup' => 'View Group',
@@ -970,4 +986,5 @@ return [
 	'abilityToSendMessages' => 'Ability To Send In Group',
 	'abilityToEdit' => 'Ability To Edit Group Info',
 	'admins' => 'Admins',
+	'can_appeal' => 'Can Appeal',
 ];

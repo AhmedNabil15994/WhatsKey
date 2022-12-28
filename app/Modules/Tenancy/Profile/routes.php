@@ -28,6 +28,10 @@ Route::group(['prefix' => '/profile'] , function () {
         Route::get('/syncDialogs', [$controller2,'syncDialogs']);
         Route::get('/syncContacts', [$controller2,'syncContacts']);
         Route::get('/syncLabels', [$controller2,'syncLabels']);
+        Route::get('/syncCollections', [$controller2,'syncCollections']);
+        Route::get('/syncProducts', [$controller2,'syncProducts']);
+        Route::get('/syncReplies', [$controller2,'syncReplies']);
+        Route::get('/syncOrders', [$controller2,'syncOrders']);
         Route::get('/restoreAccountSettings', [$controller2,'restoreAccountSettings']);
         Route::get('/clearMessagesQueue', [$controller2,'clearMessagesQueue']);
     }); 

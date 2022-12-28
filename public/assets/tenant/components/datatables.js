@@ -193,6 +193,16 @@ $(function(){
 						deleteButton = '';
 					}
 
+					if(designElems.mainData.url == 'orders' && $('input[name="data-tab"]').val() == 1){
+						showButton = '<a data-toggle="tooltip" data-original-title="'+detailsText+'" href="/orders/view/'+full.id+'" class="action-icon btn btn-sm btn-clean btn-icon"> <i class="icon-xl la la-eye"></i></a>';
+						editButton = '';
+						deleteButton = '';
+					}
+
+					if(designElems.mainData.url == 'products' && $('input[name="data-tab"]').val() == 1){
+						showButton = '<a data-toggle="tooltip" data-original-title="'+detailsText+'" href="/products/view/'+full.id+'" class="action-icon btn btn-sm btn-clean btn-icon"> <i class="icon-xl la la-eye"></i></a>';
+					}
+
 					if((designElems.mainData.url == 'transfers' || designElems.mainData.name == 'whatsapp-bankTransfers') && $('input[name="data-tab"]').val() == 1){
 						showButton = '<a data-toggle="tooltip" data-original-title="'+detailsText+'" href="/'+designElems.mainData.url+'/view/'+full.id+'" class="action-icon btn btn-sm btn-clean btn-icon"> <i class="icon-xl la la-eye"></i></a>';
 						editButton = '';
