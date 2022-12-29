@@ -33,7 +33,7 @@ class Conversation extends Component
 
     public function mount(){
         $this->myImage = User::getData(User::find(USER_ID))->photo;
-        $this->replies = Reply::dataList(1)['data'];
+        $this->replies = Reply::dataList(null,3)['data'];
         $this->templates = Template::dataList(1)['data'];
         $this->contacts = Contact::dataList(1)['data'];
         $this->labels = Category::dataList(null,null,true)['data'];

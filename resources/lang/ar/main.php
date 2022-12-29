@@ -75,8 +75,13 @@ return [
 
 	'groupValidate' => "يرجى اختيار المجموعة",
 	'nameValidate' => "يرجى ادخال الاسم",
+	'pirceValidate' => "يرجى ادخال السعر",
+	'currencyValidate' => "يرجى اختيار العملة",
+
+
 	'name2Validate' => "يرجى ادخال الاسم الثنائي",
 	'phoneValidate' => "يرجى ادخال رقم الجوال",
+	'phonesValidate' => "يرجى اختيار الارقام المرسل لها",
 	'passwordValidate' => "يرجى ادخال كلمة المرور",
 	'passwordValidate2' => "يجب ان تتكون كلمة المرور فيما لا يقل عن 6 حروف",
 	'emailValidate' => "يرجى ادخال البريد الالكتروني",
@@ -963,8 +968,11 @@ return [
 	'availability' => 'حالة التوافر',
 	'review_status' => 'حالة المراجعة',
 	'addNewProduct' => 'اضافة منتج جديد',
-	'isHidden' => 'عرض المنتج',
-
+	'isHidden' => 'اخفاء المنتج',
+	'latestProducts' => 'اخر المنتجات المضافة',
+	'lastOrders' => 'اخر الطلبات',
+	'sendProduct' => 'ارسال المنتج',
+	'sendCatalog' => 'ارسال الكاتالوج',
 
 	'groupChatInvite' => 'Group Chat Invite',
 	'viewGroup' => 'View Group',

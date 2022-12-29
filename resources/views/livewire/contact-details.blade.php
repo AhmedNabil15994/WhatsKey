@@ -223,15 +223,15 @@
                         <div class="form-group">
                             <label>{{trans('main.abilityToSendMessages')}}</label>
                             <select name="send_messages" class="form-control" data-toggle="select2">
-                                <option value="announcement" {{ $chat['send_messages'] == "announcement" ? 'selected' : '' }}>{{trans('main.admins')}}</option>
-                                <option value="not_announcement" {{ $chat['send_messages'] == "not_announcement" ? 'selected' : '' }}>{{trans('main.all')}}</option>
+                                <option value="0" {{ $chat['announce'] == 0 ? 'selected' : '' }}>{{trans('main.all')}}</option>
+                                <option value="1" {{ $chat['announce'] == 1 ? 'selected' : '' }}>{{trans('main.admins')}}</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label>{{trans('main.abilityToEdit')}}</label>
                             <select name="edit_info" class="form-control" data-toggle="select2">
-                                <option value="locked" {{ $chat['edit_info'] == "locked" ? 'selected' : '' }}>{{trans('main.admins')}}</option>
-                                <option value="unlocked" {{ $chat['edit_info'] == "unlocked" ? 'selected' : '' }}>{{trans('main.all')}}</option>
+                                <option value="0" {{ $chat['group_restrict'] == "0" ? 'selected' : '' }}>{{trans('main.all')}}</option>
+                                <option value="1" {{ $chat['group_restrict'] == "1" ? 'selected' : '' }}>{{trans('main.admins')}}</option>
                             </select>
                         </div>
                         <div class="w-100 text-right">

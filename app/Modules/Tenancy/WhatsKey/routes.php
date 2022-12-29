@@ -9,6 +9,7 @@ Route::group(['prefix' => '/services'] , function (){
 	Route::group(['prefix' => '/webhooks'] ,function() use ($controller){
 		Route::webhooks('/messages-webhook','default');
 		Route::webhooks('/acks-webhook','acks');
+		Route::webhooks('/chats-webhook','chats');
 	});
     
 	

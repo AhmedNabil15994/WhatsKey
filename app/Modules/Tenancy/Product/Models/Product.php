@@ -21,10 +21,10 @@ class Product extends Model{
         return $this->belongsTo('App\Models\WACollection','collection_id');
     }
 
-    static function dataList() {
+    static function dataList($latest=null) {
         $input = \Request::all();
 
-        $source = self::where('id','!=',null);
+        $source = self::NotDeleted();
         if(isset($input['id']) && !empty($input['id'])){
             $source->where('id',$input['id']);
         }
@@ -49,6 +49,9 @@ class Product extends Model{
         if(isset($input['collection_id']) && $input['collection_id'] != null){
             $source->where('collection_id',$input['collection_id']);
         }
+        if($latest != null){
+            $source->where('id','!=',$latest)->take(5);
+        }
 
         $source->orderBy('id', 'DESC');
         return self::generateObj($source);
@@ -71,15 +74,15 @@ class Product extends Model{
     static function getData($source) {
         $data = new  \stdClass();
         $data->id = $source->id;
-        $data->product_id = $source->product_id;
+        $data->product_id = $source->product_id != null ? $source->product_id : '';
         $data->name = $source->name;
         $data->currency = $source->currency;
         $data->price = $source->price;
         $data->collection_id = $source->collection_id;
         $data->collection = $source->WACollection != null ? $source->WACollection->name : '';
-        $data->description = $source->description;
-        $data->availability = $source->availability;
-        $data->review_status = $source->review_status;
+        $data->description = $source->description != null ? $source->description : '';
+        $data->availability = $source->availability != null ? $source->availability : '';
+        $data->review_status = $source->review_status != null ? $source->review_status : '';
         $data->is_hidden = $source->is_hidden == 1 ? trans('main.yes') : trans('main.no');
         $data->images = $source->images;
         return $data;

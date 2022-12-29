@@ -21,26 +21,28 @@ class Reply extends Model{
     static function dataList($status=null,$noUserReplies=0) {
         $input = \Request::all();
 
-        $source = self::NotDeleted()->where(function ($query) use ($input) {
-                    if (isset($input['channel']) && !empty($input['channel'])) {
-                        $query->where('channel',$input['channel']);
-                    } 
-                    if (isset($input['name_ar']) && !empty($input['name_ar'])) {
-                        $query->where('name_ar', 'LIKE', '%' . $input['name_ar'] . '%');
-                    } 
-                    if (isset($input['name_en']) && !empty($input['name_en'])) {
-                        $query->where('name_en', 'LIKE', '%' . $input['name_en'] . '%');
-                    } 
-                    if (isset($input['from']) && !empty($input['from']) && isset($input['to']) && !empty($input['to'])) {
-                        $query->where('created_at','>=', $input['from'].' 00:00:00')->where('created_at','<=',$input['to']. ' 23:59:59');
-                    }
-        
-                });
+        $source = self::NotDeleted();
+        if (isset($input['channel']) && !empty($input['channel'])) {
+            $source->where('channel',$input['channel']);
+        } 
+        if (isset($input['name_ar']) && !empty($input['name_ar'])) {
+            $source->where('name_ar', 'LIKE', '%' . $input['name_ar'] . '%');
+        } 
+        if (isset($input['name_en']) && !empty($input['name_en'])) {
+            $source->where('name_en', 'LIKE', '%' . $input['name_en'] . '%');
+        } 
+        if (isset($input['from']) && !empty($input['from']) && isset($input['to']) && !empty($input['to'])) {
+            $source->where('created_at','>=', $input['from'].' 00:00:00')->where('created_at','<=',$input['to']. ' 23:59:59');
+        }
+
         if($noUserReplies == 1){
             $source->where('reply_id',null);
         }else if($noUserReplies == 2){
             $source->where('reply_id','!=',null);
+        }else if($noUserReplies == 3){
+            $source->where('id','!=',null);
         }
+        
         if($status != null){
             $source->where('status',$status);
         }

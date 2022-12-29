@@ -10,7 +10,7 @@ class CreateProductsTable extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('product_id');
+            $table->string('product_id')->nullable();
             $table->string('name');
             $table->string('currency');
             $table->string('price');
@@ -20,6 +20,8 @@ class CreateProductsTable extends Migration
             $table->string('review_status')->nullable();
             $table->integer('is_hidden')->nullable();
             $table->text('images');
+            $table->integer('deleted_by')->nullable();
+            $table->dateTime('deleted_at')->nullable();
         });
     }
 

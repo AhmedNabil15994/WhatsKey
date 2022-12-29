@@ -117,18 +117,18 @@ class ContactDetails extends Component
             }
         }
 
-        if(in_array($send_messages, ['announcement','not_announcement'])){
-            $mainWhatsLoopObj->updateSetting(['groupId'=>$this->selected,'setting'=>$send_messages]);
+        if(in_array($send_messages, [0,1])){
+            $mainWhatsLoopObj->updateSetting(['groupId'=>$this->selected,'setting'=> ($send_messages == 1 ? 'announcement' : 'not_announcement') ]);
             if($chatObj){
-                $chatObj->send_messages = $send_messages;
+                $chatObj->announce = $send_messages;
                 $chatObj->save();
             }
         }
         
-        if(in_array($edit_info, ['locked','unlocked'])){
-            $mainWhatsLoopObj->updateSetting(['groupId'=>$this->selected,'setting'=>$edit_info]);
+        if(in_array($edit_info, [0,1])){
+            $mainWhatsLoopObj->updateSetting(['groupId'=>$this->selected,'setting'=> ($edit_info == 1 ? 'locked' : 'unlocked')]);
             if($chatObj){
-                $chatObj->edit_info = $edit_info;
+                $chatObj->group_restrict = $edit_info;
                 $chatObj->save();
             }
         }

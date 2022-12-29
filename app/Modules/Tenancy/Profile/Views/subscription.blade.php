@@ -147,7 +147,7 @@
         </div> --}}
     </div>
     <div class="card-body">
-        <table class="datatable datatable-bordered datatable-head-custom" id="kt_datatable">
+        <table class="datatable datatable-bordered datatable-head-custom" id="kt_datatables">
             <thead>
                 <tr>
                     <th title="Field #1">{{ trans('main.id') }}</th>

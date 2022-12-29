@@ -147,8 +147,11 @@ class Chats extends Component
             });
 
             usort($notPinned, function($a, $b) {
-                return ((int) $b->lastMessage->time) - ((int) $a->lastMessage->time);
+                if(isset($b->lastMessage) && isset($a->lastMessage)){
+                    return ((int) $b->lastMessage->time) - ((int) $a->lastMessage->time);
+                }
             });
+
             $pinned = json_decode(json_encode($pinned), true);
             $notPinned = json_decode(json_encode($notPinned), true);
             // $this->emitTo('chat','changeDialogStatus',$chatObj,$data['domain']);

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Session;
 use DataTables;
 use Storage;
 use App\Models\WACollection;
+use App\Models\Contact;
 
 class WACollectionControllers extends Controller {
 
@@ -40,6 +41,24 @@ class WACollectionControllers extends Controller {
                 'class' => 'form-control datatable-input',
                 'index' => '1',
                 'label' => trans('main.name'),
+            ],
+            'products' => [
+                'type' => 'text',
+                'class' => 'form-control datatable-input',
+                'index' => '2',
+                'label' => trans('main.productsCount'),
+            ],
+            'status' => [
+                'type' => 'text',
+                'class' => 'form-control datatable-input',
+                'index' => '3',
+                'label' => trans('main.status'),
+            ],
+            'can_appeal' => [
+                'type' => 'text',
+                'class' => 'form-control datatable-input',
+                'index' => '4',
+                'label' => trans('main.can_appeal'),
             ],
         ];
 
@@ -81,8 +100,38 @@ class WACollectionControllers extends Controller {
             ],
         ];
       
-        $data['dis'] = true;
-        return view('Tenancy.Template.Views.index')->with('data', (object) $data);
+        $data['contacts'] = Contact::dataList(1)['data'];
+        return view('Tenancy.WACollection.Views.index')->with('data', (object) $data);
     }
 
+    public function sendCatalog(){
+        $input = \Request::all();
+
+        if(!isset($input['phones']) || empty($input['phones'])){
+            return \TraitsFunc::ErrorMessage(trans('main.editSuccess'));
+        }
+
+        $phones = $input['phones'];
+        if($input['type'] == 2){
+            $newPhones = [];
+            $phones = trim($input['phones']);
+            
+            $numbersArr = explode(PHP_EOL, $phones);
+            for ($i = 0; $i < count($numbersArr) ; $i++) {
+                $phone = str_replace('\r', '', $numbersArr[$i]);
+                $newPhones[] = $phone;
+            }
+            $phones = $newPhones;
+        }
+        
+        $mainWhatsLoopObj = new \OfficialHelper();
+        $updateResult = $mainWhatsLoopObj->sendBulkCatalog([
+            'phones' => $phones,
+            'interval' => 3,
+        ]);
+        $updateResult = $updateResult->json();
+        
+        $dataList['status'] = \TraitsFunc::SuccessMessage(trans('main.inPrgo'));
+        return \Response::json((object) $dataList);     
+    }
 }

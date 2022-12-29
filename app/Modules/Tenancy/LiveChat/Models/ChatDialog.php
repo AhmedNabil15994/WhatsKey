@@ -6,7 +6,7 @@ class ChatDialog extends Model{
 
     protected $table = 'dialogs';
     protected $primaryKey = 'id';
-    protected $fillable = ['id','name','image','metadata','pinned','archived','unreadCount','unreadMentionCount','notSpam','readOnly','blocked','modsArr','muted','muted_until','labels','creation','owner','group_restrict','announce','participants','disable_read','background','send_messages','edit_info','group_description'];  
+    protected $fillable = ['id','name','image','metadata','pinned','archived','unreadCount','unreadMentionCount','notSpam','readOnly','blocked','modsArr','muted','muted_until','labels','creation','owner','group_restrict','announce','participants','disable_read','background','group_description'];  
 
 
     public $timestamps = false;
@@ -177,10 +177,10 @@ class ChatDialog extends Model{
         if( isset($source->owner) && $source->owner != null){
             $dataObj->owner = str_replace('s.whatsapp.net','c.us',$source->owner);
         }
-        if( isset($source->restrict) && $source->restrict != null){
+        if( isset($source->restrict) && $source->restrict != ''){
             $dataObj->group_restrict = $source->restrict;
         }
-        if( isset($source->announce) && $source->announce != null){
+        if( isset($source->announce) && $source->announce != ''){
             $dataObj->announce = $source->announce;
         }
         if( isset($source->participants) && $source->participants != null){
@@ -239,8 +239,6 @@ class ChatDialog extends Model{
             $dataObj->creation = $source->creation;
             $dataObj->owner = $source->owner;
             $dataObj->group_restrict = $source->group_restrict;
-            $dataObj->send_messages = $source->send_messages;
-            $dataObj->edit_info = $source->edit_info;
             $dataObj->group_description = $source->group_description;
             $dataObj->announce = $source->announce;
             $dataObj->participants = $source->participants != null && $source->participants != '' ? json_decode($source->participants) : [];

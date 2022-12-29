@@ -2,10 +2,14 @@
 
 use App\Models\Product;
 use App\Models\WACollection;
+use App\Models\Order;
+use App\Models\Contact;
+use App\Models\UserExtraQuota;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use DataTables;
+use Storage;
 
 
 class ProductControllers extends Controller {
@@ -131,7 +135,7 @@ class ProductControllers extends Controller {
                 'anchor-class' => '',
             ],
             'is_hidden' => [
-                'label' => trans('main.availability'),
+                'label' => trans('main.isHidden'),
                 'type' => 'select',
                 'className' => 'edits selects',
                 'data-col' => 'isHidden',
@@ -164,13 +168,15 @@ class ProductControllers extends Controller {
 
     protected function validateInsertObject($input){
         $rules = [
-            'name_ar' => 'required',
-            'name_en' => 'required',
+            'name' => 'required',
+            'price' => 'required',
+            'currency' => 'required',
         ];
 
         $message = [
-            'name_ar.required' => trans('main.nameArValidate'),
-            'name_en.required' => trans('main.nameEnValidate'),
+            'name.required' => trans('main.nameValidate'),
+            'price.required' => trans('main.pirceValidate'),
+            'currency.required' => trans('main.currencyValidate'),
         ];
 
         $validate = \Validator::make($input, $rules, $message);
@@ -186,6 +192,7 @@ class ProductControllers extends Controller {
         $data['designElems'] = $this->getData();
         $collections = WACollection::get();
         $colls = [];
+        $data['disFastEdit'] = 1;
         foreach($collections as $one){
             $colls[] = ['id'=>$one->id,'title'=>$one->name];
         }
@@ -198,7 +205,7 @@ class ProductControllers extends Controller {
         $data['designElems'] = $this->getData();
         $data['designElems']['mainData']['title'] = trans('main.add') . ' '.trans('main.products') ;
         $data['designElems']['mainData']['icon'] = 'fa fa-plus';
-        return view('Tenancy.Template.Views.add')->with('data', (object) $data);
+        return view('Tenancy.Product.Views.add')->with('data', (object) $data);
     }
 
     public function create() {
@@ -208,18 +215,49 @@ class ProductControllers extends Controller {
             Session::flash('error', $validate->messages()->first());
             return redirect()->back()->withInput();
         }
-        
 
-        $dataObj = new Group;
-        $dataObj->name_ar = $input['name_ar'];
-        $dataObj->name_en = $input['name_en'];
-        $dataObj->rules = isset($input['permission']) && !empty($input['permission']) ? serialize($input['permission']) : '';
-        $dataObj->sort = Group::newSortIndex();
-        $dataObj->status = isset($input['status']) && !empty($input['status']) ? $input['status'] : 1;
-        $dataObj->created_at = DATE_TIME;
-        $dataObj->created_by = USER_ID;
+        $photos_name = Session::get('photo');
+        $image = '';
+        if($photos_name){
+            $photos = Storage::files($photos_name);
+            if(count($photos) > 0){
+                $images = self::addImage($photos[0],0);
+                if ($images == false) {
+                    Session::flash('error', trans('main.uploadProb'));
+                    return redirect()->back()->withInput();
+                }
+                $image = config('app.BASE_URL')  . '/uploads/' . \Session::get('tenant_id') . '/products/0/' . $images;
+            }
+        }
+       
+        $mainWhatsLoopObj = new \OfficialHelper();
+        $updateResult = $mainWhatsLoopObj->productCreate([
+            'name' => $input['name'],
+            'description' => $input['description'],
+            'price' => $input['price'],
+            'currency' => $input['currency'],
+            'isHidden' => $input['is_hidden'] == 1 ? true : false,
+            'image' => $image,
+        ]);
+        $updateResult = $updateResult->json();
+        if(!isset($updateResult) || !isset($updateResult['data']) || !isset($updateResult['data']['id'])){
+            Session::flash('error', $updateResult['status']['message']);
+            return \Redirect::back()->withInput();
+        }
+
+        $dataObj = new Product;
+        $dataObj->name = $input['name'];
+        $dataObj->product_id = $updateResult['data']['id'];
+        $dataObj->description = $input['description'];
+        $dataObj->price = $input['price'];
+        $dataObj->availability = $updateResult['data']['availability'];
+        $dataObj->review_status = isset($updateResult['data']['reviewStatus']) && isset($updateResult['data']['reviewStatus']['whatsapp']) ? $updateResult['data']['reviewStatus']['whatsapp'] : '';
+        $dataObj->currency = $input['currency'];
+        $dataObj->is_hidden = $input['is_hidden'];
+        $dataObj->images = $image;
         $dataObj->save();
 
+        Session::forget('photo');
         Session::flash('success', trans('main.addSuccess'));
         return redirect()->to($this->getData()['mainData']['url'].'/');
     }
@@ -227,38 +265,79 @@ class ProductControllers extends Controller {
     public function view($id) {
         $id = (int) $id;
 
-        $userObj = Product::find($id);
+        $userObj = Product::NotDeleted()->find($id);
         if($userObj == null) {
             return Redirect('404');
         }
 
         $data['data'] = Product::getData($userObj);
         $data['designElems'] = $this->getData();
-        $data['designElems']['mainData']['title'] = trans('main.edit') . ' '.trans('main.groups') ;
+        $data['designElems']['mainData']['title'] = trans('main.edit') . ' '.trans('main.products') ;
         $data['designElems']['mainData']['icon'] = 'fa fa-pencil-alt';
-        return view('Tenancy.Template.Views.edit')->with('data', (object) $data);      
+        $data['latest'] = Product::dataList($id)['data'];
+        $data['lastOrders'] = Order::dataList($userObj->product_id)['data'];
+        $data['contacts'] = Contact::dataList(1)['data'];
+        return view('Tenancy.Product.Views.view')->with('data', (object) $data);      
+    }
+
+    public function sendProduct($id){
+        $input = \Request::all();
+        $id = (int) $id;
+
+        $userObj = Product::NotDeleted()->find($id);
+        if($userObj == null && $userObj->product_id != null) {
+            return Redirect('404');
+        }
+
+        if(!isset($input['phones']) || empty($input['phones'])){
+            return \TraitsFunc::ErrorMessage(trans('main.editSuccess'));
+        }
+
+        $phones = $input['phones'];
+        if($input['type'] == 2){
+            $newPhones = [];
+            $phones = trim($input['phones']);
+            
+            $numbersArr = explode(PHP_EOL, $phones);
+            for ($i = 0; $i < count($numbersArr) ; $i++) {
+                $phone = str_replace('\r', '', $numbersArr[$i]);
+                $newPhones[] = $phone;
+            }
+            $phones = $newPhones;
+        }
+        
+        $mainWhatsLoopObj = new \OfficialHelper();
+        $updateResult = $mainWhatsLoopObj->sendBulkProduct([
+            'phones' => $phones,
+            'productId' => $userObj->product_id,
+            'interval' => 3,
+        ]);
+        $updateResult = $updateResult->json();
+        
+        $dataList['status'] = \TraitsFunc::SuccessMessage(trans('main.inPrgo'));
+        return \Response::json((object) $dataList);     
     }
 
     public function edit($id) {
         $id = (int) $id;
 
-        $userObj = Product::find($id);
+        $userObj = Product::NotDeleted()->find($id);
         if($userObj == null) {
             return Redirect('404');
         }
 
         $data['data'] = Product::getData($userObj);
         $data['designElems'] = $this->getData();
-        $data['designElems']['mainData']['title'] = trans('main.edit') . ' '.trans('main.groups') ;
+        $data['designElems']['mainData']['title'] = trans('main.edit') . ' '.trans('main.products') ;
         $data['designElems']['mainData']['icon'] = 'fa fa-pencil-alt';
-        return view('Tenancy.Template.Views.edit')->with('data', (object) $data);      
+        return view('Tenancy.Product.Views.edit')->with('data', (object) $data);      
     }
 
     public function update($id) {
         $id = (int) $id;
 
         $input = \Request::all();
-        $dataObj = Product::find($id);
+        $dataObj = Product::NotDeleted()->find($id);
         if($dataObj == null || $id == 1) {
             return Redirect('404');
         }
@@ -269,38 +348,127 @@ class ProductControllers extends Controller {
             return redirect()->back();
         }
 
-        $dataObj->name_ar = $input['name_ar'];
-        $dataObj->name_en = $input['name_en'];
-        $dataObj->rules = isset($input['permission']) && !empty($input['permission']) ? serialize($input['permission']) : '';
-        $dataObj->status = $input['status'];
-        $dataObj->updated_at = DATE_TIME;
-        $dataObj->updated_by = USER_ID;
+        $photos_name = Session::get('photo');
+        $image = '';
+        if($photos_name){
+            $photos = Storage::files($photos_name);
+            if(count($photos) > 0){
+                $images = self::addImage($photos[0],0);
+                if ($images == false) {
+                    Session::flash('error', trans('main.uploadProb'));
+                    return redirect()->back()->withInput();
+                }
+                $image = config('app.BASE_URL')  . '/uploads/' . \Session::get('tenant_id') . '/products/0/' . $images;
+            }
+        }
+
+        $updateArr = [
+            'productId' => $dataObj->product_id,
+        ];
+        
+        if(isset($input['name']) && $input['name'] != '' && $input['name'] != $dataObj->name){
+            $updateArr['name'] = $input['name'];
+        }
+        if(isset($input['description']) && $input['description'] != '' && $input['description'] != $dataObj->description){
+            $updateArr['description'] = $input['description'];
+        }
+        if(isset($input['price']) && $input['price'] != '' && $input['price'] != $dataObj->price){
+            $updateArr['price'] = $input['price'];
+        }
+        if(isset($input['currency']) && $input['currency'] != '' && $input['currency'] != $dataObj->currency){
+            $updateArr['currency'] = $input['currency'];
+        }
+        if(isset($input['is_hidden']) && $input['is_hidden'] != '' && $input['is_hidden'] != $dataObj->is_hidden){
+            $updateArr['isHidden'] = $input['is_hidden'];
+        }
+        if(isset($image) && $image != '' && $image != $dataObj->images){
+            $updateArr['image'] = $image;
+        }
+
+        $mainWhatsLoopObj = new \OfficialHelper();
+        $updateResult = $mainWhatsLoopObj->productUpdate($updateArr);
+        $updateResult = $updateResult->json();
+        if(!isset($updateResult) || !isset($updateResult['data']) || !isset($updateResult['data']['id'])){
+            Session::flash('error', $updateResult['status']['message']);
+            return \Redirect::back()->withInput();
+        }
+
+        $dataObj->name = $input['name'];
+        $dataObj->description = $input['description'];
+        $dataObj->price = $input['price'];
+        $dataObj->availability = $updateResult['data']['availability'];
+        $dataObj->review_status = isset($updateResult['data']['reviewStatus']) && isset($updateResult['data']['reviewStatus']['whatsapp']) ? $updateResult['data']['reviewStatus']['whatsapp'] : '';
+        $dataObj->currency = $input['currency'];
+        $dataObj->is_hidden = $input['is_hidden'];
+        $dataObj->images = $image;
         $dataObj->save();
 
+        Session::forget('photo');
         Session::flash('success', trans('main.editSuccess'));
         return \Redirect::back()->withInput();
     }
 
     public function delete($id) {
         $id = (int) $id;
-        $dataObj = Group::getOne($id);
-        if($id == 1){
+        $dataObj = Product::getOne($id);
+        if(!$dataObj){
             return \TraitsFunc::ErrorMessage(trans('main.notDeleted'));
+        }
+        if($dataObj->product_id != null){
+            $mainWhatsLoopObj = new \OfficialHelper();
+            $updateResult = $mainWhatsLoopObj->productDelete(['productId'=>$dataObj->product_id]);
+            $updateResult = $updateResult->json();
         }
         return \Helper::globalDelete($dataObj);
     }
 
-    public function fastEdit() {
+    public function uploadImage(Request $request){
+        $rand = rand() . date("YmdhisA");
+    
+        if ($request->hasFile('file')) {
+            $files = $request->file('file');
+
+            $file_size = $files->getSize();
+            $file_size = $file_size/(1024 * 1024);
+            $file_size = number_format($file_size,2);
+            $uploadedSize = \Helper::getFolderSize(public_path().'/uploads/'.TENANT_ID.'/');
+            $totalStorage = Session::get('storageSize');
+            $extraQuotas = UserExtraQuota::getOneForUserByType(GLOBAL_ID,3);
+            if($totalStorage + $extraQuotas < (doubleval($uploadedSize) + $file_size) / 1024){
+                return \TraitsFunc::ErrorMessage(trans('main.storageQuotaError'));
+            }
+
+            $type = \ImagesHelper::checkFileExtension($files->getClientOriginalName());
+            
+            if( $type != 'photo' ){
+                return \TraitsFunc::ErrorMessage(trans('main.selectFile'));
+            }
+
+            Storage::put($rand,$files);
+            Session::put('photo',$rand);
+            return \TraitsFunc::SuccessResponse('');
+        }
+    }
+
+    public function addImage($images,$nextID=false){
+        $fileName = \ImagesHelper::UploadFile('products', $images, $nextID);
+        if($fileName == false){
+            return false;
+        }
+        return $fileName;        
+    }
+
+    public function deleteImage($id){
+        $id = (int) $id;
         $input = \Request::all();
-        foreach ($input['data'] as $item) {
-            $col = $item[1];
-            $dataObj = Group::find($item[0]);
-            $dataObj->$col = $item[2];
-            $dataObj->updated_at = DATE_TIME;
-            $dataObj->updated_by = USER_ID;
-            $dataObj->save();
+        $menuObj = Product::find($id);
+        if($menuObj == null) {
+            return \TraitsFunc::ErrorMessage(trans('main.notFound'));
         }
 
-        return \TraitsFunc::SuccessResponse(trans('main.editSuccess'));
+        \ImagesHelper::deleteDirectory(public_path('/').'/uploads/'.$this->getData()['mainData']['name'].'/'.$id.'/'.$menuObj->image);
+        $menuObj->images = null;
+        $menuObj->save();
+        return \TraitsFunc::SuccessResponse(trans('main.imgDeleted'));
     }
 }

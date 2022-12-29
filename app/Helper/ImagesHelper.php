@@ -175,6 +175,11 @@ class ImagesHelper {
             //     $checkFile = $checkFile . '/bankAccounts/' . $id . '/' . $filename;
             //     return is_file($checkFile) ? URL::to($fullPath) : $default;
             //     break;
+            case "products":
+                $fullPath = $path.'/uploads'.($tenant != '' ? '/'.$tenant : '') . '/products/' . $id . '/' . $filename;
+                $checkFile = $checkFile . '/products/' . $id . '/' . $filename;
+                return is_file($checkFile) ? URL::to($fullPath) : $default;
+                break;
             case "bots":
                 $fullPath = $path.'/uploads'.($tenant != '' ? '/'.$tenant : '') . '/bots/' . $id . '/' . $filename;
                 $checkFile = $checkFile . '/bots/' . $id . '/' . $filename;
@@ -313,6 +318,10 @@ class ImagesHelper {
 
         if ($strAction == 'bots') {
             $directory = $path . 'bots/' . $id;
+        }
+
+        if ($strAction == 'products') {
+            $directory = $path . 'products/' . $id;
         }
 
         if ($strAction == 'botPlus') {
@@ -463,6 +472,10 @@ class ImagesHelper {
             $directory = $path . 'bots/' . $id;
         }
 
+        if ($strAction == 'products') {
+            $directory = $path . 'products/' . $id;
+        }
+
         if ($strAction == 'groupMessages') {
             $directory = $path . 'groupMessages/' . $id;
         }
@@ -598,6 +611,11 @@ class ImagesHelper {
         if ($strAction == 'tickets') {
             $path = public_path() . '/uploads/';
             $directory = $path . 'tickets/' . $id;
+        }
+
+        if ($strAction == 'users') {
+            $path = public_path() . '/uploads/';
+            $directory = $path . 'users/' . $id;
         }
 
         if ($strAction == 'comments') {

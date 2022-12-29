@@ -125,7 +125,7 @@ class OfficialHelper
     }
 
     /*----------------------------------------------------------
-    Users
+    Profiles
     ----------------------------------------------------------*/
     public function me()
     {
@@ -136,6 +136,50 @@ class OfficialHelper
         ])->get($mainURL);
     }
 
+    // name
+    public function updateName($data)
+    {
+        $mainURL = $this->baseUrl . 'profiles/updateName';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL,$data);
+    }
+
+    // status
+    public function updateStatus($data)
+    {
+        $mainURL = $this->baseUrl . 'profiles/updateStatus';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL,$data);
+    }
+
+    // phone , imageURL
+    public function updateProfilePicture($data)
+    {
+        $mainURL = $this->baseUrl . 'profiles/updateProfilePicture';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL,$data);
+    }
+
+    // phone , presence
+    // 'unavailable' | 'available' | 'composing' | 'recording' | 'paused'
+    public function updatePresence($data)
+    {
+        $mainURL = $this->baseUrl . 'profiles/updatePresence';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL,$data);
+    }
+
+    /*----------------------------------------------------------
+    Users
+    ----------------------------------------------------------*/
     public function checkPhone($data)
     {
         $mainURL = $this->baseUrl . 'users/checkPhone';
@@ -880,22 +924,49 @@ class OfficialHelper
         ])->post($mainURL);
     }
 
-    public function orders()
+    public function orders($data=[])
     {
         $mainURL = $this->baseUrl . 'business/orders';
         return Http::withToken($this->authToken)->withHeaders([
             'CHANNELID' => $this->instanceId,
             'CHANNELTOKEN' => $this->token,
-        ])->post($mainURL);
+        ])->post($mainURL,$data);
     }
 
-    public function products()
+    public function products($data=[])
     {
         $mainURL = $this->baseUrl . 'business/products';
         return Http::withToken($this->authToken)->withHeaders([
             'CHANNELID' => $this->instanceId,
             'CHANNELTOKEN' => $this->token,
-        ])->post($mainURL);
+        ])->post($mainURL,$data);
+    }
+
+    public function productCreate($data)
+    {
+        $mainURL = $this->baseUrl . 'business/products/create';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL,$data);
+    }
+
+    public function productUpdate($data)
+    {
+        $mainURL = $this->baseUrl . 'business/products/update';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL,$data);
+    }
+
+    public function productDelete($data)
+    {
+        $mainURL = $this->baseUrl . 'business/products/delete';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL,$data);
     }
 
     public function replies()

@@ -211,17 +211,23 @@ return [
     'QuickRepliesControllers@delete' => 'delete-quickReply',
 
     'WACollectionControllers@index' => 'list-collections',
+    'WACollectionControllers@sendCatalog' => 'send-collection',
+
+    'BusinessProfileControllers@index' => 'list-businessProfile',
+    'BusinessProfileControllers@update' => 'edit-businessProfile',
+    'BusinessProfileControllers@uploadImage' => 'edit-businessProfile',
+    'BusinessProfileControllers@deleteImage' => 'edit-businessProfile',
 
     'ProductControllers@index' => 'list-products',
     'ProductControllers@edit' => 'edit-product',
     'ProductControllers@update' => 'edit-product',
-    'ProductControllers@fastEdit' => 'edit-product',
     'ProductControllers@view' => 'view-product',
     'ProductControllers@add' => 'add-product',
     'ProductControllers@create' => 'add-product',
     'ProductControllers@delete' => 'delete-product',
-    'ProductControllers@uploadImage' => 'add-product',
+    'ProductControllers@uploadImage' => 'uploadImage-product',
     'ProductControllers@deleteImage' => 'deleteImage-product',
+    'ProductControllers@sendProduct' => 'send-product',
 
     'OrderControllers@index' => 'list-orders',
     'OrderControllers@view' => 'view-order',

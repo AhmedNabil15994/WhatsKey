@@ -17,7 +17,7 @@ class Order extends Model{
             ->first();
     }
 
-    static function dataList() {
+    static function dataList($productId=null) {
         $input = \Request::all();
 
         $source = self::where('id','!=',null);
@@ -42,7 +42,9 @@ class Order extends Model{
         if(isset($input['chatId']) && !empty($input['chatId'])){
             $source->where('chatId',$input['chatId']);
         }
-
+        if($productId != null){
+            $source->where('products','LIKE','%'.$productId.'%');
+        }
         $source->orderBy('id', 'DESC');
         return self::generateObj($source);
     }

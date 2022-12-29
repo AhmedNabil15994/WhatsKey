@@ -31,6 +31,15 @@ class  WACollection extends Model{
                     if (isset($input['name']) && !empty($input['name'])) {
                         $query->where('name', 'LIKE', '%' . $input['name'] . '%');
                     }
+                    if (isset($input['products']) && !empty($input['products'])) {
+                        $query->where('products',$input['products']);
+                    }
+                    if (isset($input['status']) && !empty($input['status'])) {
+                        $query->where('status',$input['status']);
+                    }
+                    if (isset($input['can_appeal']) && !empty($input['can_appeal'])) {
+                        $query->where('can_appeal',$input['can_appeal']);
+                    }
                 });
         $source->orderBy('id','DESC');
         return self::getObj($source);
@@ -56,7 +65,7 @@ class  WACollection extends Model{
         $dataObj->name = $source->name;
         $dataObj->products = $source->products;
         $dataObj->productsIDArr = $source->products != null && $source->products != '' ? explode(',', $source->products) : [];
-        $dataObj->productsCount = count($dataObj->productsIDArr);
+        $dataObj->productsCount =  $source->products != null && $source->products != '' ? substr_count($source->products, ',') : 0;
         $dataObj->status = $source->status;
         $dataObj->can_appeal = $source->can_appeal == 1 ? trans('main.yes') : trans('main.no');
         return $dataObj;

@@ -56,14 +56,7 @@ class WAAccountController extends Controller
 
         // Perform Whatsapp Integration
         $mainWhatsLoopObj = new \OfficialHelper();
-        $updateResult = $mainWhatsLoopObj->me();
-        $result = $updateResult->json();
-
-        if ($result == null) {
-            Session::flash('error', trans('main.loading'));
-            return back()->withInput();
-        }
-
+        
         // Fetch Subscription Data
         $membershipObj = Session::get('membership') != null ? Membership::getData(Membership::getOne(Session::get('membership'))) : [];
         $channelObj = Session::get('channel') != null ? CentralChannel::getData(CentralChannel::getOne(Session::get('channel'))) : null;
@@ -381,6 +374,7 @@ class WAAccountController extends Controller
             'webhooks' => [
                 'messageNotifications' => str_replace('://', '://'.$domain.'.', config('app.BASE_URL')).'/services/webhooks/messages-webhook',
                 'ackNotifications' => str_replace('://', '://'.$domain.'.', config('app.BASE_URL')).'/services/webhooks/acks-webhook',
+                'chatNotifications' => str_replace('://', '://'.$domain.'.', config('app.BASE_URL')).'/services/webhooks/chats-webhook',
             ],
             'ignoreOldMessages' => 1,
         ];
