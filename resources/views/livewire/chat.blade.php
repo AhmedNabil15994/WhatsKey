@@ -1,7 +1,20 @@
 <div>
     @php
         $chat = json_decode(json_encode($chat), true);
-        $senderText = $chat['lastMessage']['fromMe']? trans('main.you').':' : '';
+        $spanIcon = '';
+        if($chat['lastMessage']['fromMe']){
+            if($chat['lastMessage']['sending_status'] == 1){
+                $spanIcon = '<i class="icon-md la la-check"></i>';
+            }elseif($chat['lastMessage']['sending_status'] == 2){
+                $spanIcon = '<i class="icon-md la la-check-double"></i>';   
+            }elseif($chat['lastMessage']['sending_status'] == 3){
+                $spanIcon = '<i class="icon-md la la-check-double text-primary"></i>';    
+            }elseif($chat['lastMessage']['sending_status'] == 0){
+                $spanIcon = '<i class="icon-md la la-clock"></i>';
+            }
+        }
+
+        $senderText = $chat['lastMessage']['fromMe'] ? ('<span class="fa-icon">'. $spanIcon .'</span>') : '';
         $msgIcon = '';
         $msgBody = mb_strlen($chat['lastMessage']['body']) > 85 ? mb_substr($chat['lastMessage']['body'], 0, 85) . ' ........' : $chat['lastMessage']['body'];
 

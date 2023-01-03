@@ -1,11 +1,9 @@
 <div>
     @php $msg = json_decode(json_encode($msg), true); @endphp
-    @if($msg['metadata'] && isset($msg['metadata']['type']) && $msg['metadata']['type'] == 'reply' && isset($msg['metadata']['quotedMessage']))
-    <div class="replyHeader mt-3 py-3 px-3 d-flex align-items-center mb-1 replyMsg" data-id="{{array_reverse(explode('_',$msg['metadata']['quotedMessageId']))[0]}}" style="min-width: 200px;">
+    @if($msg['metadata'] && isset($msg['metadata']['type']) && $msg['metadata']['type'] == 'reply' && isset($msg['metadata']['quotedMessage']) && isset($msg['metadata']['quotedMessage']['fromMe']))
+    <div class="replyHeader mt-3 py-3 px-3 d-flex align-items-center mb-3 replyMsg" data-id="{{array_reverse(explode('_',$msg['metadata']['quotedMessageId']))[0]}}" style="min-width: 200px;">
         <div class="d-flex flex-column align-items-start">
-            @if(isset($msg['metadata']['quotedMessage']['fromMe']))
-            <span class="text-dark font-weight-bold mb-1">{{ str_contains($msg['metadata']['quotedMessageId'], 'true') ? trans('main.you') : $chatName}}</span>
-            @endif
+            <span class="text-dark font-weight-bold mb-1">{{ $msg['metadata']['quotedMessage']['fromMe'] == 'false' ? $chatName : trans('main.you') }}</span>
             @if($msg['metadata']['quotedMessage']['messageType'] == 'video')
             <span class="text-dark-50 font-weight-bold mb-1"><i class="icon-xl la la-video"></i> {{($msg['metadata']['quotedMessage']['caption'] != '' ? $msg['metadata']['quotedMessage']['caption'] : $msg['metadata']['quotedMessage']['fileName']) . ' ('.$msg['metadata']['quotedMessage']['metadata']['seconds'].' '.trans('main.second').')'}}</span>
 

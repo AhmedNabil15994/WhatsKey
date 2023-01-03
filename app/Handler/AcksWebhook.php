@@ -82,34 +82,36 @@ class AcksWebhook extends ProcessWebhookJob
             $messageId = $action['id'];
             $messageObj = ChatMessage::where('id', $messageId)->first();
             $statusInt = 1;
-            if ($action['status'] == 'delivered') {
-                $statusInt = 2;
-                $contactObj = ContactReport::where('contact', str_replace('@c.us', '', $sender))->where('message_id', $messageId)->update(['status' => $statusInt]);
-            } elseif ($action['status'] == 'viewed') {
-                $statusInt = 3;
-                $contactObj = ContactReport::where('contact', str_replace('@c.us', '', $sender))->where('message_id', $messageId)->update(['status' => $statusInt]);
-            } elseif ($action['status'] == 'deleted') {
-                $statusInt = 6;
-            }
-
-            if (isset($messageObj) && $statusInt > $messageObj->sending_status) {
-                $messageObj->update(['sending_status' => $statusInt]);
-                if ($statusInt == 3) {
-                    ChatMessage::where('fromMe', $messageObj->fromMe)->where('chatId', $sender)->update(['sending_status' => 3]);
-                }else if ($statusInt == 6) {
-                    $messageObj->update(['deleted_at' => date('Y-m-d H:i:s')]);
+            if($messageObj){
+                if ($action['status'] == 'delivered') {
+                    $statusInt = 2;
+                    $contactObj = ContactReport::where('contact', str_replace('@c.us', '', $sender))->where('message_id', $messageId)->update(['status' => $statusInt]);
+                } elseif ($action['status'] == 'viewed') {
+                    $statusInt = 3;
+                    $contactObj = ContactReport::where('contact', str_replace('@c.us', '', $sender))->where('message_id', $messageId)->update(['status' => $statusInt]);
+                } elseif ($action['status'] == 'deleted') {
+                    $statusInt = 6;
                 }
-                broadcast(new MessageStatus(strtolower($domain), $sender, $messageId, $messageObj->sending_status));
-            }
 
-            if(in_array($action['status'],['starred','unstarred'])){
-                $messageObj->update(['starred' => $action['status'] == 'starred' ? 1 : 0]);
-                broadcast(new MessageStatus(strtolower($domain), $sender, $messageId, $action['status']));
-            }else if(in_array($action['status'],['labelled','unlabelled'])){
-                $oldLabels = $messageObj->labelled;
-                $newLabels = $action['status'] == 'labelled' ? $oldLabels.= $action['label_id'].',' : str_replace($action['label_id'].',','',$oldLabels);
-                $messageObj->update(['labelled' => $newLabels]);
-                broadcast(new MessageStatus(strtolower($domain), $sender, $messageId, $action['status']));
+                if (isset($messageObj) && $statusInt > $messageObj->sending_status) {
+                    $messageObj->update(['sending_status' => $statusInt]);
+                    if ($statusInt == 3) {
+                        ChatMessage::where('fromMe', $messageObj->fromMe)->where('chatId', $sender)->update(['sending_status' => 3]);
+                    }else if ($statusInt == 6) {
+                        $messageObj->update(['deleted_at' => date('Y-m-d H:i:s')]);
+                    }
+                    broadcast(new MessageStatus(strtolower($domain), $sender, $messageId, $messageObj->sending_status));
+                }
+
+                if(in_array($action['status'],['starred','unstarred'])){
+                    $messageObj->update(['starred' => $action['status'] == 'starred' ? 1 : 0]);
+                    broadcast(new MessageStatus(strtolower($domain), $sender, $messageId, $action['status']));
+                }else if(in_array($action['status'],['labelled','unlabelled'])){
+                    $oldLabels = $messageObj->labelled;
+                    $newLabels = $action['status'] == 'labelled' ? $oldLabels.= $action['label_id'].',' : str_replace($action['label_id'].',','',$oldLabels);
+                    $messageObj->update(['labelled' => $newLabels]);
+                    broadcast(new MessageStatus(strtolower($domain), $sender, $messageId, $action['status']));
+                }
             }
 
         }

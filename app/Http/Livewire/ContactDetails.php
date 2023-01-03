@@ -20,7 +20,6 @@ class ContactDetails extends Component
     {
         $this->mods = User::getModerators()['data'];
         $this->contacts = Contact::dataList(1)['data'];
-
     }
 
     public function setSelected($chatObj){

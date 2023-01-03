@@ -186,6 +186,9 @@ class ChatDialog extends Model{
         if( isset($source->participants) && $source->participants != null){
             $dataObj->participants = json_encode($source->participants);
         }
+        if( isset($source->labels) && $source->labels != null){
+            $dataObj->labels = implode(',', $source->labels).',';
+        }
         if(isset($source->image) && !empty($source->image)){
             $path = $source->image;
             $type = pathinfo(

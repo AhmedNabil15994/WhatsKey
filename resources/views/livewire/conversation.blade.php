@@ -1,5 +1,5 @@
 <div class="flex-row-fluid ml-lg-8" id="kt_chat_content">
-    <div class="card card-custom" style="height: 100%; background: url({{ ($selected && $chat['background'] ? $chat['background'] : asset('assets/tenant/images/bg-chat.png'))}});">
+    <div class="card card-custom" style="height: 100%; background: url({{ ($selected && $chat['background'] ? $chat['background'] : asset('assets/tenant/images/bg-chat.png'))}});  {{$selected && $chat['background'] ? 'background-size:cover' : ''}} ">
         <div class="card-header px-1 py-1" style="display: block;min-height: 45px;background:{{$selected ? '#FFF':'transparent'}}"> 
         @if($selected)
         @php

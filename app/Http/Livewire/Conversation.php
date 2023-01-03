@@ -125,9 +125,8 @@ class Conversation extends Component
             $this->messages = $msgs;
             $this->emit('focusInput');
         }
-        $this->emit('refreshDesign');
 
-        if($data['chatId'] && $data['statusInt'] == 6){
+        if($data['chatId']){
             // $this->emitTo('chats','chatsChanges',$data['message'],$data['domain']); 
             $this->emitTo('chat','lastUpdates',$data['messageId'],$data['chatId'],$data['statusInt'],$data['domain']); 
         }
@@ -146,7 +145,6 @@ class Conversation extends Component
             $this->messages = $msgs;
             $this->emit('focusInput');
         }
-        $this->emit('refreshDesign');
 
         if($msgObj->chatId){
             $this->emitTo('chat','lastUpdates',$msgId,$msgObj->chatId,$type,\Session::get('domain')); 

@@ -97,8 +97,7 @@
                         </div>  
                     </div>
 
-                    @if(str_contains($chat['id'], '@g.us'))
-                    <div class="text-left bg-white mb-3 mt-3 p-5">
+                    <div class="text-left bg-white mb-3 mt-3 p-5 {{str_contains($selected, '@c.us') ? 'hidden' : ''}}">
                         <h4 class="card-title"><i class="la la-users icon-xl"></i> {{trans('main.groupParticipants')}} <span>({{count($chat['participants'])}})</span></h4>
                         @foreach($chat['participants'] as $participant)
                         <div class="d-flex align-items-center mb-10">
@@ -157,7 +156,7 @@
                         @endforeach
                     </div>
 
-                    <div class="text-left bg-white mb-3 mt-3 p-5">
+                    <div class="text-left bg-white mb-3 mt-3 p-5 {{str_contains($selected, '@c.us') ? 'hidden' : ''}}">
                         <div class="row p-0 m-0">
                             <div class="col-8">
                                 <h4 class="card-title"><i class="la la-external-link-alt icon-xl"></i> {{trans('main.groupInviteCode')}}</h4>
@@ -179,7 +178,7 @@
                         </div>
                     </div>
 
-                    <div class="text-left bg-white mb-3 mt-3 p-5">
+                    <div class="text-left bg-white mb-3 mt-3 p-5 {{str_contains($selected, '@c.us') ? 'hidden' : ''}}">
                         <h4 class="card-title"><i class="la la-users icon-xl"></i> {{trans('main.addGroupParticipants')}}</h4>
                         <div class="form-group">
                             <label>{{trans('main.numbers')}}</label>
@@ -206,7 +205,7 @@
                         </div> 
                     </div>
 
-                    <div class="text-left bg-white mb-3 mt-3 p-5">
+                    <div class="text-left bg-white mb-3 mt-3 p-5 {{str_contains($selected, '@c.us') ? 'hidden' : ''}}">
                         <h4 class="card-title"><i class="la la-cogs icon-xl"></i> {{trans('main.groupSettings')}}</h4>
                         <div class="form-group textWrap">
                             <label>{{trans('main.groupName')}}</label>
@@ -238,7 +237,6 @@
                             <button type="button" class="btn btn-primary mr-2 updateSettings">{{trans('main.updateSettings')}}</button>
                         </div> 
                     </div>
-                    @endif
                 </div>
             </div>
         </div>

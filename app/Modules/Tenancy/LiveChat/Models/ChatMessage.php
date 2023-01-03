@@ -165,6 +165,9 @@ class ChatMessage extends Model{
         if(isset($source->labelled)){
             $dataObj->labelled = $source->labelled ;
         }
+        if( isset($source->labels) && $source->labels != null){
+            $dataObj->labelled = implode(',', $source->labels).',';
+        }
         if(isset($source->metadata['quotedMessageId'])){
             $dataObj->quotedMessageId = $source->metadata['quotedMessageId'] ;
         }

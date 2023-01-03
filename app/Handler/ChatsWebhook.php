@@ -138,26 +138,29 @@ class ChatsWebhook extends ProcessWebhookJob
     public function handleChatsUpdates($domain, $actions)
     {
         $actions = (array) $actions;
-        if(isset($actions['pinned'])){
-            ChatDialog::where('id',$actions['chatId'])->update(['pinned' => (int) $actions['pinned']]);
-        }
-        if(isset($actions['archived'])){
-            ChatDialog::where('id',$actions['chatId'])->update(['archived' =>  $actions['archived'] == 'true' ? 1 : 0]);
-        }
-        if(isset($actions['muted'])){
-            if(!$actions['muted']){
-                ChatDialog::where('id',$actions['chatId'])->update(['muted' =>  0 , 'muted_until' => null]);
-            }else{
-                ChatDialog::where('id',$actions['chatId'])->update(['muted' =>  1 , 'muted_until' => date('Y-m-d H:i:s',$actions['muted'] / 1000)]);
+        $chatObj = ChatDialog::where('id',$actions['chatId'])->first();
+
+        if($chatObj){
+            if(isset($actions['pinned'])){
+                $chatObj->update(['pinned' => (int) $actions['pinned']]);
             }
+            if(isset($actions['archived'])){
+                $chatObj->update(['archived' =>  $actions['archived'] == 'true' ? 1 : 0]);
+            }
+            if(isset($actions['muted'])){
+                if(!$actions['muted']){
+                    $chatObj->update(['muted' =>  0 , 'muted_until' => null]);
+                }else{
+                    $chatObj->update(['muted' =>  1 , 'muted_until' => date('Y-m-d H:i:s',$actions['muted'] / 1000)]);
+                }
+            }
+            if(isset($actions['labelled'])){
+                $oldLabels = $chatObj->labels;
+                $newLabels = $actions['labelled'] == true ? $oldLabels.= $actions['label_id'].',' : str_replace($actions['label_id'].',','',$oldLabels);
+                $chatObj->update(['labels' =>  $newLabels]);
+            }
+            broadcast(new DialogUpdateStatus(strtolower($domain), $actions));
         }
-        if(isset($actions['labelled'])){
-            $chatObj = ChatDialog::where('id',$actions['chatId'])->first();
-            $oldLabels = $chatObj->labels;
-            $newLabels = $actions['labelled'] == true ? $oldLabels.= $actions['label_id'].',' : str_replace($actions['label_id'].',','',$oldLabels);
-            $chatObj->update(['labels' =>  $newLabels]);
-        }
-        broadcast(new DialogUpdateStatus(strtolower($domain), $actions));
         return 1;
     }
 }

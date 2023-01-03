@@ -132,14 +132,17 @@ $(function(){
     });
 
     Livewire.on('refreshDesign', chat => {
+		document.querySelector('emoji-picker').database.close()
     	$('[data-toggle="tooltip"').tooltip();
     	$('[data-toggle="select2"]').select2()
 		var avatar5 = new KTImageInput('kt_image_5');
 		const demo = document.querySelector('.scroll-pulld');
 		const ps = new PerfectScrollbar(demo);
 		ps.update()
+		if($('.sendMsg textarea').length){
+    		$('#kt_scrollDown').click()
+		}
     });        
-
 
     Livewire.on('errorMsg', error => {
     	errorNotification(error)
