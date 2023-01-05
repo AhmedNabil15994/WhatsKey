@@ -91,7 +91,7 @@ class Helper
                 $file_size += $file->getSize();
             }
             $file_size = $file_size/(1024 * 1024);
-            $file_size = number_format($file_size,2) . " MB ";
+            $file_size = number_format($file_size,2);
         }
         return $file_size;
     }

@@ -9,7 +9,7 @@ class GroupMsg extends Model{
 
     protected $table = 'group_messages';
     protected $primaryKey = 'id';
-    protected $fillable = ['id','channel','group_id','messages_count','message_type','later','publish_at','message','file_name','https_url','url_title','url_desc','url_image','whatsapp_no','lat','lng','address','status','created_by','created_at'];    
+    protected $fillable = ['id','channel','group_id','messages_count','message_type','later','publish_at','message','file_name','https_url','url_title','url_desc','url_image','whatsapp_no','lat','lng','address','status','bot_plus_id','list_id','poll_id','created_by','created_at'];    
     public $timestamps = false;
 
     static function getPhotoPath($id, $photo,$tenantId=null) {

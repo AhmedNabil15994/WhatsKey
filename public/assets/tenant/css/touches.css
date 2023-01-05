@@ -685,3 +685,10 @@ html[dir="ltr"] .newGroup emoji-picker{
     50% {height:5px;transform:translateY(0px);background:#ddd;}
     100% {height:5px;transform:translateY(0px);background:#ddd;}
 }
+.call{
+	border-radius: 5px;
+	direction: ltr;
+}
+.max-w-200{
+	max-width: 200px !important;
+}

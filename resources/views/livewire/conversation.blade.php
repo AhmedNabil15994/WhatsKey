@@ -37,6 +37,31 @@
                 </span>
             </div>
         </div>
+
+
+        <div class="modal fade" id="callModal">
+            <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i aria-hidden="true" class="ki ki-close"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <div class="symbol symbol-circle mr-3">
+                            <img class="max-w-200px w-200px h-200px mb-5" alt="Pic" src=""/>
+                        </div>
+                        <div class="text-dark-50 callName h3 mb-3 font-weight-bold"></div>
+                        <div class="text-dark-50 callText h5 font-weight-bold"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-danger font-weight-bold d-block w-100 rejectCall">{{trans('main.rejectCall')}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         @if($selected)
         <div class="msgReplyHeader p-5 bg-gray-100" style="display:none;">
             <div class="row m-0 p-0">

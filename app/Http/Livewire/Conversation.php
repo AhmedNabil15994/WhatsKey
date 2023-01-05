@@ -29,7 +29,7 @@ class Conversation extends Component
     public $contacts = [];
     public $labels = [];
 
-    protected $listeners = ['loadMessages','loadMoreMsgs','newIncomingMsg','sendMsg','changeMessageStatus','updateMsg','updateChat'];
+    protected $listeners = ['loadMessages','loadMoreMsgs','newIncomingMsg','sendMsg','changeMessageStatus','updateMsg','updateChat','rejectCall'];
 
     public function mount(){
         $this->myImage = User::getData(User::find(USER_ID))->photo;
@@ -90,6 +90,21 @@ class Conversation extends Component
             }
             $this->emit('refreshDesign');
         }
+
+        if($msg['message_type'] == 'call'){
+            if(!in_array($msg['metadata']['status'],['reject','timeout'])){
+                $callObj = (object) [
+                    'title' => $msg['metadata']['isVideo'] ? trans('main.incomingVideoCall') : trans('main.incomingVoiceCall'),
+                    'name' => $chat['name'],
+                    'image' => $chat['image'],
+                    'text' => $chat['lastMessage']['body'],
+                    'callId' => array_reverse(explode('_',$msg['id']))[0],
+                ];
+                $this->emit('incomingCall', $callObj);
+            }else{
+                $this->emit('closeCall');
+            }
+        } 
         // if(isset($chat['lastMessage']) && isset($chat['lastMessage']['id']) && isset($this->messages) && isset($this->messages[0]) && $this->messages[0]['id'] != $chat['lastMessage']['id']){
         //     $this->emitTo('chats','chatsChanges',$data['message'],$data['domain']); 
         //     $this->emitTo('chat','lastUpdates',$data['message'],$data['domain']); 
@@ -159,5 +174,15 @@ class Conversation extends Component
             $this->chat = json_decode(json_encode($data), true);
         }
         $this->emit('refreshDesign');
+    }
+
+    public function rejectCall($callId){
+        $msgObj = ChatMessage::where('id','LIKE','%'.$callId.'%')->first();
+        if($msgObj){
+            $chatId = $msgObj->chatId;
+            $mainWhatsLoopObj = new \OfficialHelper();
+            $result = $mainWhatsLoopObj->rejectCall(str_contains($chatId, '@g.us') ? ['chat'=>$chatId,'callId' => $callId] : ['phone'=>$chatId,'callId' => $callId]);
+            $this->emit('closeCall');
+        }
     }
 }

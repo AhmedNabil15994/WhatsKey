@@ -195,6 +195,12 @@ return [
     'TemplateMsgControllers@copy' => 'copy-template-message',
     'TemplateMsgControllers@delete' => 'delete-template-message',
 
+    'LiveChatControllers@index' => 'list-livechat',
+    'LiveChatControllers@upload' => 'list-livechat',
+    'LiveChatControllers@updateContact' => 'list-livechat',
+
+
+
     // ********************* Business ************************** //
     'CategoryControllers@index' => 'list-categories',
     'CategoryControllers@edit' => 'edit-category',

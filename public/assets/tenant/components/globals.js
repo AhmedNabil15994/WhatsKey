@@ -261,40 +261,40 @@ $(document).on('click','#unknownBot .addBotReply',function(e){
 });
 
 
-// function deleteStorageFile($url) {
-//     swal({
-//         title: title,
-//         text: deleteText,
-//         type: "warning",
-//         showCancelButton: true,
-//         confirmButtonText: confirmButton,
-//         confirmButtonClass: 'btn btn-success mt-2',
-//         cancelButtonText: cancelButton,
-//         cancelButtonClass: 'btn-danger ml-2 mt-2',
-//         closeOnConfirm: false,
-//         buttonsStyling:!1
-//     },
-//     function(isConfirm) {
-//         if (isConfirm) {
-//             swal(success1, success2, "success");
-//             $.get($url,function(data) {
-//                 if (data.status.original.status.status == 1) {
-//                     successNotification(data.status.original.status.message);
-//                     window.location.href = '/storage';
-//                 } else {
-//                     errorNotification(data.status.original.status.message);
-//                 }
-//             });
-//         } else {
-//             swal(
-//                 cancel1,
-//                 cancel2,
-//                 "error"
-//             )
-//             swal("Cancelled", "Your imaginary file is safe :)", "error");
-//         }
-//     });
-// }
+function deleteStorageFile($url) {
+    swal({
+        title: title,
+        text: deleteText,
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: confirmButton,
+        confirmButtonClass: 'btn btn-success mt-2',
+        cancelButtonText: cancelButton,
+        cancelButtonClass: 'btn-danger ml-2 mt-2',
+        closeOnConfirm: false,
+        buttonsStyling:!1
+    },
+    function(isConfirm) {
+        if (isConfirm) {
+            swal(success1, success2, "success");
+            $.get($url,function(data) {
+                if (data.status.status == 1) {
+                    successNotification(data.status.message);
+                    window.location.href = '/storage';
+                } else {
+                    errorNotification(data.status.message);
+                }
+            });
+        } else {
+            swal(
+                cancel1,
+                cancel2,
+                "error"
+            )
+            swal("Cancelled", "Your imaginary file is safe :)", "error");
+        }
+    });
+}
 
 
 

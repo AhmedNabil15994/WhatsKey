@@ -30,6 +30,9 @@ use App\Models\ChatSession;
 use App\Models\ModTemplate;
 use App\Models\OAuthData;
 use App\Models\TemplateMsg;
+use App\Models\ContactGroup;
+use App\Models\GroupMsg;
+
 class MessagesWebhook extends ProcessWebhookJob
 {
 
@@ -67,6 +70,95 @@ class MessagesWebhook extends ProcessWebhookJob
             $sender = $message['chatId'];
             $senderMessage = $message['body'];
             $senderMessageType = $message['type'];
+
+            if($message['fromMe'] == true){
+                $contact = str_replace('@c.us','',$message['chatId']);
+                if($message['type'] == 'buttons'){
+                    $buttonsNumber = count($message['metadata']['buttons']);
+                    $textsArr = preg_split('/ \r\n| \r|\n /',$message['metadata']['content']);
+                    $title = $textsArr[0];
+                    $footer = $message['metadata']['footer'];
+                    $contactGroups = ContactGroup::where('contact',$contact)->get();
+                    foreach($contactGroups as $oneGroup){
+                        $groupMsgId = $oneGroup->group_id;
+                        $groupMsgObj = GroupMsg::find($groupMsgId);
+                        $trues = 0;
+                        if($groupMsgObj && $groupMsgObj->bot_plus_id != null){
+                            $deleteBot = BotPlus::find($groupMsgObj->bot_plus_id);
+                            if($deleteBot && $deleteBot->title == $title && $deleteBot->footer == $footer && $deleteBot->buttons == $buttonsNumber){
+                                $buttonsData = $deleteBot->buttonsData != null ? unserialize($deleteBot->buttonsData) : [];
+                                $buttonsData = json_decode(json_encode($buttonsData), true);
+                                for ($i=0; $i < $buttonsNumber; $i++) { 
+                                    if(str_replace('id','',$message['metadata']['buttons'][$i]['id']) == $buttonsData[$i]['id'] && $message['metadata']['buttons'][$i]['title'] == $buttonsData[$i]['text']){
+                                        $trues+=1;
+                                    }
+                                }
+                                if($trues == $buttonsNumber){
+                                    $message['metadata']['botPlusId'] = $groupMsgObj->bot_plus_id;
+                                    $oneGroup->delete();
+                                }
+                            }
+                        }
+                    }
+                }else if($message['type'] == 'list'){
+                    $sectionsNumber = count($message['metadata']['sections']);
+                    $title = $message['metadata']['title'];
+                    $buttonText = $message['metadata']['buttonText'];
+                    $footer = $message['metadata']['footer'];
+                    $contactGroups = ContactGroup::where('contact',$contact)->get();
+                    foreach($contactGroups as $oneGroup){
+                        $groupMsgId = $oneGroup->group_id;
+                        $groupMsgObj = GroupMsg::find($groupMsgId);
+                        $trues = 0;
+                        if($groupMsgObj && $groupMsgObj->list_id != null){
+                            $deleteBot = ListMsg::find($groupMsgObj->list_id);
+                            if($deleteBot && $deleteBot->title == $title && $deleteBot->footer == $footer && $deleteBot->sections == $sectionsNumber && $deleteBot->buttonText == $buttonText){
+                                $sectionsData = $deleteBot->sectionsData != null ? unserialize($deleteBot->sectionsData) : [];
+                                $sectionsData = json_decode(json_encode($sectionsData), true);
+                                $rows = 0;
+                                for ($i=0; $i < $sectionsNumber; $i++) { 
+                                    if(count($message['metadata']['sections'][$i]['rows']) == count($sectionsData[$i]['rows']) && $message['metadata']['sections'][$i]['title'] == $sectionsData[$i]['title']){
+                                        $rows+=count($message['metadata']['sections'][$i]['rows']);
+                                        for ($x=0; $x < count($message['metadata']['sections'][$i]['rows']) ; $x++) { 
+                                            if($message['metadata']['sections'][$i]['rows'][$x]['id'] == $sectionsData[$i]['rows'][$x]['rowId'] && $message['metadata']['sections'][$i]['rows'][$x]['title'] == $sectionsData[$i]['rows'][$x]['title'] && $message['metadata']['sections'][$i]['rows'][$x]['description'] == $sectionsData[$i]['rows'][$x]['description']){
+                                                $trues+=1;
+                                            }
+                                        }
+                                    }
+                                }
+                                if($trues == $rows){
+                                    $message['metadata']['listId'] = $groupMsgObj->list_id;
+                                    $oneGroup->delete();
+                                }
+                            }
+                        }
+                    }
+                }else if($message['type'] == 'poll'){
+                    $optionsNumber = count($message['metadata']['options']);
+                    $contactGroups = ContactGroup::where('contact',$contact)->get();
+                    foreach($contactGroups as $oneGroup){
+                        $groupMsgId = $oneGroup->group_id;
+                        $groupMsgObj = GroupMsg::find($groupMsgId);
+                        $trues = 0;
+                        if($groupMsgObj && $groupMsgObj->poll_id != null){
+                            $deleteBot = Poll::find($groupMsgObj->poll_id);
+                            if($deleteBot && $deleteBot->options == $optionsNumber){
+                                $optionsData = $deleteBot->optionsData != null ? unserialize($deleteBot->optionsData) : [];
+                                $optionsData = json_decode(json_encode($optionsData), true);
+                                $optionArr = [];
+                                for ($i=0; $i < $optionsNumber; $i++) { 
+                                    $optionArr[] = $optionsData[$i]['text'];
+                                    $trues+=1;
+                                }
+                                if($trues == $optionsNumber && $optionArr == $message['metadata']['options']){
+                                    $message['metadata']['pollId'] = $groupMsgObj->poll_id;
+                                    $oneGroup->delete();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             // Fire Incoming Message Event For Web Application
             $lastM = $this->handleMessages($userObj->domain, $message, $tenantObj->tenant_id);
             // TODO: Make Feature in Client to disable or enable bot in groups

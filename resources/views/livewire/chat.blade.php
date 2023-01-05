@@ -56,6 +56,14 @@
             }else if($chat['lastMessage']['message_type'] == 'order'){
                 $msgIcon = '<span class="fa-icon"><i class="icon-md la la-shopping-cart"></i></span>';
                 $msgBody = @$chat['lastMessage']['metadata']['itemCount'].' '.trans('main.items');
+            }else if($chat['lastMessage']['message_type'] == 'call'){
+                if($chat['lastMessage']['metadata']['isVideo'] == true){
+                    $msgIcon = '<span class="svg-icon text-danger"><svg viewBox="0 0 19 16" height="16" width="19" preserveAspectRatio="xMidYMid meet" class="" version="1.1" x="0px" y="0px" enable-background="new 0 0 19 16" xml:space="preserve"><path fill="currentColor" d="M11.2,1.8H3.3C2,1.8,1,2.8,1,4.1V11c0,1.1,1,2.2,2.3,2.2h8c1.2,0,2.3-1,2.3-2.3V4.1 C13.5,2.8,12.4,1.8,11.2,1.8z M10.3,5.3L6.4,9.2h2.1c0.2,0,0.4,0.2,0.4,0.4V10c0,0.2-0.2,0.4-0.4,0.4H4.7c-0.2,0-0.4-0.2-0.4-0.4 V6.2c0-0.2,0.2-0.4,0.4-0.4h0.4c0.2,0,0.4,0.2,0.4,0.4v2.1l3.9-3.9c0.2-0.2,0.4-0.1,0.5,0l0.3,0.3C10.4,4.9,10.4,5.1,10.3,5.3z  M15.1,5.3c-0.2,0.1-0.3,0.3-0.3,0.5v3.3c0,0.2,0.1,0.4,0.3,0.5l2.9,2.1V3.2L15.1,5.3z"></path></svg></span>';
+                    $msgBody = trans('main.missedVideo');
+                }else{
+                    $msgIcon = '<span class="svg-icon text-danger"><svg viewBox="0 0 20 17" height="17" width="20" preserveAspectRatio="xMidYMid meet" class="" version="1.1" x="0px" y="0px" enable-background="new 0 0 20 17" xml:space="preserve"><path fill="currentColor" d="M18.2,12.1L18.2,12.1c-1.5-1.8-5-2.7-8.2-2.7s-6.7,1-8.2,2.7c-0.7,0.8-0.3,2.3,0.2,2.8 c0.2,0.2,0.3,0.3,0.5,0.3c1.4,0,3.6-0.7,3.6-0.7c0.5-0.2,0.8-0.5,0.8-1c0,0,0-0.7,0-1.3c0.7-1.2,5.4-1.2,6.4-0.1c0,0,0,0,0.1,0.1 v1.3c0,0.2,0.1,0.4,0.2,0.6c0.1,0.2,0.3,0.3,0.5,0.4c0,0,2.2,0.7,3.6,0.7C17.9,15.2,19.1,13.2,18.2,12.1z M5.4,3.2l4.7,4.6l5.8-5.7 L15,1.3L10.1,6L6.4,2.3h2.5V1H4.1v4.8h1.3C5.4,5.8,5.4,3.2,5.4,3.2z"></path></svg></span>';
+                    $msgBody = trans('main.missedVoice');
+                }
             }
         }
     @endphp

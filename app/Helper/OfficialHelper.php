@@ -224,6 +224,15 @@ class OfficialHelper
             'CHANNELTOKEN' => $this->token,
         ])->post($mainURL, $data);
     }
+
+    public function rejectCall($data)
+    {
+        $mainURL = $this->baseUrl . 'users/rejectCall';
+        return Http::withToken($this->authToken)->withHeaders([
+            'CHANNELID' => $this->instanceId,
+            'CHANNELTOKEN' => $this->token,
+        ])->post($mainURL, $data);
+    }
     /*----------------------------------------------------------
     Chats
     ----------------------------------------------------------*/

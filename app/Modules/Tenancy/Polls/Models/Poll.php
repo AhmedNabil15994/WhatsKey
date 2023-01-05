@@ -52,7 +52,7 @@ class Poll extends Model{
     }
 
     static function getMsgBotByMsg($senderMessage){
-        $botObj = self::NotDeleted()->where('status',1)->where('id',$senderMessage)->first();
+        $botObj = self::where('status',1)->where('id',$senderMessage)->first();
         if($botObj){
             return self::getData($botObj);
         }

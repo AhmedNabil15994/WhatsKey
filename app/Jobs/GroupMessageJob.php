@@ -18,6 +18,7 @@ use App\Models\Poll;
 use App\Models\UserAddon;
 use App\Models\User;
 use App\Models\CentralUser;
+use App\Models\ContactGroup;
 
 // implements ShouldQueue
 class GroupMessageJob implements ShouldQueue
@@ -93,6 +94,7 @@ class GroupMessageJob implements ShouldQueue
                 $hasNotWhatsapp+=1;
             }
             ContactReport::newStatus($checkData['phone'],$messageObj['group_id'],$messageObj['id'],$status,'');
+            ContactGroup::newRecord($checkData['phone'],$messageObj['id'],$messageObj['created_at']);
         }
         // For Local
         // $messageObj['file'] = str_replace('newdomain1.whatskey.localhost/', 'd677-154-182-251-196.ngrok.io', $messageObj['file']);
@@ -148,9 +150,9 @@ class GroupMessageJob implements ShouldQueue
                         'title' => $oneItem['text'],
                     ];
                 }
-                $messageData[$key]['body'] = $this->reformMessage($botObj->title,$contact['name'],str_replace('+', '', $contact['phone']));
+                $messageData[$key]['body'] = $botObj->title;
                 $messageData[$key]['body'] .= " \r\n \r\n".$this->reformMessage($botObj->body,$contact['name'],str_replace('+', '', $contact['phone']));
-                $messageData[$key]['footer'] = $this->reformMessage($botObj->footer,$contact['name'],str_replace('+', '', $contact['phone']));
+                $messageData[$key]['footer'] = $botObj->footer;
                 $messageData[$key]['buttons'] = $buttons;
                 $messageFunction = 'sendBulkButtons';
             }else if($messageObj['message_type'] == 31){
@@ -170,10 +172,10 @@ class GroupMessageJob implements ShouldQueue
                     ];
                 }
 
-                $messageData[$key]['title'] = $this->reformMessage($botObj->title,$contact['name'],str_replace('+', '', $contact['phone']));
+                $messageData[$key]['title'] = $botObj->title;
                 $messageData[$key]['body'] = $this->reformMessage($botObj->body,$contact['name'],str_replace('+', '', $contact['phone']));
-                $messageData[$key]['footer'] = $this->reformMessage($botObj->footer,$contact['name'],str_replace('+', '', $contact['phone']));
-                $messageData[$key]['buttonText'] = $this->reformMessage($botObj->buttonText,$contact['name'],str_replace('+', '', $contact['phone']));
+                $messageData[$key]['footer'] = $botObj->footer;
+                $messageData[$key]['buttonText'] = $botObj->buttonText;
                 $messageData[$key]['sections'] = $sections;
                 $messageFunction = 'sendBulkList';
             }else if($messageObj['message_type'] == 32){

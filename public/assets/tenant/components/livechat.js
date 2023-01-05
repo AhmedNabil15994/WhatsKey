@@ -9,6 +9,26 @@ $(function(){
 	    }
 	});
 
+	Livewire.on('incomingCall', call => {
+		$('#callModal .modal-title').html(call.title)
+		$('#callModal img').attr('src',call.image)
+		$('#callModal .callText').html(call.text)
+		$('#callModal .callName').html(call.name)
+		$('#callModal .rejectCall').attr('data-id',call.callId);
+        $('#callModal').modal('show');
+    });
+
+	$(document).on('click','#callModal .rejectCall',function(e){
+		e.preventDefault();
+		let callId = $(this).data('id');
+		window.livewire.emitTo('conversation','rejectCall',callId)
+	})
+
+    Livewire.on('closeCall', chat => {
+        $('#callModal').modal('hide');
+       	errorNotification('Call Has been ended !!!')
+    });
+
 	Livewire.on('conversationOpened', chat => {
 		document.querySelector('emoji-picker').database.close()
     	$('#kt_scrollDown').click()

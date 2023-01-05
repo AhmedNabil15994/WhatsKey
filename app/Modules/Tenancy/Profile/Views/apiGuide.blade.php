@@ -110,19 +110,69 @@
             </div>
         </div>
 
-        <div class="accordion accordion-toggle-arrow mb-5" id="accordionExample2">
+        <div class="accordion accordion-toggle-arrow mb-5" id="accordionExample11">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title" data-toggle="collapse" data-target="#collapseOne2">
-                        {{ trans('main.send_file') }}
+                    <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseOne11">
+                        {{ trans('main.send_image') }}
                     </div>
                 </div>
-                <div id="collapseOne2" class="collapse" data-parent="#accordionExample2">
+                <div id="collapseOne11" class="collapse" data-parent="#accordionExample11">
                     <div class="card-body">
                         <div class="example-preview">
                             <p>{{ trans('main.send_file_p1') }}</p>
-                            <p>{{ trans('main.send_file_p2') }}</p>
-                            <p>{{ trans('main.send_file_p3') }}</p>
+                            <p>{{ trans('main.send_text_p2') }}</p>
+                            <ul class="nav nav-light-success nav-pills btnsTabs" id="myTab2" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="curl-tab-2" data-toggle="tab" href="#curl-2">
+                                        <span class="nav-text">PHP - CURL</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="php-tab-2" data-toggle="tab" href="#php-2" aria-controls="password">
+                                        <span class="nav-text">PHP Class</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="bash-tab-2" data-toggle="tab" href="#bash-2" aria-controls="payment">
+                                        <span class="nav-text">Curl (Bash)</span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <div class="tab-content mt-5" id="myTabContent2">
+                                <div class="tab-pane fade active show" id="curl-2" role="tabpanel" aria-labelledby="curl-tab-2">
+                                    <div class="content">
+                                        {{ preg_replace('/\b\d+\b/', '', highlight_file(public_path('assets/tenant/codes/phpCurl/sendFile.php'))) }}
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="php-2" role="tabpanel" aria-labelledby="php-tab-2">
+                                    <div class="content">
+                                        {{ preg_replace('/\b\d+\b/', '', highlight_file(public_path('assets/tenant/codes/phpClass/sendFile.php'))) }}
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="bash-2" role="tabpanel" aria-labelledby="bash-tab-2">
+                                    <div class="content">
+                                        {{ preg_replace('/\b\d+\b/', '', highlight_file(public_path('assets/tenant/codes/curl/sendFile.php'))) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion accordion-toggle-arrow mb-5" id="accordionExample12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseOne12">
+                        {{ trans('main.send_video') }}
+                    </div>
+                </div>
+                <div id="collapseOne12" class="collapse" data-parent="#accordionExample12">
+                    <div class="card-body">
+                        <div class="example-preview">
+                            <p>{{ trans('main.send_file_p1') }}</p>
                             <p>{{ trans('main.send_text_p2') }}</p>
                             <ul class="nav nav-light-success nav-pills btnsTabs" id="myTab2" role="tablist">
                                 <li class="nav-item">
@@ -167,7 +217,7 @@
         <div class="accordion accordion-toggle-arrow mb-5" id="accordionExample3">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title" data-toggle="collapse" data-target="#collapseOne3">
+                    <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseOne3">
                         {{ trans('main.send_sound') }}
                     </div>
                 </div>
@@ -222,10 +272,218 @@
             </div>
         </div>
 
+        <div class="accordion accordion-toggle-arrow mb-5" id="accordionExample2">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseOne2">
+                        {{ trans('main.send_file') }}
+                    </div>
+                </div>
+                <div id="collapseOne2" class="collapse" data-parent="#accordionExample2">
+                    <div class="card-body">
+                        <div class="example-preview">
+                            <p>{{ trans('main.send_file_p2') }}</p>
+                            <p>{{ trans('main.send_text_p2') }}</p>
+                            <ul class="nav nav-light-success nav-pills btnsTabs" id="myTab2" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="curl-tab-2" data-toggle="tab" href="#curl-2">
+                                        <span class="nav-text">PHP - CURL</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="php-tab-2" data-toggle="tab" href="#php-2" aria-controls="password">
+                                        <span class="nav-text">PHP Class</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="bash-tab-2" data-toggle="tab" href="#bash-2" aria-controls="payment">
+                                        <span class="nav-text">Curl (Bash)</span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <div class="tab-content mt-5" id="myTabContent2">
+                                <div class="tab-pane fade active show" id="curl-2" role="tabpanel" aria-labelledby="curl-tab-2">
+                                    <div class="content">
+                                        {{ preg_replace('/\b\d+\b/', '', highlight_file(public_path('assets/tenant/codes/phpCurl/sendFile.php'))) }}
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="php-2" role="tabpanel" aria-labelledby="php-tab-2">
+                                    <div class="content">
+                                        {{ preg_replace('/\b\d+\b/', '', highlight_file(public_path('assets/tenant/codes/phpClass/sendFile.php'))) }}
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="bash-2" role="tabpanel" aria-labelledby="bash-tab-2">
+                                    <div class="content">
+                                        {{ preg_replace('/\b\d+\b/', '', highlight_file(public_path('assets/tenant/codes/curl/sendFile.php'))) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion accordion-toggle-arrow mb-5" id="accordionExample13">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseOne13">
+                        {{ trans('main.send_sticker') }}
+                    </div>
+                </div>
+                <div id="collapseOne13" class="collapse" data-parent="#accordionExample13">
+                    <div class="card-body">
+                        <div class="example-preview">
+                            <p>{{ trans('main.send_file_p1') }}</p>
+                            <p>{{ trans('main.send_text_p2') }}</p>
+                            <ul class="nav nav-light-success nav-pills btnsTabs" id="myTab2" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="curl-tab-2" data-toggle="tab" href="#curl-2">
+                                        <span class="nav-text">PHP - CURL</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="php-tab-2" data-toggle="tab" href="#php-2" aria-controls="password">
+                                        <span class="nav-text">PHP Class</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="bash-tab-2" data-toggle="tab" href="#bash-2" aria-controls="payment">
+                                        <span class="nav-text">Curl (Bash)</span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <div class="tab-content mt-5" id="myTabContent2">
+                                <div class="tab-pane fade active show" id="curl-2" role="tabpanel" aria-labelledby="curl-tab-2">
+                                    <div class="content">
+                                        {{ preg_replace('/\b\d+\b/', '', highlight_file(public_path('assets/tenant/codes/phpCurl/sendFile.php'))) }}
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="php-2" role="tabpanel" aria-labelledby="php-tab-2">
+                                    <div class="content">
+                                        {{ preg_replace('/\b\d+\b/', '', highlight_file(public_path('assets/tenant/codes/phpClass/sendFile.php'))) }}
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="bash-2" role="tabpanel" aria-labelledby="bash-tab-2">
+                                    <div class="content">
+                                        {{ preg_replace('/\b\d+\b/', '', highlight_file(public_path('assets/tenant/codes/curl/sendFile.php'))) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion accordion-toggle-arrow mb-5" id="accordionExample14">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseOne14">
+                        {{ trans('main.send_gif') }}
+                    </div>
+                </div>
+                <div id="collapseOne14" class="collapse" data-parent="#accordionExample14">
+                    <div class="card-body">
+                        <div class="example-preview">
+                            <p>{{ trans('main.send_file_p1') }}</p>
+                            <p>{{ trans('main.send_text_p2') }}</p>
+                            <ul class="nav nav-light-success nav-pills btnsTabs" id="myTab2" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="curl-tab-2" data-toggle="tab" href="#curl-2">
+                                        <span class="nav-text">PHP - CURL</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="php-tab-2" data-toggle="tab" href="#php-2" aria-controls="password">
+                                        <span class="nav-text">PHP Class</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="bash-tab-2" data-toggle="tab" href="#bash-2" aria-controls="payment">
+                                        <span class="nav-text">Curl (Bash)</span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <div class="tab-content mt-5" id="myTabContent2">
+                                <div class="tab-pane fade active show" id="curl-2" role="tabpanel" aria-labelledby="curl-tab-2">
+                                    <div class="content">
+                                        {{ preg_replace('/\b\d+\b/', '', highlight_file(public_path('assets/tenant/codes/phpCurl/sendFile.php'))) }}
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="php-2" role="tabpanel" aria-labelledby="php-tab-2">
+                                    <div class="content">
+                                        {{ preg_replace('/\b\d+\b/', '', highlight_file(public_path('assets/tenant/codes/phpClass/sendFile.php'))) }}
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="bash-2" role="tabpanel" aria-labelledby="bash-tab-2">
+                                    <div class="content">
+                                        {{ preg_replace('/\b\d+\b/', '', highlight_file(public_path('assets/tenant/codes/curl/sendFile.php'))) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion accordion-toggle-arrow mb-5" id="accordionExample5">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseOne5">
+                        {{ trans('main.send_link') }}
+                    </div>
+                </div>
+                <div id="collapseOne5" class="collapse" data-parent="#accordionExample5">
+                    <div class="card-body">
+                        <div class="example-preview">
+                            <p>{{ trans('main.send_link_p1') }}</p>
+                            <p>{{ trans('main.send_link_p2') }}</p>
+                            <ul class="nav nav-light-success nav-pills btnsTabs" id="myTab5" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="curl-tab-5" data-toggle="tab" href="#curl-5">
+                                        <span class="nav-text">PHP - CURL</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="php-tab-5" data-toggle="tab" href="#php-5" aria-controls="password">
+                                        <span class="nav-text">PHP Class</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="bash-tab-5" data-toggle="tab" href="#bash-5" aria-controls="payment">
+                                        <span class="nav-text">Curl (Bash)</span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <div class="tab-content mt-5" id="myTabContent5">
+                                <div class="tab-pane fade active show" id="curl-5" role="tabpanel" aria-labelledby="curl-tab-5">
+                                    <div class="content">
+                                        {{ preg_replace('/\b\d+\b/', '', highlight_file(public_path('assets/tenant/codes/phpCurl/sendLink.php'))) }}
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="php-5" role="tabpanel" aria-labelledby="php-tab-5">
+                                    <div class="content">
+                                        {{ preg_replace('/\b\d+\b/', '', highlight_file(public_path('assets/tenant/codes/phpClass/sendLink.php'))) }}
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="bash-5" role="tabpanel" aria-labelledby="bash-tab-5">
+                                    <div class="content">
+                                        {{ preg_replace('/\b\d+\b/', '', highlight_file(public_path('assets/tenant/codes/curl/sendLink.php'))) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="accordion accordion-toggle-arrow mb-5" id="accordionExample4">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title" data-toggle="collapse" data-target="#collapseOne4">
+                    <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseOne4">
                         {{ trans('main.send_location') }}
                     </div>
                 </div>
@@ -280,7 +538,7 @@
         <div class="accordion accordion-toggle-arrow mb-5" id="accordionExample9">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title" data-toggle="collapse" data-target="#collapseOne9">
+                    <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseOne9">
                         {{ trans('main.send_contact') }}
                     </div>
                 </div>
@@ -327,62 +585,10 @@
             </div>
         </div>
 
-        <div class="accordion accordion-toggle-arrow mb-5" id="accordionExample5">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title" data-toggle="collapse" data-target="#collapseOne5">
-                        {{ trans('main.send_link') }}
-                    </div>
-                </div>
-                <div id="collapseOne5" class="collapse" data-parent="#accordionExample5">
-                    <div class="card-body">
-                        <div class="example-preview">
-                            <p>{{ trans('main.send_link_p1') }}</p>
-                            <p>{{ trans('main.send_link_p2') }}</p>
-                            <ul class="nav nav-light-success nav-pills btnsTabs" id="myTab5" role="tablist">
-                                <li class="nav-item">
-                                    <a class="nav-link active" id="curl-tab-5" data-toggle="tab" href="#curl-5">
-                                        <span class="nav-text">PHP - CURL</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="php-tab-5" data-toggle="tab" href="#php-5" aria-controls="password">
-                                        <span class="nav-text">PHP Class</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="bash-tab-5" data-toggle="tab" href="#bash-5" aria-controls="payment">
-                                        <span class="nav-text">Curl (Bash)</span>
-                                    </a>
-                                </li>
-                            </ul>
-                            <div class="tab-content mt-5" id="myTabContent5">
-                                <div class="tab-pane fade active show" id="curl-5" role="tabpanel" aria-labelledby="curl-tab-5">
-                                    <div class="content">
-                                        {{ preg_replace('/\b\d+\b/', '', highlight_file(public_path('assets/tenant/codes/phpCurl/sendLink.php'))) }}
-                                    </div>
-                                </div>
-                                <div class="tab-pane fade" id="php-5" role="tabpanel" aria-labelledby="php-tab-5">
-                                    <div class="content">
-                                        {{ preg_replace('/\b\d+\b/', '', highlight_file(public_path('assets/tenant/codes/phpClass/sendLink.php'))) }}
-                                    </div>
-                                </div>
-                                <div class="tab-pane fade" id="bash-5" role="tabpanel" aria-labelledby="bash-tab-5">
-                                    <div class="content">
-                                        {{ preg_replace('/\b\d+\b/', '', highlight_file(public_path('assets/tenant/codes/curl/sendLink.php'))) }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div class="accordion accordion-toggle-arrow mb-5" id="accordionExample6">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title" data-toggle="collapse" data-target="#collapseOne6">
+                    <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseOne6">
                         {{ trans('main.send_buttons') }}
                     </div>
                 </div>
@@ -432,7 +638,7 @@
         <div class="accordion accordion-toggle-arrow mb-5" id="accordionExample7">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title" data-toggle="collapse" data-target="#collapseOne7">
+                    <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseOne7">
                         {{ trans('main.send_templates') }}
                     </div>
                 </div>
@@ -482,7 +688,7 @@
         <div class="accordion accordion-toggle-arrow mb-5" id="accordionExample8">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title" data-toggle="collapse" data-target="#collapseOne8">
+                    <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseOne8">
                         {{ trans('main.send_list') }}
                     </div>
                 </div>

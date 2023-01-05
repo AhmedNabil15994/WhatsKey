@@ -71,7 +71,7 @@ class UserStorageControllers extends Controller {
         $data['parent'] = 'main';
         $data['totalSize'] = $data['designElems']['totalSize'];
         $data['totalStorage'] = $data['designElems']['totalStorage'];
-        return view('Tenancy.UserStorage.Views.V5.index')->with('data', (object) $data);
+        return view('Tenancy.UserStorage.Views.index')->with('data', (object) $data);
     }
 
     public function groupMsgs(Request $request) {
@@ -85,11 +85,11 @@ class UserStorageControllers extends Controller {
         }
         $data['designElems'] = $this->getData();
         $data['data'] = $dataArr;
-        $data['type'] = 'groupMsgs';
+        $data['type'] = 'groupMessages';
         $data['parent'] = 'main';
         $data['totalSize'] = $data['designElems']['totalSize'];
         $data['totalStorage'] = $data['designElems']['totalStorage'];
-        return view('Tenancy.UserStorage.Views.V5.index')->with('data', (object) $data);
+        return view('Tenancy.UserStorage.Views.index')->with('data', (object) $data);
     }
 
     public function chats(Request $request) {
@@ -100,80 +100,117 @@ class UserStorageControllers extends Controller {
                 $dataObj[$key] = new \stdClass();
                 $file_size = $file->getSize();
                 $file_size = $file_size/(1024 * 1024);
-                $file_size = number_format($file_size,2) . " MB ";
-                $dataObj[$key]->file_size = $file_size;
-                $dataObj[$key]->file_name = $file->getFileName();
-                $dataObj[$key]->file = \URL::to('/').'/public/uploads/'.TENANT_ID.'/chats/'.$file->getFileName();
+                $file_size = number_format($file_size,2);
+                $dataObj[$key]->size = $file_size;
+                $dataObj[$key]->name = $file->getFileName();
+                $dataObj[$key]->extension = in_array($file->getExtension(),['png','jpg','jpeg']) ? 'jpg' : $file->getExtension();
+                $dataObj[$key]->file = \URL::to('/').'/uploads/'.TENANT_ID.'/chats/'.$file->getFileName();
             }
         }
-        // dd($dataObj);
         $data['data'] = $dataObj;
         $data['designElems'] = $this->getData();
         $data['type'] = 'chats';
         $data['parent'] = 'child';
         $data['totalSize'] = $data['designElems']['totalSize'];
         $data['totalStorage'] = $data['designElems']['totalStorage'];
-        return view('Tenancy.UserStorage.Views.V5.index')->with('data', (object) $data);
+        return view('Tenancy.UserStorage.Views.index')->with('data', (object) $data);
     }
 
     public function getByTypeAndId($type,$id){
-        if($type == 'users'){
-            $dataObj = User::getData(User::getOne($id));
-        }else if($type == 'bots'){
-            $dataObj = Bot::getData(Bot::getOne($id));
-        }else if($type == 'groupMsgs'){
-            $dataObj = GroupMsg::getData(GroupMsg::getOne($id));
-        }
+        // if($type == 'users'){
+        //     $dataObj = User::getData(User::getOne($id));
+        // }else if($type == 'bots'){
+        //     $dataObj = Bot::getData(Bot::getOne($id));
+        // }else if($type == 'groupMsgs'){
+        //     $dataObj = GroupMsg::getData(GroupMsg::getOne($id));
+        // }
         
-        if( isset($dataObj->photo_name) && $dataObj->photo_name == null){
-            return redirect()->back();
-        }
+        // if( isset($dataObj->photo_name) && $dataObj->photo_name == null){
+        //     return redirect()->back();
+        // }
 
-        if( isset($dataObj->file_name) && $dataObj->file_name == null){
-            return redirect()->back();
+        // if( isset($dataObj->file_name) && $dataObj->file_name == null){
+        //     return redirect()->back();
+        // }
+        
+
+
+
+        $dataObj = [];
+        $path = public_path().'/uploads/'.TENANT_ID.'/'.$type.'/'.$id;
+        if(file_exists($path)){
+            foreach (File::allFiles($path) as $key => $file) {
+                $dataObj[$key] = new \stdClass();
+                $file_size = $file->getSize();
+                $file_size = $file_size/(1024 * 1024);
+                $file_size = number_format($file_size,2);
+                $dataObj[$key]->size = $file_size;
+                $dataObj[$key]->name = $file->getFileName();
+                $dataObj[$key]->extension = in_array($file->getExtension(),['png','jpg','jpeg']) ? 'jpg' : $file->getExtension();
+                $dataObj[$key]->file = \URL::to('/').'/uploads/'.TENANT_ID.'/'.$type.'/'.$id.'/'.$file->getFileName();
+            }
         }
-    
         $data['data'] = $dataObj;
         $data['designElems'] = $this->getData();
         $data['type'] = $type;
         $data['parent'] = 'child';
         $data['totalSize'] = $data['designElems']['totalSize'];
         $data['totalStorage'] = $data['designElems']['totalStorage'];
-        return view('Tenancy.UserStorage.Views.V5.index')->with('data', (object) $data);
+        return view('Tenancy.UserStorage.Views.index')->with('data', (object) $data);
     }
 
     public function removeByTypeAndId($type,$id){
+        $input = \Request::all();
+
         if($type == 'users'){
             $dataObj = User::getOne($id);
         }else if($type == 'bots'){
             $dataObj = Bot::getOne($id);
-        }else if($type == 'groupMsgs'){
+        }else if($type == 'groupMessages'){
             $dataObj = GroupMsg::getOne($id);
         }
-        if(isset($dataObj->image)){
-            $dataObj->image = null;
-            $dataObj->save();
-        }
 
-        if(isset($dataObj->file_name)){
-            $dataObj->file_name = null;
-            $dataObj->save();
-        } 
-        if(isset($dataObj->file_name)){
-            $dataObj->file_name = null;
-            $dataObj->save();
-        } 
-        \ImagesHelper::deleteDirectory(public_path('/').'uploads/'.TENANT_ID.'/'.$type.'/'.$id);
-        $data['status'] = \TraitsFunc::SuccessResponse(trans('main.deleteSuccess'));
-        $data['url'] = \URL::to('/storage/'.$type == 'user' ? '' : $type);
-        return response()->json($data);
+        $url = public_path('/').'uploads/'.TENANT_ID.'/'.$type.'/'.$id;
+        if(isset($input['fileName']) && !empty($input['fileName'])){
+            $url = public_path('/').'uploads/'.TENANT_ID.'/'.$type.'/'.$id.'/'.$input['fileName'];
+            if(isset($dataObj->image) && $input['fileName'] == $dataObj->image){
+                $dataObj->image = null;
+                $dataObj->save();
+            }
+
+            if(isset($dataObj->file_name) && $input['fileName'] == $dataObj->file_name){
+                $dataObj->file_name = null;
+                $dataObj->save();
+            } 
+
+            if(isset($dataObj->file_name) && $input['fileName'] == $dataObj->file_name){
+                $dataObj->file_name = null;
+                $dataObj->save();
+            } 
+        }else{
+            if(isset($dataObj->image)){
+                $dataObj->image = null;
+                $dataObj->save();
+            }
+
+            if(isset($dataObj->file_name)){
+                $dataObj->file_name = null;
+                $dataObj->save();
+            } 
+
+            if(isset($dataObj->file_name)){
+                $dataObj->file_name = null;
+                $dataObj->save();
+            } 
+        }
+        
+        \ImagesHelper::deleteDirectory($url);
+        return \TraitsFunc::SuccessResponse(trans('main.deleteSuccess'));
     }
 
     public function removeChatFile($id){
         \ImagesHelper::deleteDirectory(public_path('/').'uploads/'.TENANT_ID.'/chats/'.$id);
-        $data['status'] = \TraitsFunc::SuccessResponse(trans('main.deleteSuccess'));
-        $data['url'] = \URL::to('/storage/chats');
-        return response()->json($data);
+        return \TraitsFunc::SuccessResponse(trans('main.deleteSuccess'));
     }
 
 }

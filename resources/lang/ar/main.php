@@ -351,6 +351,7 @@ return [
 	'phone_model' => 'موديل الهاتف',
 	'os_ver' => 'اصدار النظام',
 	'leftDays' => 'الأيام المتبقية',
+	'leftSpace' => 'المساحة المتبقية',
 	'day' => 'يوم',
 	'days' => 'أيام',
 	'add_days' => 'اضافة أيام',
@@ -444,6 +445,7 @@ return [
 
 	'message' => 'رسالة',
 	'gigaB' => 'جيجا بايت',
+	'migaB' => 'ميجا بايت',
 	'employee' => 'موظف',
 	'extra_count' => 'عدد الوحدات',
 	'extra_type' => 'النوع',
@@ -535,7 +537,7 @@ return [
 	'storage' => 'ادارة الملفات',
 	'size' => 'حجم الملف',
 	'userStorage' => 'ادارة الملفات',
-	'storages' => 'المساحة',
+	'storages' => 'المساحة الاجمالية',
 	'demo' => 'مدة تجريبية (3 أيام)',
 
 	'invoices' => 'الفواتير',
@@ -670,7 +672,7 @@ return [
 	'employee' => 'موظف',
 	'lastReply' => 'اخر تحديث',
 	'of' => 'من',
-	'used' => 'مستخدم',
+	'used' => 'المساحة المستخدمة',
 	'createdFor' => 'أنشأت هذه الفاتورة لـ',
 	'transactions' => 'عمليات الأيداع',
 	'transaction_date' => 'تاريخ الأيداع',
@@ -995,4 +997,14 @@ return [
 	'abilityToEdit' => 'Ability To Edit Group Info',
 	'admins' => 'Admins',
 	'can_appeal' => 'Can Appeal',
+	'folders' => 'المجلدات',
+
+	// 'missedVideo' => 'Missed Video Call at ',
+	// 'missedVoice' => 'Missed Voice Call at ',
+	'missedVideo' => 'مكالمة فيديو فائتة ',
+	'missedVoice' => 'مكالمة صوتية فائتة ',
+
+	'incomingVoiceCall' => 'مكالمة صوتية واردة',
+	'incomingVideoCall' => 'مكالمة فيديو واردة',
+	'rejectCall' => 'رفض المكالمة',
 ];

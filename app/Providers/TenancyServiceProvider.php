@@ -147,7 +147,6 @@ class TenancyServiceProvider extends ServiceProvider
             ->group(function () {
             require app_path('Modules/Tenancy/Auth/routes.php');
             require app_path('Modules/Tenancy/WhatsKey/routes.php');
-            // require app_path('Modules/Tenancy/WhatsappOrder/clientRoutes.php');
         });
     }
 
@@ -186,7 +185,6 @@ class TenancyServiceProvider extends ServiceProvider
             require app_path('Modules/Tenancy/BusinessProfile/routes.php');
             
             // require app_path('Modules/Tenancy/ExternalServices/routes.php');
-            // require app_path('Modules/Tenancy/WhatsappOrder/routes.php');
         });
     }
 
