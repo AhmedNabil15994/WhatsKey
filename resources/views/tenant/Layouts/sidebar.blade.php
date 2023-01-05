@@ -226,14 +226,14 @@
                             @endif
 
                             @if(\Helper::checkRules('list-templates-messages') || IS_ADMIN)
-                            <li class="menu-item {{ Active(URL::to('/templateMsg*'),'menu-item-active') }}" aria-haspopup="true">
+{{--                             <li class="menu-item {{ Active(URL::to('/templateMsg*'),'menu-item-active') }}" aria-haspopup="true">
                                 <a href="{{URL::to('/templateMsg')}}" class="menu-link">
                                     <i class="menu-bullet menu-bullet-dot">
                                         <span></span>
                                     </i>
                                     <span class="menu-text">{{ trans('main.templateMsg') }}</span>
                                 </a>
-                            </li>
+                            </li> --}}
                             @endif
                         </ul>
                     </div>
