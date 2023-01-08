@@ -78,8 +78,8 @@ class Kernel extends HttpKernel
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            \App\Http\Middleware\ApiGeneralAuthEngine::class,
-            \App\Http\Middleware\ApiLanguageMiddleware::class,
+            \App\Http\Middleware\EngineInstance::class,
+            \App\Http\Middleware\EngineAuthEngine::class,
         ],
 
         'apiWithAuth' => [

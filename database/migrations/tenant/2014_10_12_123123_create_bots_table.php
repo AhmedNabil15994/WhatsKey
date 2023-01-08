@@ -35,7 +35,6 @@ class CreateBotsTable extends Migration
             $table->string('expiration_in_seconds')->nullable();
             $table->integer('status')->nullable();
             $table->integer('sort')->nullable();
-            $table->integer('lang')->default(0);
             $table->integer('created_by')->nullable();
             $table->dateTime('created_at')->nullable();
             $table->integer('updated_by')->nullable();

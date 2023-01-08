@@ -154,14 +154,12 @@ class BotControllers extends Controller {
             'message_type' => 'required',
             'message' => 'required',
             'reply_type' => 'required',
-            'lang' => 'required',
         ];
 
         $message = [
             'message_type.required' => trans('main.messageTypeValidate'),
             'message.required' => trans('main.messageValidate'),
             'reply_type.required' => trans('main.replyTypeValidate'),
-            'lang.required' => trans('main.langValidate'),
         ];
 
         $validate = \Validator::make($input, $rules, $message);
@@ -212,7 +210,6 @@ class BotControllers extends Controller {
         $dataObj->reply_type = $input['reply_type'];
         $dataObj->sort = Bot::newSortIndex();
         $dataObj->status = 1;
-        $dataObj->lang = $input['lang'];
         $dataObj->created_at = DATE_TIME;
         $dataObj->created_by = USER_ID;
         $dataObj->save();
@@ -349,7 +346,6 @@ class BotControllers extends Controller {
         $dataObj->message = $input['message'];
         $dataObj->reply_type = $input['reply_type'];
         $dataObj->status = $input['status'];
-        $dataObj->lang = $input['lang'];
         $dataObj->updated_at = DATE_TIME;
         $dataObj->updated_by = USER_ID;
         $dataObj->save();

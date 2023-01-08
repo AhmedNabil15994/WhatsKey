@@ -15,6 +15,7 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
     'BASE_URL' => 'http://whatskey.localhost',
+    'ENGINE_URL' => 'http://whatskey.localhost/engine',
     'MY_DOMAIN' => 'http://myDomain.whatskey.localhost',
     'OFFICIAL_DOMAIN' => env('OFFICIAL_DOMAIN', 'http://official.whatsapp.loc/engine'),
     'debug_blacklist' => [

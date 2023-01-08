@@ -28,7 +28,13 @@ class ListMsg extends Model{
     }
 
     static function findBotMessage($senderMessage){
-        return self::NotDeleted()->where('status',1)->where('message_type',1)->where('message',$senderMessage)->first();
+        $obj = self::NotDeleted()->where('status',1)->where('message_type',1)->where('message',$senderMessage)->first();
+        if(!$obj){
+            $obj = self::NotDeleted()->where('status',1)->where('message_type',2)->search(strtolower($senderMessage))->first();
+            return $obj ? $obj : null;
+        }else{
+            return $obj;
+        }
     }
 
     static function getMsgBotByMsg($senderMessage){

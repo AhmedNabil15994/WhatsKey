@@ -39,7 +39,7 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->mapGuestRoutes();
         $this->mapModuleRoutes();
-        // $this->mapApiGuestRoutes();
+        $this->mapApiGuestRoutes();
         // $this->mapApiModuleRoutes();
 
         // $this->routes(function () {
@@ -106,27 +106,26 @@ class RouteServiceProvider extends ServiceProvider
         foreach ($this->centralDomains() as $domain) {
             Route::middleware('apiGeneral')
                 ->domain($domain)
-                ->prefix('api')
                 ->namespace($this->namespace)
                 ->group(function () {
-                    require app_path('Modules/Mobile/Auth/routes.php');
+                    require app_path('Modules/Engine/Engine/routes.php');
             });
         }
     }
 
-    protected function mapApiModuleRoutes()
-    {
-        foreach ($this->centralDomains() as $domain) {        
-            Route::middleware('apiWithAuth')
-                ->domain($domain)
-                ->prefix('api')
-                ->namespace($this->namespace)
-                ->group(function (){
-                    require app_path('Modules/Mobile/LiveChat/routes.php');
-                    require app_path('Modules/Mobile/Profile/routes.php');
-            });
-        }
-    }
+    // protected function mapApiModuleRoutes()
+    // {
+    //     foreach ($this->centralDomains() as $domain) {        
+    //         Route::middleware('apiWithAuth')
+    //             ->domain($domain)
+    //             ->prefix('api')
+    //             ->namespace($this->namespace)
+    //             ->group(function (){
+    //                 require app_path('Modules/Mobile/LiveChat/routes.php');
+    //                 require app_path('Modules/Mobile/Profile/routes.php');
+    //         });
+    //     }
+    // }
 
     protected function centralDomains(): array
     {

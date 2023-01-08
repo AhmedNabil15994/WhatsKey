@@ -29,8 +29,14 @@ class Bot extends Model{
             ->first();
     }
 
-    static function findBotMessage($langPref,$senderMessage){
-        return self::NotDeleted()->where('status',1)->where('lang',$langPref)->where('message_type',1)->where('message',$senderMessage)->first();
+    static function findBotMessage($senderMessage){
+        $obj = self::NotDeleted()->where('status',1)->where('message_type',1)->where('message',$senderMessage)->first();
+        if(!$obj){
+            $obj = self::NotDeleted()->where('status',1)->where('message_type',2)->search(strtolower($senderMessage))->first();
+            return $obj ? $obj : null;
+        }else{
+            return $obj;
+        }
     }
 
     static function dataList($status=null) {
@@ -101,8 +107,6 @@ class Bot extends Model{
         $data->webhook_url = $source->webhook_url;
         $data->templates = $source->templates != null ? unserialize(@$source->templates) : [];
         $data->status = $source->status;
-        $data->lang = $source->lang;
-        $data->langText = $source->lang == 0 ? trans('main.arabic') : trans('main.english');
         $data->sort = $source->sort;
         $data->created_at = \Helper::formatDate($source->created_at);
         return $data;

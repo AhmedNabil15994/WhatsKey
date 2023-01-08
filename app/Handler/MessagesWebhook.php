@@ -175,25 +175,15 @@ class MessagesWebhook extends ProcessWebhookJob
                 }else {    
                     // Find Out Bot Object Based on incoming message
                     $langPref = 0;
-                    $botObj1 = Bot::findBotMessage($langPref, $senderMessage);
+                    $botObj1 = Bot::findBotMessage($senderMessage);
                     if($botObj1){
 	                    $this->handleBasicBot($botObj1, $userObj->domain, $sender, $tenantObj->tenant_id, $message);
-                    }else{
-                    	$botObj2 = Bot::findBotMessage(!$langPref, $senderMessage);
-                    	if($botObj2){
-	                    	$this->handleBasicBot($botObj2, $userObj->domain, $sender, $tenantObj->tenant_id, $message);
-                    	}
                     }
 
                     // Find BotPlus Object Based on incoming message
-                    $botPlusObj1 = BotPlus::findBotMessage($langPref, $senderMessage);
+                    $botPlusObj1 = BotPlus::findBotMessage($senderMessage);
                     if($botPlusObj1){
 	                    $this->handleBotPlus($message, $botPlusObj1, $userObj->domain, $sender,$tenantObj->tenant_id,$senderMessage);
-                    }else{
-                    	$botPlusObj2 = BotPlus::findBotMessage(!$langPref, $senderMessage);
-                    	if($botPlusObj2){
-	                    	$this->handleBotPlus($message, $botPlusObj2, $userObj->domain, $sender,$tenantObj->tenant_id,$senderMessage);
-                    	}
                     }
                     
                     // Find ListMsg Object Based on incoming message
@@ -312,7 +302,7 @@ class MessagesWebhook extends ProcessWebhookJob
         $botObj = Bot::getData($botObj, $tenantId);
         $botObj->file = str_replace('localhost', $domain . '.whatskey.net', $botObj->file);
         // For Local
-        $botObj->file = str_replace('newdomain1.whatskey.net/', '047c-156-219-111-19.ngrok.io', $botObj->file);
+        $botObj->file = str_replace('newdomain1.whatskey.net/', 'e3f1-156-219-78-52.ngrok.io', $botObj->file);
         $myMessage = $botObj->reply;
         $message_type = '';
         $sendData['phone'] = str_replace('@c.us', '', $sender);
@@ -446,7 +436,7 @@ class MessagesWebhook extends ProcessWebhookJob
             }
             if($botObj->image != ''){
         		$botObj->image = str_replace('localhost', $domain . '.whatskey.net', $botObj->image);
-        		$botObj->image = str_replace('newdomain1.whatskey.net/', '047c-156-219-111-19.ngrok.io', $botObj->image);
+        		$botObj->image = str_replace('newdomain1.whatskey.net/', 'e3f1-156-219-78-52.ngrok.io', $botObj->image);
 	            $sendData['image'] = $botObj->image;
             }
             $sendData['footer'] = $botObj->footer;

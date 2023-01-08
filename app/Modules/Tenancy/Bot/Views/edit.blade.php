@@ -5,6 +5,17 @@
 
 @section('styles')
 <link rel="stylesheet" href="{{ asset('assets/tenant/css/photoswipe.css') }}" />
+<style>
+    .form-group.textWrap emoji-picker{
+        top: 40px;
+    }
+    html[dir="ltr"] .form-group.textWrap emoji-picker{
+        right: 30px;
+    }
+    html[dir="rtl"] .form-group.textWrap emoji-picker{
+        left: 30px;
+    }
+</style>
 @endsection
 @section('breadcrumbs')
 @include('tenant.Layouts.breadcrumb',[
@@ -41,12 +52,14 @@
                 <select class="form-control" data-toggle="select2" data-style="btn-outline-myPR" name="message_type">
                     <option value="">{{ trans('main.choose') }}</option>
                     <option value="1" {{ $data->data->message_type == 1 ? 'selected' : '' }}>{{ trans('main.equal') }}</option>
-                                        <option value="2" {{ $data->data->message_type == 2 ? 'selected' : '' }}>{{ trans('main.part') }}</option>
+                    <option value="2" {{ $data->data->message_type == 2 ? 'selected' : '' }}>{{ trans('main.part') }}</option>
                 </select>
             </div> 
-            <div class="form-group">
+            <div class="form-group textWrap">
                 <label>{{ trans('main.clientMessage') }} :</label>
                 <input class="form-control" type="text" value="{{ $data->data->message }}" name="message" placeholder="{{ trans('main.clientMessage') }}">
+                <i class="la la-smile icon-xl emoji-icon"></i>
+                <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
             </div>
             <div class="form-group">
                 <label>{{ trans('main.replyType') }} :</label>
@@ -65,28 +78,23 @@
                     <option value="50" {{ $data->data->reply_type == 50 ? 'selected' : '' }}>{{ trans('main.webhook') }}</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label> {{ trans('main.lang') }}</label>                            
-                <select class="form-control" data-toggle="select2" data-style="btn-outline-myPR" name="lang">
-                    <option value="">{{ trans('main.choose') }}</option>
-                    <option value="0" {{ $data->data->lang == 0 ? 'selected' : '' }}>{{ trans('main.arabic') }}</option>
-                    <option value="1" {{ $data->data->lang == 1 ? 'selected' : '' }}>{{ trans('main.english') }}</option>
-                </select>
-            </div>
-
 
             {{-- Text Messages Design --}}
             <div class="reply {{$data->data->reply_type == 1 ? '' : 'hidden'}}" data-id="1">
-                <div class="form-group">
+                <div class="form-group textWrap">
                     <label> {{ trans('main.messageContent') }}</label>                   
                     <textarea name="replyText" class="form-control" placeholder="{{ trans('main.messageContent') }}">{{ $data->data->reply_type == 1 ?  $data->data->reply : '' }}</textarea>
+                    <i class="la la-smile icon-xl emoji-icon"></i>
+                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                 </div> 
             </div>
             {{-- Photo Messages Design --}}
             <div class="reply {{$data->data->reply_type == 2 ? '' : 'hidden'}}" data-id="2">
-                <div class="form-group">
+                <div class="form-group textWrap">
                     <label> {{ trans('main.caption') }}</label>            
                     <input type="text" class="form-control" name="reply" placeholder="{{ trans('main.caption') }}" value="{{ $data->data->reply }}">
+                    <i class="la la-smile icon-xl emoji-icon"></i>
+                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                 </div>
                 <div class="form-group">
                     <label class="titleLabel" for="attachFile"> {{ trans('main.attachFile') }}</label>   
@@ -129,9 +137,11 @@
             </div>
             {{-- Video Messages Design --}}
             <div class="reply {{$data->data->reply_type == 3 ? '' : 'hidden'}}" data-id="3">
-                <div class="form-group">
+                <div class="form-group textWrap">
                     <label> {{ trans('main.caption') }}</label>            
                     <input type="text" class="form-control" name="caption" placeholder="{{ trans('main.caption') }}" value="{{ $data->data->reply }}">
+                    <i class="la la-smile icon-xl emoji-icon"></i>
+                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                 </div>
                 <div class="form-group">
                     <label class="titleLabel" for="attachFile"> {{ trans('main.attachFile') }}</label>   
@@ -264,9 +274,11 @@
                     <label> {{ trans('main.lng') }}</label>            
                     <input class="form-control" type="text" value="{{ $data->data->lng }}" name="lng" placeholder="{{ trans('main.lng') }}">
                 </div>
-                <div class="form-group">
+                <div class="form-group textWrap">
                     <label> {{ trans('main.location') }}</label>            
                     <input class="form-control" type="text" value="{{ $data->data->address }}" name="address" placeholder="{{ trans('main.location') }}">
+                    <i class="la la-smile icon-xl emoji-icon"></i>
+                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                 </div>
             </div>
             {{-- Contact Messages Design --}}
@@ -279,9 +291,11 @@
             </div>
             {{-- Disappearing Messages Design --}}
             <div class="reply {{$data->data->reply_type == 10 ? '' : 'hidden'}}" data-id="10">
-                <div class="form-group">
+                <div class="form-group textWrap">
                     <label> {{ trans('main.messageContent') }}</label>            
                     <textarea class="form-control" name="disappearingText" placeholder="{{ trans('main.messageContent') }}">{{ $data->data->reply }}</textarea>
+                    <i class="la la-smile icon-xl emoji-icon"></i>
+                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                 </div>
                 <div class="form-group">
                     <label> {{ trans('main.expires_in') }} ( {{trans('main.minute')}} )</label>            
@@ -306,9 +320,11 @@
                     <label> {{ trans('main.urlTitle') }}</label>            
                     <input class="form-control" type="text" value="{{ $data->data->url_title }}" name="url_title" placeholder="{{ trans('main.urlTitle') }}">
                 </div>
-                <div class="form-group">
+                <div class="form-group textWrap">
                     <label> {{ trans('main.urlDesc') }}</label>            
                     <input class="form-control" type="text" value="{{ $data->data->url_desc }}" name="url_desc" placeholder="{{ trans('main.urlDesc') }}">
+                    <i class="la la-smile icon-xl emoji-icon"></i>
+                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                 </div>
             </div>
             {{-- Webhook Messages Design --}}
@@ -348,4 +364,6 @@
 <script src="{{ asset('assets/tenant/js/photoswipe-ui-default.min.js') }}"></script>
 <script src="{{ asset('assets/tenant/components/myPhotoSwipe.js') }}"></script>      
 <script src="{{ asset('assets/tenant/components/addBot.js') }}"></script>
+<script type="module" src="{{asset('assets/tenant/js/emojiIndex.js')}}"></script>
+<script src="{{ asset('assets/tenant/components/initEmoji.js') }}"></script>
 @endsection

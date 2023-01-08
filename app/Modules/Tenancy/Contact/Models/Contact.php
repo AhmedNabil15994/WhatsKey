@@ -221,12 +221,6 @@ class Contact extends Model{
         $data->has_whatsapp_text = $source->has_whatsapp == 1 ? trans('main.yes') : trans('main.no');
         $data->email = $source->email != null ? $source->email : '';
         $data->city = $source->city != null ? $source->city : '';
-        if($dets != false){
-            $cats = ContactLabel::where('contact',$data->phone2)->pluck('category_id');
-            $cats = reset($cats);
-            $cats = empty($cats) ? [0] : $cats;
-            $data->labels = Category::dataList(null,$cats)['data'];
-        }
         $data->country = $source->country != null ? $source->country : '';
         $data->status = $source->status;
         $data->sort = $source->sort;
