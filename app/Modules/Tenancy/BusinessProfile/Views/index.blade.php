@@ -68,7 +68,7 @@
                             <i class="h1 si si-cloud-upload"></i>
                             <h3>{{ trans('main.dropzoneP') }}</h3>
                         </div>
-                        @if($data->data['image'] != '')
+                        @if(isset($data->data['image']) && $data->data['image'] != '')
                         <div class="dz-preview dz-image-preview" id="my-preview">  
                             <div class="dz-image">
                                 <img alt="image" src="{{ $data->data['image'] }}">

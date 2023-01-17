@@ -120,11 +120,15 @@
                 </select>
                 <div class="clearfix"></div>
                 <div class="buts mt-5">
-                    <div class='form-group mains'>
+                    <div class='form-group mains buttons'>
                         <label class='titleLabel'>{{ trans('main.btnData',['button'=>1]) }} :</label>
                         <div class='row'>
                             <div class='col-md-4'>
-                                <input class="form-control" type='text' name='btn_text_1' value="" placeholder='{{ trans('main.text') }}'>
+                                <div class="form-group textWrap">
+                                    <input class="form-control" type='text' name='btn_text_1' value="" placeholder='{{ trans('main.text') }}'>
+                                    <i class="la la-smile icon-xl emoji-icon"></i>
+                                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
+                                </div>
                             </div>
                             <div class='col-md-4'>
                                 <select class="form-control reply_types" data-toggle='select2' name='btn_reply_type_1'>
@@ -133,7 +137,11 @@
                                 </select>
                             </div>
                             <div class='col-md-4 repy'>
-                                <textarea class="form-control" name='btn_reply_1' placeholder='{{ trans('main.messageContent') }}' maxlength="140"></textarea>
+                                <div class="form-group textWrap">
+                                    <textarea class="form-control" name='btn_reply_1' placeholder='{{ trans('main.messageContent') }}' maxlength="140"></textarea>
+                                    <i class="la la-smile icon-xl emoji-icon"></i>
+                                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
+                                </div>
                                 <select data-toggle="" class='form-control dets hidden' name='btn_msg_1'>
                                     <option value='' selected>{{ trans('main.choose') }}</optin>
                                     @foreach($data->bots as $bot)

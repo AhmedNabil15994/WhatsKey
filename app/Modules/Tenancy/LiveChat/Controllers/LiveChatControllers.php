@@ -17,6 +17,8 @@ use App\Models\User;
 use App\Models\UserAddon;
 use App\Models\UserExtraQuota;
 use App\Models\Variable;
+use App\Events\DialogUpdate;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 use Illuminate\Support\Facades\Response;
@@ -78,6 +80,7 @@ class LiveChatControllers extends Controller
     public function updateContact(Request $request)
     {
         $input = \Request::all();
+        $domain = User::first()->domain;
         $input['chatId'] = Session::get('selected_chat_id');
         if ($this->checkPerm()) {
             return \TraitsFunc::ErrorMessage('Please Re-activate LiveChat Addon');
@@ -160,6 +163,8 @@ class LiveChatControllers extends Controller
                 $chatObj->save();
             }
         }
+
+        broadcast(new DialogUpdate(strtolower($domain), $input['chatId']));
 
         $dataList['status'] = \TraitsFunc::SuccessMessage('Data Updated Successfully.');
         return \Response::json((object) $dataList);

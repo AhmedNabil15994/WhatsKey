@@ -4,6 +4,7 @@
 return [
     
     'DashboardControllers@Dashboard' => 'general',
+    'DashboardControllers@completeJob' => 'general',
     'DashboardControllers@changeLang' => 'general',
     'DashboardControllers@qrIndex' => 'general',
     'DashboardControllers@updateName' => 'general',
@@ -78,10 +79,17 @@ return [
     'ProfileControllers@deleteImage' => 'profile',
     'ProfileControllers@postChangePassword' => 'profile',
     'ProfileControllers@postPaymentInfo' => 'paymentInfo',
+    'ProfileControllers@memberships' => 'changeSubscription',
+    'ProfileControllers@updateMembership' => 'changeSubscription',
+    'ProfileControllers@addCoupon' => 'addCoupon',
+    'ProfileControllers@checkout' => 'checkout',
+    'ProfileControllers@activate' => 'checkout',
+
 
     'WAAccountController@subscription' => 'subscription',
     'WAAccountController@screenshot' => 'subscription',
     'WAAccountController@syncAll' => 'subscription',
+    'WAAccountController@resyncAll' => 'subscription',
     'WAAccountController@closeConn' => 'subscription',
     'WAAccountController@unBlock' => 'subscription',
     'WAAccountController@read' => 'subscription',
@@ -94,6 +102,7 @@ return [
     'WAAccountController@syncOrders' => 'subscription',
     'WAAccountController@restoreAccountSettings' => 'subscription',
     'WAAccountController@clearMessagesQueue' => 'subscription',
+    'WAAccountController@updateChannelSetting' => 'subscription',
 
     'TenantInvoiceControllers@index' => 'list-invoices',
     'TenantInvoiceControllers@view' => 'view-invoice',
@@ -122,84 +131,6 @@ return [
     'UserStorageControllers@getByTypeAndId' => 'list-storage',
     'UserStorageControllers@removeByTypeAndId' => 'delete-storage',
     'UserStorageControllers@removeChatFile' => 'delete-storage',
-
-
-    // Belonged To Addon
-    'ApiSettingController@apiSetting' => 'apiSetting',
-    'ApiSettingController@apiGuide' => 'apiGuide',
-    'ApiSettingController@webhookSetting' => 'webhookSetting',
-    'ApiSettingController@postWebhookSetting' => 'webhookSetting',
-
-    'BotControllers@index' => 'list-bots',
-    'BotControllers@edit' => 'edit-bot',
-    'BotControllers@update' => 'edit-bot',
-    'BotControllers@fastEdit' => 'edit-bot',
-    'BotControllers@changeStatus' => 'edit-bot',
-    'BotControllers@add' => 'add-bot',
-    'BotControllers@addBotReply' => 'add-bot',
-    'BotControllers@create' => 'add-bot',
-    'BotControllers@copy' => 'copy-bot',
-    'BotControllers@delete' => 'delete-bot',
-    'BotControllers@uploadImage' => 'uploadImage-bot',
-    'BotControllers@deleteImage' => 'deleteImage-bot',
-
-    'BotPlusControllers@index' => 'list-bots-plus',
-    'BotPlusControllers@edit' => 'edit-bot-plus',
-    'BotPlusControllers@update' => 'edit-bot-plus',
-    'BotPlusControllers@changeStatus' => 'edit-bot-plus',
-    'BotPlusControllers@fastEdit' => 'edit-bot-plus',
-    'BotPlusControllers@add' => 'add-bot-plus',
-    'BotPlusControllers@create' => 'add-bot-plus',
-    'BotPlusControllers@copy' => 'copy-bot-plus',
-    'BotPlusControllers@delete' => 'delete-bot-plus',
-    'BotPlusControllers@uploadImage' => 'uploadImage-bot-plus',
-    'BotPlusControllers@deleteImage' => 'deleteImage-bot-plus',
-
-    'GroupMsgsControllers@index' => 'list-group-messages',
-    'GroupMsgsControllers@add' => 'add-group-message' ,
-    'GroupMsgsControllers@create' => 'add-group-message',
-    'GroupMsgsControllers@resend' => 'add-group-message',
-    'GroupMsgsControllers@view' => 'view-group-message',
-    'GroupMsgsControllers@charts' => 'charts-group-message',
-    'GroupMsgsControllers@uploadImage' => 'uploadImage-group-message',
-    
-    'ListMsgControllers@index' => 'list-lists',
-    'ListMsgControllers@edit' => 'edit-list',
-    'ListMsgControllers@update' => 'edit-list',
-    'ListMsgControllers@changeStatus' => 'edit-list',
-    'ListMsgControllers@fastEdit' => 'edit-list',
-    'ListMsgControllers@add' => 'add-list',
-    'ListMsgControllers@create' => 'add-list',
-    'ListMsgControllers@copy' => 'copy-list',
-    'ListMsgControllers@delete' => 'delete-list',
-
-    'PollsControllers@index' => 'list-polls',
-    'PollsControllers@edit' => 'edit-poll',
-    'PollsControllers@update' => 'edit-poll',
-    'PollsControllers@changeStatus' => 'edit-poll',
-    'PollsControllers@fastEdit' => 'edit-poll',
-    'PollsControllers@add' => 'add-poll',
-    'PollsControllers@create' => 'add-poll',
-    'PollsControllers@copy' => 'copy-poll',
-    'PollsControllers@delete' => 'delete-poll',
-
-    'TemplateMsgControllers@index' => 'list-templates-messages',
-    'TemplateMsgControllers@edit' => 'edit-template-message',
-    'TemplateMsgControllers@deleteImage' => 'deleteImage-template-message',
-    'TemplateMsgControllers@update' => 'edit-template-message',
-    'TemplateMsgControllers@changeStatus' => 'edit-template-message',
-    'TemplateMsgControllers@fastEdit' => 'edit-template-message',
-    'TemplateMsgControllers@add' => 'add-template-message',
-    'TemplateMsgControllers@create' => 'add-template-message',
-    'TemplateMsgControllers@uploadImage' => 'add-template-message',
-    'TemplateMsgControllers@copy' => 'copy-template-message',
-    'TemplateMsgControllers@delete' => 'delete-template-message',
-
-    'LiveChatControllers@index' => 'list-livechat',
-    'LiveChatControllers@upload' => 'list-livechat',
-    'LiveChatControllers@updateContact' => 'list-livechat',
-
-
 
     // ********************* Business ************************** //
     'CategoryControllers@index' => 'list-categories',
@@ -239,25 +170,12 @@ return [
     'OrderControllers@view' => 'view-order',
 
 
-    /************************** In Review ********************/
-    'SubscriptionControllers@packages' => 'general',
-    'SubscriptionControllers@updateSubscription' => 'general',
-    'SubscriptionControllers@postBundle' => 'general',
-    'SubscriptionControllers@postUpdateSubscription' => 'general',
+    /************************** In Review **************************/
     'SubscriptionControllers@updateAddonStatus' => 'general',
     'SubscriptionControllers@updateAddonStatus' => 'general',
-    'SubscriptionControllers@sync' => 'general',
-    'SubscriptionControllers@postSync' => 'general',
     'SubscriptionControllers@paymentError' => 'general',
-    'SubscriptionControllers@checkout' => 'general',
-    'SubscriptionControllers@addCoupon' => 'general',
-    'SubscriptionControllers@postCheckout' => 'general',
     'SubscriptionControllers@completeOrder' => 'general',
     'SubscriptionControllers@pushInvoice' => 'general',
-    'SubscriptionControllers@getCities' => 'general',
-    'SubscriptionControllers@bankTransfer' => 'general',
-    'SubscriptionControllers@completeJob' => 'general',
-
     'ProfileControllers@extraQuotas' => 'extraQuotas',
     'ProfileControllers@postExtraQuotas' => 'extraQuotas',
     'ProfileControllers@addons' => 'addons',

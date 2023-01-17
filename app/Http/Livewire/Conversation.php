@@ -10,6 +10,7 @@ use App\Models\Contact;
 use App\Models\ChatMessage;
 use App\Models\ChatDialog;
 use App\Models\Category;
+use App\Models\Variable;
 
 class Conversation extends Component
 {
@@ -66,49 +67,59 @@ class Conversation extends Component
         $chat['lastMessage'] = (array) $chat['lastMessage'];
         $msg = $chat['lastMessage'];
         if($msg['chatId'] == $this->selected){
+            $msgs = array_reverse($this->messages);
             if(isset($this->messages[0]) && $this->messages[0]['id'] != $chat['lastMessage']['id']){
-                $msgs = array_reverse($this->messages);
-                if(!in_array($msg['message_type'],['reaction'])){
+                if(!in_array($msg['message_type'],['reaction',])){
                     $msgs[]= $msg;
                 }else{
                     $newMsgs = [];
                     foreach ($msgs as $key => $value) {
-                        if($value['id'] == $msg['metadata']['quotedMessageId']){
+                        if(isset($msg['metadata']['quotedMessageId']) && $value['id'] == $msg['metadata']['quotedMessageId']){
                             $value = ChatMessage::getData(ChatMessage::getOne($msg['metadata']['quotedMessageId']));
                         }
                         $newMsgs[] = $value;
                     }
                     $msgs = $newMsgs;
                 }
-                $msgs = array_reverse($msgs);
             }else{
-                $msgs[] = $msg;
+                if($msg['message_type'] != 'call'){
+                    $msgs[] = $msg;
+                }
             }
+            $msgs = array_reverse($msgs);
             $this->messages = $msgs;
+        }else{
             if($chat['lastMessage']['fromMe'] == 0 && !$chat['muted']){
                 $this->emit('playAudio');
             }
-            $this->emit('refreshDesign');
         }
+        $this->emit('updatePresence',[
+            'chatId' => $msg['chatId'],
+            'presence' => '',
+        ]);
+        $this->emit('refreshDesign');
 
         if($msg['message_type'] == 'call'){
-            if(!in_array($msg['metadata']['status'],['reject','timeout'])){
-                $callObj = (object) [
-                    'title' => $msg['metadata']['isVideo'] ? trans('main.incomingVideoCall') : trans('main.incomingVoiceCall'),
-                    'name' => $chat['name'],
-                    'image' => $chat['image'],
-                    'text' => $chat['lastMessage']['body'],
-                    'callId' => array_reverse(explode('_',$msg['id']))[0],
-                ];
-                $this->emit('incomingCall', $callObj);
-            }else{
-                $this->emit('closeCall');
+            $varObj = Variable::getVar('disableReceivingCalls');
+            if($varObj == '0' || $varObj == null){
+                if(!in_array($msg['metadata']['status'],['reject','timeout'])){
+                    $callObj = (object) [
+                        'title' => $msg['metadata']['isVideo'] ? trans('main.incomingVideoCall') : trans('main.incomingVoiceCall'),
+                        'name' => $chat['name'],
+                        'image' => $chat['image'],
+                        'text' => $chat['lastMessage']['body'],
+                        'callId' => array_reverse(explode('_',$msg['id']))[0],
+                    ];
+                    $this->emit('incomingCall', $callObj);
+                }else{
+                    $this->emit('closeCall');
+                }    
             }
         } 
-        // if(isset($chat['lastMessage']) && isset($chat['lastMessage']['id']) && isset($this->messages) && isset($this->messages[0]) && $this->messages[0]['id'] != $chat['lastMessage']['id']){
-        //     $this->emitTo('chats','chatsChanges',$data['message'],$data['domain']); 
-        //     $this->emitTo('chat','lastUpdates',$data['message'],$data['domain']); 
-        // }
+
+        if(isset($chat['lastMessage']) && isset($chat['lastMessage']['id']) && isset($this->messages) && isset($this->messages[0])){
+            $this->emitTo('chats','chatsChanges',$msg['chatId']); 
+        }
     }
 
     public function changeMessageStatus($data){
@@ -119,7 +130,7 @@ class Conversation extends Component
             foreach ($this->messages as $key => $value) {
                 if($value['id'] == $data['messageId']){
                     if(!in_array($data['statusInt'], ['starred','unstarred','labelled','unlabelled'])){
-                        $value['sending_status'] = $data['statusInt'];
+                        $value['sending_status'] = (int)$data['statusInt'];
                     }
                     if($data['statusInt'] == 6){
                         $value['deleted_at'] = date('Y-m-d H:i:s'); 
@@ -138,7 +149,6 @@ class Conversation extends Component
                 $msgs[] = $value;
             }
             $this->messages = $msgs;
-            $this->emit('focusInput');
         }
 
         if($data['chatId']){
@@ -171,7 +181,11 @@ class Conversation extends Component
         $chatObj = ChatDialog::getOne($chatId);
         if($chatObj && $chatId == $this->selected){
             $data = ChatDialog::getData($chatObj);
-            $this->chat = json_decode(json_encode($data), true);
+            $chat = json_decode(json_encode($data), true);
+            $this->chat = $chat;
+            $this->emitTo('chats','chatsChanges',$chatId); 
+            $this->emitTo('chat-actions','updateSelected',$chat['name']);
+            $this->emitTo('contact-details','setSelected',$chat);
         }
         $this->emit('refreshDesign');
     }

@@ -2148,6 +2148,15 @@ window.Echo.channel(domain + '-UpdateMessageStatus').listen('MessageStatus', fun
 window.Echo.channel(domain + '-UpdateDialogStatus').listen('DialogUpdateStatus', function (data) {
   window.Livewire.emitTo('chats', 'changeDialogStatus', data);
 });
+window.Echo.channel(domain + '-UpdateDialogPresence').listen('DialogPresenceStatus', function (data) {
+  window.Livewire.emitTo('chats', 'updateDialogPresence', data);
+});
+window.Echo.channel(domain + '-UpdateDialog').listen('DialogUpdate', function (data) {
+  window.Livewire.emitTo('conversation', 'updateChat', data['chatId']);
+});
+window.Echo.channel(domain + '-DeleteDialog').listen('DialogDelete', function (data) {
+  window.Livewire.emitTo('chats', 'chatsChanges', data['data']['chatId'], true);
+});
 
 //       testBroadUpdateChatReadStatus (domain) {
 //         // Start socket.io listener

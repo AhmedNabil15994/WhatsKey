@@ -77,33 +77,91 @@
 @endsection
 
 @section('content')
-<div class="card card-custom mb-5">
-    <div class="card-header">
-        <h3 class="card-title"><i class="{{ $data->designElems['mainData']['icon'] }}"></i> {{ trans('main.actions') }}</h3>
+<div class="row">
+    <div class="col-9">
+        <div class="card card-custom mb-5">
+            <div class="card-header">
+                <h3 class="card-title"><i class="{{ $data->designElems['mainData']['icon'] }} mx-1"></i> {{ trans('main.actions') }}</h3>
+            </div>
+            <div class="card-body text-center">
+                <a href="#" class="btn btn-light-dark btn-md mr-3 mb-3 btn-pill screen"><i class="la la-mobile-alt"></i>{{ trans('main.screenshot') }}</a>
+                <a href="{{ URL::to('/profile/subscription/syncAll') }}" class="btn btn-light-success btn-md mr-3 mb-3 btn-pill"><i class="flaticon2-chat-1"></i>{{ trans('main.syncAll') }}</a>
+                <a href="{{ URL::to('/profile/subscription/closeConn') }}" class="btn btn-light-danger btn-md mr-3 mb-3 btn-pill"><i class="la la-close"></i>{{ trans('main.closeConn') }}</a>
+                <a href="{{ URL::to('/profile/subscription/read/1') }}" class="btn btn-light-dark btn-md mr-3 mb-3 btn-pill"><i class="la la-check-double"></i>{{ trans('main.readAll') }}</a>
+                <a href="{{ URL::to('/profile/subscription/read/0') }}" class="btn btn-light-warning btn-md mr-3 mb-3 btn-pill"><i class="la la-check"></i>{{ trans('main.unreadAll') }}</a>
+                <a href="{{ URL::to('/profile/subscription/syncDialogs') }}" class="btn btn-light-info btn-md mr-3 mb-3 btn-pill"><i class="la la-comments"></i>{{ trans('main.syncDialogs') }}</a>
+                <a href="{{ URL::to('/profile/subscription/syncContacts') }}" class="btn btn-light-primary btn-md mr-3 mb-3 btn-pill"><i class="la la-user-circle"></i>{{ trans('main.syncContacts') }}</a>
+                <a href="{{ URL::to('/profile/subscription/resyncAll') }}" class="btn btn-light-dark btn-md mr-3 mb-3 btn-pill"><i class="la la-user-circle"></i>{{ trans('main.resyncAll') }}</a>
+                @if(isset($data->me) && $data->me->isBussines)
+                <a href="{{ URL::to('/profile/subscription/syncLabels') }}" class="btn btn-light-info btn-md mr-3 mb-3 btn-pill"><i class="la la-tags"></i>{{ trans('main.syncLabels') }}</a>
+                <a href="{{ URL::to('/profile/subscription/syncReplies') }}" class="btn btn-light-warning btn-md mr-3 mb-3 btn-pill"><i class="la la-share"></i>{{ trans('main.syncReplies') }}</a>
+                <a href="{{ URL::to('/profile/subscription/syncCollections') }}" class="btn btn-light-success btn-md mr-3 mb-3 btn-pill"><i class="la la-tags"></i>{{ trans('main.syncCatalog') }}</a>
+                <a href="{{ URL::to('/profile/subscription/syncProducts') }}" class="btn btn-light-primary btn-md mr-3 mb-3 btn-pill"><i class="la la-product-hunt"></i>{{ trans('main.syncProducts') }}</a>
+                <a href="{{ URL::to('/profile/subscription/syncOrders') }}" class="btn btn-light-dark btn-md mr-3 mb-3 btn-pill"><i class="la la-shopping-cart"></i>{{ trans('main.syncOrders') }}</a>
+                @endif
+                <a href="{{ URL::to('/profile/subscription/restoreAccountSettings') }}" class="btn btn-light-danger btn-md mr-3 mb-3 btn-pill"><i class="la la-trash-alt"></i>{{ trans('main.restoreAccountSettings') }}</a>
+            </div>
+        </div>
     </div>
-    <div class="card-body text-center">
-        <a href="#" class="btn btn-light-dark btn-md mr-3 mb-3 btn-pill screen"><i class="la la-mobile-alt"></i>{{ trans('main.screenshot') }}</a>
-        <a href="{{ URL::to('/profile/subscription/syncAll') }}" class="btn btn-light-success btn-md mr-3 mb-3 btn-pill"><i class="flaticon2-chat-1"></i>{{ trans('main.syncAll') }}</a>
-        <a href="{{ URL::to('/profile/subscription/closeConn') }}" class="btn btn-light-danger btn-md mr-3 mb-3 btn-pill"><i class="la la-close"></i>{{ trans('main.closeConn') }}</a>
-        <a href="{{ URL::to('/profile/subscription/read/1') }}" class="btn btn-light-dark btn-md mr-3 mb-3 btn-pill"><i class="la la-check-double"></i>{{ trans('main.readAll') }}</a>
-        <a href="{{ URL::to('/profile/subscription/read/0') }}" class="btn btn-light-warning btn-md mr-3 mb-3 btn-pill"><i class="la la-check"></i>{{ trans('main.unreadAll') }}</a>
-        <a href="{{ URL::to('/profile/subscription/syncDialogs') }}" class="btn btn-light-info btn-md mr-3 mb-3 btn-pill"><i class="la la-comments"></i>{{ trans('main.syncDialogs') }}</a>
-        <a href="{{ URL::to('/profile/subscription/syncContacts') }}" class="btn btn-light-primary btn-md mr-3 mb-3 btn-pill"><i class="la la-user-circle"></i>{{ trans('main.syncContacts') }}</a>
-        @if($data->me->isBussines)
-        <a href="{{ URL::to('/profile/subscription/syncLabels') }}" class="btn btn-light-info btn-md mr-3 mb-3 btn-pill"><i class="la la-tags"></i>{{ trans('main.syncLabels') }}</a>
-        <a href="{{ URL::to('/profile/subscription/syncReplies') }}" class="btn btn-light-warning btn-md mr-3 mb-3 btn-pill"><i class="la la-share"></i>{{ trans('main.syncReplies') }}</a>
-        <a href="{{ URL::to('/profile/subscription/syncCollections') }}" class="btn btn-light-success btn-md mr-3 mb-3 btn-pill"><i class="la la-tags"></i>{{ trans('main.syncCatalog') }}</a>
-        <a href="{{ URL::to('/profile/subscription/syncProducts') }}" class="btn btn-light-primary btn-md mr-3 mb-3 btn-pill"><i class="la la-product-hunt"></i>{{ trans('main.syncProducts') }}</a>
-        <a href="{{ URL::to('/profile/subscription/syncOrders') }}" class="btn btn-light-dark btn-md mr-3 mb-3 btn-pill"><i class="la la-shopping-cart"></i>{{ trans('main.syncOrders') }}</a>
-        @endif
-        <a href="{{ URL::to('/profile/subscription/restoreAccountSettings') }}" class="btn btn-light-danger btn-md mr-3 mb-3 btn-pill"><i class="la la-trash-alt"></i>{{ trans('main.restoreAccountSettings') }}</a>
+    <div class="col-3">
+        <div class="card card-custom mb-5">
+            <div class="card-header">
+                <h3 class="card-title"><i class="la la-cog icon-xl mx-1"></i> {{ trans('main.channel_settings') }}</h3>
+            </div>
+            <div class="card-body p-2">
+                <div class="form-group row m-0">
+                    <label class="col-8 col-form-label">{{trans('main.channelSettings_disableGroupsReply')}}</label>
+                    <div class="col-4">
+                        <span class="switch switch-outline switch-sm switch-icon switch-success">
+                            <label>
+                                <input type="checkbox" name="disableGroupsReply" {{$data->channelSettings['disableGroupsReply'] != null && $data->channelSettings['disableGroupsReply'] == 1 ? 'checked' : ''}}/>
+                                <span></span>
+                            </label>
+                        </span>
+                    </div>
+                </div>  
+                <div class="form-group row m-0">
+                    <label class="col-8 col-form-label">{{trans('main.channelSettings_disableDialogsArchive')}}</label>
+                    <div class="col-4">
+                        <span class="switch switch-outline switch-sm switch-icon switch-success">
+                            <label>
+                                <input type="checkbox" name="disableDialogsArchive" {{$data->channelSettings['disableDialogsArchive'] != null && $data->channelSettings['disableDialogsArchive'] == 1 ? 'checked' : ''}}/>
+                                <span></span>
+                            </label>
+                        </span>
+                    </div>
+                </div>  
+                <div class="form-group row m-0">
+                    <label class="col-8 col-form-label">{{trans('main.channelSettings_disableReceivingCalls')}}</label>
+                    <div class="col-4">
+                        <span class="switch switch-outline switch-sm switch-icon switch-success">
+                            <label>
+                                <input type="checkbox" name="disableReceivingCalls" {{$data->channelSettings['disableReceivingCalls'] != null && $data->channelSettings['disableReceivingCalls'] == 1 ? 'checked' : ''}}/>
+                                <span></span>
+                            </label>
+                        </span>
+                    </div>
+                </div>  
+                <div class="form-group row mx-4 mb-2">
+                    <label>{{trans('main.channelSettings_contactsNameType')}}</label>
+                    <select class="form-control" data-toggle="select2" name="contactsNameType">
+                        <option>{{trans('main.choose')}}</option>
+                        <option value="1" {{$data->channelSettings['contactsNameType'] != null && $data->channelSettings['contactsNameType'] == 1 ? 'selected' : ''}}>{{trans('main.contactsNameType1')}}</option>
+                        <option value="2" {{$data->channelSettings['contactsNameType'] != null && $data->channelSettings['contactsNameType'] == 2 ? 'selected' : ''}}>{{trans('main.contactsNameType2')}}</option>
+                        <option value="3" {{$data->channelSettings['contactsNameType'] != null && $data->channelSettings['contactsNameType'] == 3 ? 'selected' : ''}}>{{trans('main.contactsNameType3')}}</option>
+                    </select>
+                </div>  
+            </div>
+        </div>
     </div>
 </div>
+    
+
 
 @if(isset($data->totalQueueMessages) && $data->totalQueueMessages > 0)
 <div class="card card-custom mb-5">
     <div class="card-header">
-        <h3 class="card-title">{{ trans('main.messagesQueue') }} ({{$data->totalQueueMessages}})</h3>
+        <h3 class="card-title"><i class="la la-envelope icon-xl mx-1"></i> {{ trans('main.messagesQueue') }} ({{$data->totalQueueMessages}})</h3>
         <div class="card-toolbar">
             <a href="{{ URL::to('/profile/subscription/clearMessagesQueue') }}" class="btn btn-sm btn-danger font-weight-bold">
             <i class="la la-trash-alt"></i>{{ trans('main.delete') }}</a>
@@ -140,7 +198,7 @@
 @if(isset($data->blockList) && $data->blockList > 0)
 <div class="card card-custom mb-5">
     <div class="card-header">
-        <h3 class="card-title">{{ trans('main.blockedUser') }} ({{count($data->blockList)}})</h3>
+        <h3 class="card-title"><i class="la la-users icon-xl mx-1"></i> {{ trans('main.blockedUser') }} ({{count($data->blockList)}})</h3>
         {{-- <div class="card-toolbar">
             <a href="{{ URL::to('/profile/subscription/clearMessagesQueue') }}" class="btn btn-sm btn-danger font-weight-bold">
             <i class="la la-trash-alt"></i>{{ trans('main.delete') }}</a>
@@ -174,7 +232,10 @@
 
 <div class="card card-custom gutter-b mb-5">
     <div class="card-header">
-        <h3 class="card-title"> {{ trans('main.currentPackage') }}</h3>
+        <h3 class="card-title"><i class="la la-id-card icon-xl mx-1"></i> {{ trans('main.currentPackage') }}</h3>
+        <div class="card-toolbar">
+            <a href="{{ URL::to('/profile/subscription/memberships') }}" class="btn btn-sm btn-dark font-weight-bold">{{ trans('main.resubscribe_b2') }}</a>
+        </div>
     </div>
     <div class="card-body">
         <div class="d-flex align-items-center flex-wrap mb-5">
@@ -296,7 +357,7 @@
         </div>
         <div class="separator separator-solid"></div>
         <div class="d-flex align-items-center flex-wrap mt-8">
-            @if($data->me->businessProfile->business_hours)
+            @if(isset($data->me) && $data->me->businessProfile->business_hours)
             <div class="d-flex align-items-center flex-lg-fill mr-5 mb-2">
                 <span class="mr-4">
                     <i class="flaticon-piggy-bank display-4 text-muted font-weight-bold"></i>
@@ -318,7 +379,7 @@
                     <span class="text-dark-50 font-weight-bold"></span>{{@$data->me->status->status}}</span>
                 </div>
             </div>
-            @if($data->me->businessProfile->category)
+            @if(isset($data->me) && $data->me->businessProfile->category)
             <div class="d-flex align-items-center flex-lg-fill mr-5 mb-2">
                 <span class="mr-4">
                     <i class="flaticon-pie-chart display-4 text-muted font-weight-bold"></i>
@@ -330,7 +391,7 @@
                 </div>
             </div>
             @endif
-            @if($data->me->businessProfile->description)
+            @if(isset($data->me) && $data->me->businessProfile->description)
             <div class="d-flex align-items-center flex-lg-fill mr-5 mb-2">
                 <span class="mr-4">
                     <i class="flaticon-file-2 display-4 text-muted font-weight-bold"></i>
@@ -341,7 +402,7 @@
                 </div>
             </div>
             @endif
-            @if($data->me->businessProfile->website)
+            @if(isset($data->me) && $data->me->businessProfile->website)
             <div class="d-flex align-items-center flex-lg-fill mr-5 mb-2">
                 <span class="mr-4">
                     <i class="flaticon2-website display-4 text-muted font-weight-bold"></i>

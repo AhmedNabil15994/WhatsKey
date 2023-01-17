@@ -2,7 +2,6 @@
 @extends('tenant.Layouts.V5.master2')
 @section('title',$data->designElems['mainData']['title'])
 @section('styles')
-<link rel="stylesheet" type="text/css" href="{{ asset('css/phone.css') }}">
 <style type="text/css" media="screen">
     .user-langs{
         background-color: unset;
@@ -26,6 +25,17 @@
     }
     html[dir="ltr"] .repy textarea{
         float: right;
+    }
+</style>
+<style>
+    .form-group.textWrap emoji-picker{
+        top: 40px;
+    }
+    html[dir="ltr"] .form-group.textWrap emoji-picker{
+        right: 30px;
+    }
+    html[dir="rtl"] .form-group.textWrap emoji-picker{
+        left: 30px;
     }
 </style>
 @endsection
@@ -201,4 +211,6 @@
 
 @section('topScripts')
 <script src="{{ asset('V5/components/addTemplateMsg.js') }}"></script>
+<script type="module" src="{{asset('assets/tenant/js/emojiIndex.js')}}"></script>
+<script src="{{ asset('assets/tenant/components/initEmoji.js') }}"></script>
 @endsection

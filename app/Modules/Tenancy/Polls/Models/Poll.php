@@ -19,13 +19,6 @@ class Poll extends Model{
     protected $fillable = ['id','channel','message_type','message','body','options','optionsData','selected_options','sort','status','created_by','created_at'];    
     public $timestamps = false;
 
-    protected $searchable = [
-        'columns' => [
-            'message' => 255,
-            // 'body' => 255,
-        ],
-    ];
-
     static function getOne($id){
         return self::NotDeleted()
             ->where('id', $id)
@@ -33,12 +26,14 @@ class Poll extends Model{
     }
 
     static function findBotMessage($senderMessage){
-        $obj = self::NotDeleted()->where('status',1)->where('message_type',1)->where('message',$senderMessage)->first();
-        if(!$obj){
-            $obj = self::NotDeleted()->where('status',1)->where('message_type',2)->search(strtolower($senderMessage))->first();
-            return $obj ? $obj : null;
-        }else{
-            return $obj;
+        if($senderMessage != ''){
+            $obj = self::NotDeleted()->where('status',1)->where('message_type',1)->where('message',$senderMessage)->first();
+            if(!$obj){
+                $obj = self::NotDeleted()->where('status',1)->where('message_type',2)->search(strtolower($senderMessage))->first();
+                return $obj ? $obj : null;
+            }else{
+                return $obj;
+            }
         }
     }
 

@@ -3,9 +3,6 @@
 		<img alt="Logo" src="{{ asset('assets/images/noBackLogo.png') }}">
 	</a>
 	<div class="d-flex align-items-center">
-		<button class="btn p-0 burger-icon burger-icon-left" id="kt_aside_mobile_toggle">
-			<span></span>
-		</button>
 		<button class="btn btn-hover-text-primary p-0 ml-2 active" id="kt_header_mobile_topbar_toggle">
 			<span class="svg-icon svg-icon-xl">
 				<!--begin::Svg Icon | path:assets/media/svg/icons/General/User.svg-->
@@ -17,6 +14,9 @@
 					</g>
 				</svg>
 			</span>
+		</button>
+		<button class="btn p-0 burger-icon burger-icon-left" id="kt_aside_mobile_toggle">
+			<span></span>
 		</button>
 	</div>
 </div>

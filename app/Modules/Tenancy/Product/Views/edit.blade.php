@@ -5,6 +5,17 @@
 
 @section('styles')
 <link rel="stylesheet" href="{{ asset('assets/tenant/css/photoswipe.css') }}" />
+<style>
+    .form-group.textWrap emoji-picker{
+        top: 40px;
+    }
+    html[dir="ltr"] .form-group.textWrap emoji-picker{
+        right: 30px;
+    }
+    html[dir="rtl"] .form-group.textWrap emoji-picker{
+        left: 30px;
+    }
+</style>
 @endsection
 
 @section('breadcrumbs')
@@ -36,13 +47,17 @@
     <form method="POST" action="{{ URL::to('/'.$data->designElems['mainData']['url'].'/update/'.$data->data->id) }}">
         @csrf
         <div class="card-body">
-            <div class="form-group">
+            <div class="form-group textWrap">
                 <label> {{ trans('main.name') }}</label>            
                 <input class="form-control" type="text" value="{{ $data->data->name }}" name="name" placeholder="{{ trans('main.name') }}">
+                <i class="la la-smile icon-xl emoji-icon"></i>
+                <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
             </div>
-            <div class="form-group">
+            <div class="form-group textWrap">
                 <label> {{ trans('main.description') }}</label>   
                 <textarea class="form-control" name="description" placeholder="{{trans('main.description')}}">{{ $data->data->description }}</textarea>         
+                <i class="la la-smile icon-xl emoji-icon"></i>
+                <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
             </div>
             <div class="form-group">
                 <label> {{ trans('main.price') }}</label>            
@@ -115,4 +130,6 @@
 <script src="{{ asset('assets/tenant/js/photoswipe.min.js') }}"></script>
 <script src="{{ asset('assets/tenant/js/photoswipe-ui-default.min.js') }}"></script>
 <script src="{{ asset('assets/tenant/components/myPhotoSwipe.js') }}"></script>      
+<script type="module" src="{{asset('assets/tenant/js/emojiIndex.js')}}"></script>
+<script src="{{ asset('assets/tenant/components/initEmoji.js') }}"></script>
 @endsection

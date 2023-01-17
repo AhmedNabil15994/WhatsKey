@@ -95,21 +95,21 @@
                                 <tbody>
                                     @php $mainPrices = 0; @endphp
                                     @foreach($data->data->items as $item)
-                                    @php $mainPrices+=$item['data']['price'] @endphp
+                                    @php $mainPrices+=$item['price'] @endphp
                                     <tr class="mainRow">
                                         <td>
                                             <p class="m-0 d-inline-block align-middle font-16">
-                                                <a href="ecommerce-product-detail.html" class="text-reset font-family-secondary">{{ $item['data']['title_'.LANGUAGE_PREF] }}</a><br>
+                                                <a href="ecommerce-product-detail.html" class="text-reset font-family-secondary">{{ $item['title'] }}</a><br>
                                                 <small class="mr-2"><b>{{ trans('main.type') }}:</b> {{ trans('main.'.$item['type']) }} </small>
                                             </p>
                                         </td>
-                                        <td class="tdPrice">{{ $item['data']['price'] }}</td>
+                                        <td class="tdPrice">{{ $item['price'] }}</td>
                                         <td>1</td>
                                         <td>{{ $data->data->due_date }}</td>
-                                        <td>{{ $item['data']['duration_type'] == 1 ? date('Y-m-d',strtotime('+1 month',strtotime($data->data->due_date)))  : date('Y-m-d',strtotime('+1 year',strtotime($data->data->due_date))) }}</td>
+                                        <td>{{ $item['duration_type'] == 1 ? date('Y-m-d',strtotime('+1 month',strtotime($data->data->due_date)))  : date('Y-m-d',strtotime('+1 year',strtotime($data->data->due_date))) }}</td>
                                         <td class="text-center">
                                             @php 
-                                            $total = $item['data']['quantity'] * $item['data']['price_after_vat'];
+                                            $total = $item['quantity'] * $item['price'];
                                             $tax=  \Helper::calcTax($total);
                                             @endphp
                                             {{ $total - $tax }} 

@@ -153,7 +153,7 @@ class TenantInvoiceControllers extends Controller {
             'city' => CentralVariable::getVar('city'),
             'postal_code' => CentralVariable::getVar('postal_code'),
             'country' => CentralVariable::getVar('country'),
-            'tax_id' => $invoiceObj->due_date >= date('Y-m-d',strtotime('2022-05-01')) ? CentralVariable::getVar('tax_id2') : CentralVariable::getVar('tax_id'),
+            'tax_id' => CentralVariable::getVar('tax_id'),
         ];
         $tax = \Helper::calcTax($data['invoice']->total);
         $paymentObj = PaymentInfo::NotDeleted()->where('user_id',$invoiceObj->client_id)->first();

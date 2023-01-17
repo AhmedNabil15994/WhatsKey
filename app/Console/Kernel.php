@@ -17,19 +17,10 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         //
         \App\Console\Commands\InstanceStatus::class,
-
-        \App\Console\Commands\DelayedGroupMessages::class,
-        \App\Console\Commands\SyncMessages::class,
-        \App\Console\Commands\SyncDialogs::class,
         \App\Console\Commands\SetInvoices::class,
         \App\Console\Commands\PushChannelSetting::class,
         \App\Console\Commands\PushAddonSetting::class,
         \App\Console\Commands\TransferDays::class,
-        \App\Console\Commands\SetAddonReports::class,
-        \App\Console\Commands\SyncWhmcs::class,
-        \App\Console\Commands\SendScheduleCarts::class,
-        \App\Console\Commands\SyncZidAbandonedCarts::class,
-        \App\Console\Commands\FixGroupMsg::class,
     ];
 
     protected function schedule(Schedule $schedule)

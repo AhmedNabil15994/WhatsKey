@@ -100,11 +100,11 @@ class InvoiceControllers extends Controller {
                 'data-col' => 'due_date',
                 'anchor-class' => '',
             ],
-            'roTtotal' => [
+            'total' => [
                 'label' => trans('main.total'),
                 'type' => '',
                 'className' => '',
-                'data-col' => 'roTtotal',
+                'data-col' => 'total',
                 'anchor-class' => '',
             ],
             'statusText' => [
@@ -149,9 +149,9 @@ class InvoiceControllers extends Controller {
             'city' => CentralVariable::getVar('city'),
             'postal_code' => CentralVariable::getVar('postal_code'),
             'country' => CentralVariable::getVar('country'),
-            'tax_id' => $invoiceObj->due_date >= date('Y-m-d',strtotime('2022-05-01')) ? CentralVariable::getVar('tax_id2') : CentralVariable::getVar('tax_id'),
+            'tax_id' => CentralVariable::getVar('tax_id'),
         ];
-        $tax = \Helper::calcTax($data['invoice']->roTtotal);
+        $tax = \Helper::calcTax($data['invoice']->total);
 
         $userObj = CentralUser::NotDeleted()->find($invoiceObj->client_id);
         $userObjData = CentralUser::getData($userObj);
@@ -165,7 +165,7 @@ class InvoiceControllers extends Controller {
             new Seller($data['companyAddress']->servers), // seller name        
             new TaxNumber($data['companyAddress']->tax_id), // seller tax number
             new InvoiceDate(date('Y-m-d\TH:i:s\Z',strtotime($data['invoice']->due_date))), // invoice date as Zulu ISO8601 @see https://en.wikipedia.org/wiki/ISO_8601
-            new InvoiceTotalAmount($data['invoice']->roTtotal), // invoice total amount
+            new InvoiceTotalAmount($data['invoice']->total), // invoice total amount
             new InvoiceTaxAmount($tax) // invoice tax amount
             // TODO :: Support others tags
         ])->render();

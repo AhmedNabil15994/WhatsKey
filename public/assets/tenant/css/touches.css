@@ -291,6 +291,15 @@ html[dir="rtl"] .chatItem .card-toolbar{
 html[dir="ltr"] .chatItem .card-toolbar{
 	right: 0;
 }
+.datepicker{
+	width: auto;
+}
+.imgPhone{
+	width: 100%;
+}
+html[dir="rtl"] .wizard-arrow{
+	transform: rotateZ(-180deg);
+}
 .chatMsg{
 	line-break: anywhere;
 }

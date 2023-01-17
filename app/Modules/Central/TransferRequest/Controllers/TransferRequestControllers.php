@@ -137,63 +137,37 @@ class TransferRequestControllers extends Controller {
         }
 
         $oldStatus = $transferObj->status;
-
         $beginProcess = 0;
         if($status == 2 && $oldStatus != $status){
             $beginProcess = 1;
         }
 
         if($beginProcess){
-            $tenant = Tenant::find($transferObj->tenant_id);
-            tenancy()->initialize($tenant);
+            tenancy()->initialize($transferObj->tenant_id);
             $cartObj = Variable::getVar('cartObj');
-            $endDate = Variable::getVar('endDate');
             $type = Variable::getVar('inv_status');
-            $cartObj = json_decode(json_decode($cartObj));
-            tenancy()->end($tenant);
+            $cartObj = json_decode($cartObj);
+            tenancy()->end($transferObj->tenant_id);
 
             $invoiceObj = Invoice::getOne($transferObj->invoice_id);
-            if(!$invoiceObj){
-                $invoiceObj = Invoice::NotDeleted()->where('client_id',$transferObj->user_id)->where('id','>',$transferObj->invoice_id)->where('status','!=',1)->where('total',$transferObj->total)->orderBy('id','DESC')->first();
-                if($invoiceObj){
-                    $transferObj->invoice_id = $invoiceObj->id;
-                    $transferObj->save();
-                }else{
-                    return Redirect('404');
-                }
-            }
-           
             $data = [
-                'cartObj' => $cartObj, 
+                'user_id' => $transferObj->user_id,
+                'tenant_id' => $transferObj->tenant_id,
+                'global_id' => $transferObj->global_id,
+                'cartData' => json_decode(json_encode($cartObj), true), 
                 'type' => $type,
                 'transaction_id' => $transferObj->order_no,
-                'paymentGateaway' => trans('main.bankTransfer'),
-                'start_date' => $type == 'Suspended' ? date('Y-m-d') : $invoiceObj->due_date,
-                'invoiceObj' => $invoiceObj,
-                'transferObj' => $transferObj,
-                'arrType' => null,
-                'myEndDate' => null,
-            ];
+                'payment_gateaway' => trans('main.bankTransfer'),
+                'invoice_id' => $transferObj->invoice_id,
+            ];        
+
             try {
-                dispatch(new NewClient($data))->onConnection('cjobs');
-            } catch (Exception $e) {
-                
-            }
-            // if($resultData[0] == 0){
-            //     Session::flash('error',$resultData[1]);
-            //     return back()->withInput();
-            // }  
+                dispatch(new NewClient($data))->onConnection('database');
+                // dispatch(new NewClient($data))->onConnection('cjobs');
+            } catch (Exception $e) {}
         }
 
-        // if($status == 3){
-        //     if($oldStatus !== 2){
-        //         $transferObj->status = $status;
-        //     }
-        // }elseif($status == 2){
-        //     $transferObj->status = $status;
-        // }
         $transferObj->status = $status;
-
         $transferObj->updated_at = DATE_TIME;
         $transferObj->updated_by = USER_ID;
         $transferObj->save();

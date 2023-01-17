@@ -69,6 +69,7 @@ class BankTransfer extends Model{
     }
 
     static function getData($source) {
+        $invObj = $source->invoice_id != null ? Invoice::getData($source->Invoice) : [];
         $data = new  \stdClass();
         $data->id = $source->id;
         $data->user_id = $source->user_id;
@@ -77,9 +78,10 @@ class BankTransfer extends Model{
         $data->global_id = $source->global_id;
         $data->tenant_id = $source->tenant_id;
         $data->invoice_id = $source->invoice_id;
-        $data->items = $source->invoice_id != null && Invoice::getOne($source->invoice_id) != null ? Invoice::getData($source->Invoice)->items : [];
+        $data->invoice = $invObj;
+        $data->items = $source->invoice_id != null && !empty($invObj) ? $invObj->items : [];
         $data->order_no = $source->order_no;
-        $data->total = $source->Invoice != null && Invoice::getOne($source->invoice_id) != null ? Invoice::getData($source->Invoice)->roTtotal : $source->total;
+        $data->total = $source->total;
         $data->domain = $source->domain;
         $data->sort = $source->sort;
         $data->status = $source->status;

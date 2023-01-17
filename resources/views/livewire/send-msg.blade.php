@@ -56,7 +56,6 @@
     <script>
 
         $(function(){
-
             $(document).on('click','.attachment',function(e){
                 $('.msgFile')[0].click()
             });

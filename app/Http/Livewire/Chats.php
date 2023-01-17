@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use Livewire\Component;
 use App\Models\ChatDialog;
 use App\Models\ChatMessage;
+use App\Models\Variable;
 use Request;
 use Response;
 
@@ -13,7 +14,8 @@ class Chats extends Component
     public $page = 1;
     public $page_size = 20;
     public $chats;
-    protected $listeners = ['loadMore','searchAllChats','chatsChanges','changeDialogStatus','readChat','pinChat','archiveChat','deleteChat','muteChat','labelChat','blockChat','leaveGroup'];
+    public $hasSearch=0;
+    protected $listeners = ['loadMore','searchAllChats','chatsChanges','changeDialogStatus','readChat','pinChat','archiveChat','deleteChat','muteChat','labelChat','blockChat','leaveGroup','updateDialogPresence'];
 
     public function mount(){
         $data['limit'] = $this->page_size;
@@ -29,8 +31,12 @@ class Chats extends Component
 
     public function loadMore(){
         $start = $this->page * $this->page_size;
-
-        $dialogs = ChatDialog::whereHas('Messages')->orderBy('pinned','DESC')->orderByDesc(ChatMessage::select('time')
+        $varObj = Variable::getVar('disableDialogsArchive');
+        $dialogs = ChatDialog::whereHas('Messages')->where(function($whereQuery) use ($varObj){
+            if($varObj == '1'){
+                $whereQuery->where('archived',0)->orWhere('archived',null);
+            }
+        })->orderBy('pinned','DESC')->orderByDesc(ChatMessage::select('time')
             ->whereColumn('messages.chatId', 'dialogs.id')
             ->where('time','!=', null)
             ->orderBy('time','DESC')
@@ -44,119 +50,107 @@ class Chats extends Component
 
     public function searchAllChats($chats){
         $this->chats = $chats['chats'];
+        $this->hasSearch = $chats['hasSearch'];
         $this->emit('refreshDesign');
     }
 
-    // public function chatsChanges($chat,$domain){
-    //     $oldChats = $this->chats;
-    //     $newChats = [];
-    //     $pinned = [];
-    //     $notPinned = [];
-    //     $item;
-    //     $found = 0;
-    //     $domainUrl = str_replace('myDomain',$domain,config('app.MY_DOMAIN'));
-    //     $chat = json_decode(json_encode($chat), true);
-    //     $chat['image'] = str_replace('http://localhost',$domainUrl,$chat['image']);
-    //     foreach ($oldChats as $key => $value) {
-    //         if($value['id'] == $chat['lastMessage']['chatId']){
-    //             $found = 1;
-    //             $item = $chat;
-    //         }else{
-    //             $item = $value;
-    //         }
-    //         $item = (object) $item;
-    //         if(isset($item->lastMessage)){
-    //             $item->lastMessage = (object) $item->lastMessage;
-    //         }
-    //         if($item->pinned > 0){
-    //             $pinned[] = $item;
-    //         }else{
-    //             $notPinned[] = $item;
-    //         }
-    //     }
+    public function chatsChanges($chatId,$delete=false){
+        $oldChats = $this->chats;
+        $newChats = [];
+        foreach ($oldChats as $key => $value) {
+            if($value['id'] == $chatId){
+                if(!$delete){
+                    $chatObj = (array) ChatDialog::getData(ChatDialog::getOne($chatId));
+                    $chatObj['presence'] = '';
+                    $newChats[] = $chatObj;
+                }
+            }else{
+                $newChats[] = $value;
+            }
+        }
 
-    //     if(!$found){
-    //         $chat = (object) $chat;
-    //         if(isset($chat->lastMessage)){
-    //             $chat->lastMessage = (object) $chat->lastMessage;
-    //         }
-    //         if($chat->pinned > 0){
-    //             $pinned[] = $chat;
-    //         }else{
-    //             $notPinned[] = $chat;
-    //         }
-    //     }
-
-    //     usort($pinned, function($a, $b) {
-    //         return ((int) $b->pinned) - ((int) $a->pinned);
-    //     });
-
-    //     usort($notPinned, function($a, $b) {
-    //         return ((int) $b->lastMessage->time) - ((int) $a->lastMessage->time);
-    //     });
-    //     $this->chats = array_merge($pinned,$notPinned);
-    //     if($chat['lastMessage']['fromMe'] == 0){
-    //         $this->emit('playAudio');
-    //     }
-    // }
+        $this->chats = $newChats;
+    }
 
     public function changeDialogStatus($data){
+        if(!$this->hasSearch){
+
+            $data = json_decode(json_encode($data), true);
+            $pinned = [];
+            $notPinned = [];
+            $oldChats = $this->chats;
+            $oldChats = json_decode(json_encode($oldChats), true);
+            $found = 0;
+            $chatData = $data['data'];
+            if(isset($chatData['chatId'])){
+                $chatObj = ChatDialog::getData(ChatDialog::getOne($chatData['chatId']));
+                foreach ($oldChats as $key => $value) {
+                    if($value['id'] == $chatData['chatId']){
+                        $found = 1;
+                        $item = $chatObj;
+                    }else{
+                        $item = $value;
+                    }
+                    $item = (object) $item;
+                    if(isset($item->lastMessage)){
+                        $item->lastMessage = (object) $item->lastMessage;
+                    }
+                    if((int)$item->pinned > 0){
+                        $pinned[] = $item;
+                    }else{
+                        $notPinned[] = $item;
+                    }
+                }
+
+                if(!$found){
+                    $chat = $chatObj;
+                    if($chat){
+                        if(isset($chat->lastMessage)){
+                            $chat->lastMessage = (object) $chat->lastMessage;
+                        }
+                        if((int)$chat->pinned > 0){
+                            $pinned[] = $chat;
+                        }else{
+                            $notPinned[] = $chat;
+                        }
+                    }
+                }
+
+                usort($pinned, function($a, $b) {
+                    return ((int) $b->pinned) - ((int) $a->pinned);
+                });
+
+                usort($notPinned, function($a, $b) {
+                    if(isset($b->lastMessage) && isset($a->lastMessage)){
+                        return ((int) $b->lastMessage->time) - ((int) $a->lastMessage->time);
+                    }
+                });
+
+                $pinned = json_decode(json_encode($pinned), true);
+                $notPinned = json_decode(json_encode($notPinned), true);
+                // $this->emitTo('chat','changeDialogStatus',$chatObj,$data['domain']);
+                $this->chats = json_decode(json_encode(array_merge($pinned,$notPinned)), true);
+                $this->emit('refreshDesign');
+            }
+        }
+    }
+
+    public function updateDialogPresence($data)
+    {
         $data = json_decode(json_encode($data), true);
-        $pinned = [];
-        $notPinned = [];
         $oldChats = $this->chats;
         $oldChats = json_decode(json_encode($oldChats), true);
-        $found = 0;
+        $newData = [];
         $chatData = $data['data'];
         if(isset($chatData['chatId'])){
-            $chatObj = ChatDialog::getData(ChatDialog::getOne($chatData['chatId']));
-            foreach ($oldChats as $key => $value) {
-                if($value['id'] == $chatData['chatId']){
-                    $found = 1;
-                    $item = $chatObj;
-                }else{
-                    $item = $value;
-                }
-                $item = (object) $item;
-                if(isset($item->lastMessage)){
-                    $item->lastMessage = (object) $item->lastMessage;
-                }
-                if((int)$item->pinned > 0){
-                    $pinned[] = $item;
-                }else{
-                    $notPinned[] = $item;
-                }
+            $presence = '';
+            if(in_array($chatData['presenceData']['presence'],['recording','typing'])){
+                $presence = str_contains($chatData['chatId'],'@g.us') ?  $chatData['presenceData']['phone'] . ' is '. $chatData['presenceData']['presence'] . ' ......' : $chatData['presenceData']['presence'] . ' ......' ;
+                $this->emit('updatePresence',[
+                    'chatId' => $chatData['chatId'],
+                    'presence' => $presence,
+                ]);
             }
-
-            if(!$found){
-                $chat = $chatObj;
-                if($chat){
-                    if(isset($chat->lastMessage)){
-                        $chat->lastMessage = (object) $chat->lastMessage;
-                    }
-                    if((int)$chat->pinned > 0){
-                        $pinned[] = $chat;
-                    }else{
-                        $notPinned[] = $chat;
-                    }
-                }
-            }
-
-            usort($pinned, function($a, $b) {
-                return ((int) $b->pinned) - ((int) $a->pinned);
-            });
-
-            usort($notPinned, function($a, $b) {
-                if(isset($b->lastMessage) && isset($a->lastMessage)){
-                    return ((int) $b->lastMessage->time) - ((int) $a->lastMessage->time);
-                }
-            });
-
-            $pinned = json_decode(json_encode($pinned), true);
-            $notPinned = json_decode(json_encode($notPinned), true);
-            // $this->emitTo('chat','changeDialogStatus',$chatObj,$data['domain']);
-            $this->chats = json_decode(json_encode(array_merge($pinned,$notPinned)), true);
-            $this->emit('refreshDesign');
         }
     }
 

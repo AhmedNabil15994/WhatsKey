@@ -29,8 +29,8 @@ $(function(){
        	errorNotification('Call Has been ended !!!')
     });
 
+	document.querySelector('emoji-picker').database.close()
 	Livewire.on('conversationOpened', chat => {
-		document.querySelector('emoji-picker').database.close()
     	$('#kt_scrollDown').click()
     	$('[data-toggle="tooltip"]').tooltip()
     	$('.sendMsg textarea').focus()
@@ -39,6 +39,7 @@ $(function(){
 	$('#kt_scrollDown').on('click',function(){
     	$(this).addClass('hidden')
     	$('.scroll-pulls').scrollTop(1000000);
+    	document.querySelector('emoji-picker').database.close()
 	});
 
     $('.scroll-pulls').on('scroll',function(){
@@ -123,6 +124,18 @@ $(function(){
 	    });
     });
 
+    window.livewire.on('updatePresence',data=>{
+    	if(data['presence'] != ''){
+    		$('.chatItem[data-id="'+data['chatId']+'"]').find('.chatMsg').hide();
+	    	$('.chatItem[data-id="'+data['chatId']+'"]').find('.chatPresence').html(data['presence']);
+	    	$('.chatItem[data-id="'+data['chatId']+'"]').find('.chatPresence').show();
+    	}else{
+	    	$('.chatItem[data-id="'+data['chatId']+'"]').find('.chatPresence').html('');
+	    	$('.chatItem[data-id="'+data['chatId']+'"]').find('.chatPresence').hide();
+    		$('.chatItem[data-id="'+data['chatId']+'"]').find('.chatMsg').show();
+    	}
+    })
+
 	$(document).on('click','.selectAddress',function(e){
 		e.preventDefault()
 		window.livewire.emitTo('send-msg','setLocation', $('#locationModal .selectAddress').data('lat'), $('#locationModal .selectAddress').data('lng'),$('#locationModal input[name="address"]').val(),$('input[name="replyMsgId"]').val())
@@ -157,9 +170,12 @@ $(function(){
     	$('[data-toggle="select2"]').select2()
 		var avatar5 = new KTImageInput('kt_image_5');
 		const demo = document.querySelector('.scroll-pulld');
-		const ps = new PerfectScrollbar(demo);
-		ps.update()
+		if(demo){
+			const ps = new PerfectScrollbar(demo);
+			ps.update()
+		}
 		if($('.sendMsg textarea').length){
+    		$('.sendMsg textarea').focus()
     		$('#kt_scrollDown').click()
 		}
     });        

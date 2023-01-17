@@ -1,37 +1,26 @@
 <?php namespace App\Http\Controllers;
 
-use App\Jobs\ReadChatsJob;
-use App\Jobs\SyncDialogsJob;
-use App\Jobs\SyncMessagesJob;
 use App\Models\Addons;
-use App\Models\BankAccount;
-use App\Models\Category;
-use App\Models\CentralChannel;
-use App\Models\CentralUser;
-use App\Models\CentralVariable;
-use App\Models\ChatDialog;
-use App\Models\ChatMessage;
-use App\Models\Contact;
-use App\Models\ContactLabel;
-use App\Models\ContactReport;
-use App\Models\ExtraQuota;
-use App\Models\Membership;
-use App\Models\Order;
-use App\Models\PaymentInfo;
-use App\Models\Product;
-use App\Models\User;
 use App\Models\UserAddon;
-use App\Models\UserChannels;
+use App\Models\CentralUser;
+use App\Models\ExtraQuota;
 use App\Models\UserExtraQuota;
-use App\Models\UserStatus;
+use App\Models\Membership;
+use App\Models\PaymentInfo;
+use App\Models\User;
 use App\Models\Variable;
-use DataTables;
+use App\Models\UserChannels;
+use App\Models\Coupon;
+use App\Models\Invoice;
+use App\Models\BankTransfer;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Storage;
 use Validator;
+use App\Jobs\NewClient;
 
 class ProfileControllers extends Controller
 {
@@ -142,6 +131,7 @@ class ProfileControllers extends Controller
                     'messageNotifications' => str_replace('://', '://'.$input['domain'].'.', config('app.BASE_URL')).'/services/webhooks/messages-webhook',
                     'ackNotifications' => str_replace('://', '://'.$input['domain'].'.', config('app.BASE_URL')).'/services/webhooks/acks-webhook',
                     'chatNotifications' => str_replace('://', '://'.$input['domain'].'.', config('app.BASE_URL')).'/services/webhooks/chats-webhook',
+                    'businessNotifications' => str_replace('://', '://'.$input['domain'].'.', config('app.BASE_URL')).'/services/webhooks/business-webhook',
                 ],
                 'ignoreOldMessages' => 1,
             ];
@@ -226,7 +216,7 @@ class ProfileControllers extends Controller
         return \Redirect::back()->withInput();
     }
 
-    public function postPaymentInfo()
+    public function postPaymentInfo(Request $request)
     {
         $input = \Request::all();
         $rules = [
@@ -238,7 +228,7 @@ class ProfileControllers extends Controller
         ];
 
         $validate = Validator::make($input, $rules, $message);
-        if ($validate->fails()) {
+        if ($validate->fails() && !$request->ajax()) {
             Session::flash('error', $validate->messages()->first());
             return back()->withInput();
         }
@@ -259,14 +249,21 @@ class ProfileControllers extends Controller
         $paymentInfoObj->address = $input['address'];
         $paymentInfoObj->address2 = $input['address2'];
         $paymentInfoObj->city = $input['city'];
-        $paymentInfoObj->payment_method = $input['payment_method'];
-        $paymentInfoObj->currency = $input['currency'];
+        if(isset($input['payment_method'])){
+            $paymentInfoObj->payment_method = $input['payment_method'];
+        }
+        if(isset($input['currency'])){
+            $paymentInfoObj->currency = $input['currency'];
+        }
         $paymentInfoObj->region = $input['region'];
         $paymentInfoObj->country = $input['country'];
         $paymentInfoObj->postal_code = $input['postal_code'];
         $paymentInfoObj->tax_id = $input['tax_id'];
         $paymentInfoObj->save();
 
+        if($request->ajax()){
+            return \TraitsFunc::SuccessResponse(trans('main.editSuccess'));
+        }
         Session::flash('success', trans('main.editSuccess'));
         return \Redirect::back()->withInput();
     }
@@ -305,6 +302,186 @@ class ProfileControllers extends Controller
         $menuObj->image = '';
         $menuObj->save();
         return \TraitsFunc::SuccessResponse(trans('main.imgDeleted'));
+    }
+
+    public function memberships()
+    {   
+        $memberships = Membership::NotDeleted()->where('id','!=',Session::get('membership'));
+        $data['memberships'] = Membership::generateObj($memberships)['data'];
+        return view('Tenancy.Profile.Views.memberships')->with('data', (object) $data);
+    }
+
+    public function updateMembership(){
+        $input = \Request::all();
+        if((!isset($input['membership']) || empty($input['membership'])) || (!isset($input['duration']) || empty($input['duration']))){
+            Session::flash('error', trans('main.membershipValidate'));
+            return back()->withInput();
+        }
+
+        $membership_id = (int) $input['membership'];
+        $duration = (int) $input['duration'];
+        $membershipObj = Membership::getOne($membership_id);
+        $channelObj = UserChannels::NotDeleted()->first();
+        $oldDuration = User::NotDeleted()->first()->duration_type;
+        if(!$membershipObj || !$channelObj){
+            Session::flash('error', trans('main.membershipValidate'));
+            return back()->withInput();
+        }
+
+        $userObj = User::authenticatedUser();
+        $oldMembership = Membership::getOne(User::NotDeleted()->first()->membership_id);
+        $datediff = strtotime($channelObj->end_date) - strtotime(date('Y-m-d H:i:s'));
+        $daysLeft = (int) round($datediff / (60 * 60 * 24));
+        $newPriceAfterVat = $duration == 1 ? $membershipObj->monthly_after_vat : $membershipObj->annual_after_vat;
+
+        if ($oldDuration == 1) {
+            $usedCost = ($oldMembership->monthly_after_vat / 30);
+        } else if ($oldDuration == 2) {
+            $usedCost = ($oldMembership->annual_after_vat / 365);
+        }
+
+        $userCredits = round($daysLeft * $usedCost, 2);
+        if($userCredits > $newPriceAfterVat){
+            Session::flash('error', trans('main.membershipValidate'));
+            return back()->withInput();
+        }
+        \Session::put('userCredits',$userCredits);
+
+        $data['userCredits'] = $userCredits;
+        $data['paymentInfo'] = $userObj->paymentInfo;
+        $data['items'][] = [
+            'id' => $membership_id,
+            'type' => 'membership',
+            'duration_type' => $duration,
+            'title' => Membership::getData($membershipObj)->title,
+            'start_date' => $channelObj->start_date,
+            'end_date' => $duration == 1 ? date('Y-m-d',strtotime('+1 month',strtotime($channelObj->start_date))) : date('Y-m-d',strtotime('+1 year',strtotime($channelObj->start_date))),
+            'price' => $duration == 1 ? $membershipObj->monthly_after_vat : $membershipObj->annual_after_vat,
+            'quantity' => 1,
+        ];
+
+        $subscriptionHelperData = [
+            'user_id' => ROOT_ID,
+            'tenant_id' => TENANT_ID,
+            'global_id' => GLOBAL_ID,
+            'cartData' => $data['items'],
+            'type' => 'Change',
+            'transaction_id' => null,
+            'payment_gateaway' => null,
+            'user_credits' => $userCredits,
+            'coupon_code' => null,
+        ];
+
+        Variable::where('var_key','inv_status')->firstOrCreate(['var_key'=>'inv_status','var_value'=>'Change']);
+        $subscriptionHelperObj = new \SubscriptionHelper;
+        $data['invoice_id'] = $subscriptionHelperObj->setInvoice($subscriptionHelperData);
+        return view('Tenancy.Profile.Views.cart')->with('data', (object) $data);
+    }
+
+    public function addCoupon(){
+        $input = \Request::all();
+
+        $availableCoupons = Coupon::availableCoupons();
+        $availableCoupons = reset($availableCoupons);        
+        $coupon = $input['coupon'];
+        if($coupon != null){
+            if(count($availableCoupons) > 0 && !in_array($coupon, $availableCoupons)){
+                return \TraitsFunc::ErrorMessage('هذا الكود ('.$coupon.') غير متاح حاليا');
+            }
+
+            if(in_array($coupon, $availableCoupons)){
+                $couponObj = Coupon::NotDeleted()->where('code',$coupon)->where('status',1)->first();
+                if($couponObj){
+
+                    $invoiceObj = Invoice::NotDeleted()->where('client_id',USER_ID)->where('status',0)->orderBy('id','DESC')->first();
+                    if($invoiceObj){
+                        $invoiceObj->total = $invoiceObj->total - ( $couponObj->discount_type == 1 ? $couponObj->discount_value : round($invoiceObj->total * $couponObj->discount_value / 100 ,2) );
+                        $invoiceObj->coupon_code = $coupon;
+                        $invoiceObj->discount_type = $couponObj->discount_type;
+                        $invoiceObj->discount_value = $couponObj->discount_value;
+                        $invoiceObj->save();
+                    }
+
+                    $statusObj['data'] = Coupon::getData($couponObj);
+                    $statusObj['status'] = \TraitsFunc::SuccessMessage(trans('main.addSuccess'));
+                    return \Response::json((object) $statusObj);
+                }
+            }
+        }
+    }
+
+    public function checkout(Request $request){
+        if ($request->hasFile('transfer_image')) {
+            $centralUser = CentralUser::getOne(ROOT_ID);
+            $files = $request->file('transfer_image');
+
+            $bankTransferObj = BankTransfer::NotDeleted()->where('user_id',USER_ID)->where('status',1)->first();
+            $invoiceObj = Invoice::find($request->invoice_id);
+            if(!$bankTransferObj){
+                $bankTransferObj = new BankTransfer;
+                $bankTransferObj->user_id = USER_ID;
+                $bankTransferObj->tenant_id = TENANT_ID;
+                $bankTransferObj->global_id = GLOBAL_ID;
+                $bankTransferObj->invoice_id = $invoiceObj->id;
+                $bankTransferObj->domain = DOMAIN;
+                $bankTransferObj->order_no = rand(1,100000);
+                $bankTransferObj->status = 1;
+                $bankTransferObj->sort = BankTransfer::newSortIndex();
+                $bankTransferObj->created_at = DATE_TIME;
+                $bankTransferObj->created_by = USER_ID;
+            }
+            $bankTransferObj->total = $invoiceObj->total;
+            $bankTransferObj->save();
+
+            $fileName = \ImagesHelper::uploadFileFromRequest('bank_transfers', $files,$bankTransferObj->id);
+            if($fileName == false){
+                return false;
+            }
+
+            $bankTransferObj->image = $fileName;
+            $bankTransferObj->save();
+
+            Variable::where('var_key','cartObj')->firstOrCreate(['var_key'=>'cartObj','var_value'=>json_encode(unserialize($invoiceObj->items))]);
+
+            Session::flash('success',trans('main.transferSuccess'));
+            return redirect()->to('/dashboard');
+        }       
+    }
+
+    public function activate()
+    {
+        $input = \Request::all();
+        if(!isset($input['invoice_id']) || empty($input['invoice_id'])){
+            return back()->withInput();
+        }
+
+        $invoiceObj = Invoice::NotDeleted()->where('client_id',ROOT_ID)->where('id',(int) $input['invoice_id'])->first();
+        if(!$invoiceObj){
+            return back()->withInput();
+        }
+
+        tenancy()->initialize(TENANT_ID);
+        $type = Variable::getVar('inv_status');
+        tenancy()->end(TENANT_ID);
+
+        $data = [
+            'user_id' => ROOT_ID,
+            'tenant_id' => TENANT_ID,
+            'global_id' => GLOBAL_ID,
+            'cartData' => json_decode(json_encode(unserialize($invoiceObj->items)), true), 
+            'type' => $type,
+            'transaction_id' => isset($input['transaction_id']) && !empty($input['transaction_id']) ? $input['transaction_id'] : rand(1,1000000),
+            'payment_gateaway' => isset($input['payment_gateaway']) && !empty($input['payment_gateaway']) ? $input['payment_gateaway'] : 'Noon',
+            'invoice_id' => $invoiceObj->id,
+        ];        
+
+        try {
+            dispatch(new NewClient($data))->onConnection('database');
+            // dispatch(new NewClient($data))->onConnection('cjobs');
+        } catch (Exception $e) {
+            
+        }
+        return redirect()->to('/dashboard');
     }
 
     public function extraQuotas()
@@ -434,37 +611,6 @@ class ProfileControllers extends Controller
         ];
     }
 
-    public function calcData($total, $cartData, $userObj)
-    {
-        $total = json_decode($total);
-        $totals = $total[3];
-
-        Variable::firstOrCreate([
-            'var_key' => 'cartObj',
-            'var_value' => json_encode($cartData),
-        ]);
-
-        $paymentInfoObj = PaymentInfo::NotDeleted()->where('user_id', $userObj->id)->first();
-        if (!$paymentInfoObj) {
-            $paymentInfoObj = new PaymentInfo;
-        }
-        if (isset($request->address) && !empty($request->address)) {
-            $paymentInfoObj->user_id = $userObj->id;
-            $paymentInfoObj->address = $request->address;
-            $paymentInfoObj->address2 = $request->address2;
-            $paymentInfoObj->city = $request->city;
-            $paymentInfoObj->country = $request->country;
-            $paymentInfoObj->region = $request->region;
-            $paymentInfoObj->postal_code = $request->postal_code;
-            $paymentInfoObj->tax_id = $request->tax_id;
-            $paymentInfoObj->created_at = DATE_TIME;
-            $paymentInfoObj->created_by = $userObj->id;
-            $paymentInfoObj->save();
-        }
-    }
-
-  
-
     public function pushInvoice2()
     {
         $input = \Request::all();
@@ -481,23 +627,5 @@ class ProfileControllers extends Controller
         }
     }
 
-    public function activate($transaction_id = null, $paymentGateaway = null)
-    {
-        $cartObj = Variable::getVar('cartObj');
-        $endDate = Variable::getVar('endDate');
-        $start_date = Variable::getVar('start_date');
-        $cartObj = json_decode(json_decode($cartObj));
-
-        $paymentObj = new \SubscriptionHelper();
-        $resultData = $paymentObj->newSubscription($cartObj, 'new', $transaction_id, $paymentGateaway, $start_date, null, null, null, $endDate);
-        if ($resultData[0] == 0) {
-            Session::flash('error', $resultData[1]);
-            return back()->withInput();
-        }
-
-        $userObj = User::first();
-        User::setSessions($userObj);
-        return redirect()->to('/dashboard');
-    }
-
+    
 }

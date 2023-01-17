@@ -25,6 +25,17 @@
     }
 </style>
 <link rel="stylesheet" href="{{ asset('assets/tenant/css/photoswipe.css') }}" />
+<style>
+    .form-group.textWrap emoji-picker{
+        top: 40px;
+    }
+    html[dir="ltr"] .form-group.textWrap emoji-picker{
+        right: 30px;
+    }
+    html[dir="rtl"] .form-group.textWrap emoji-picker{
+        left: 30px;
+    }
+</style>
 @endsection
 @section('breadcrumbs')
 @include('tenant.Layouts.breadcrumb',[
@@ -81,13 +92,17 @@
                     <form class="form-horizontal grpmsg" method="POST" action="{{ URL::to('/profile/updatePersonalInfo') }}">
                         @csrf
                         <div class="card-body">
-                            <div class="form-group mb-3">
+                            <div class="form-group mb-3 textWrap">
                                 <label>{{ trans('main.name2') }} :</label>
                                 <input class="form-control" name="name" value="{{ $data->data->name }}" placeholder="{{ trans('main.name2') }}">
+                                <i class="la la-smile icon-xl emoji-icon"></i>
+                                <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                             </div> 
-                            <div class="form-group mb-3">
+                            <div class="form-group mb-3 textWrap">
                                 <label>{{ trans('main.company_name') }} :</label>
                                 <input class="form-control" name="company" value="{{ $data->data->company }}" placeholder="{{ trans('main.company_name') }}">
+                                <i class="la la-smile icon-xl emoji-icon"></i>
+                                <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                             </div> 
                             <div class="form-group mb-3">
                                 <label>{{ trans('main.email') }} :</label>
@@ -250,4 +265,6 @@
 <script src="{{ asset('assets/tenant/js/photoswipe.min.js') }}"></script>
 <script src="{{ asset('assets/tenant/js/photoswipe-ui-default.min.js') }}"></script>
 <script src="{{ asset('assets/tenant/components/myPhotoSwipe.js') }}"></script>      
+<script type="module" src="{{asset('assets/tenant/js/emojiIndex.js')}}"></script>
+<script src="{{ asset('assets/tenant/components/initEmoji.js') }}"></script>
 @endsection

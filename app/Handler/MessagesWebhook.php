@@ -161,9 +161,12 @@ class MessagesWebhook extends ProcessWebhookJob
             }
             // Fire Incoming Message Event For Web Application
             $lastM = $this->handleMessages($userObj->domain, $message, $tenantObj->tenant_id);
-            // TODO: Make Feature in Client to disable or enable bot in groups
+            
+            $varObj = Variable::getVar('disableGroupsReply');
 
-            if ($message['fromMe'] == false && !str_contains($message['chatId'], '@g.us')) {
+            if ($message['fromMe'] == false && ($varObj == 1 && !str_contains($message['chatId'], '@g.us')) ||
+                    $message['fromMe'] == false && ($varObj == '0' || $varObj == null)
+                ) {
                 // $this->handleNotification($message, $lastM);
 
                 if ($message['type'] == 'buttons_response') {
@@ -305,7 +308,11 @@ class MessagesWebhook extends ProcessWebhookJob
         $botObj->file = str_replace('newdomain1.whatskey.net/', 'e3f1-156-219-78-52.ngrok.io', $botObj->file);
         $myMessage = $botObj->reply;
         $message_type = '';
-        $sendData['phone'] = str_replace('@c.us', '', $sender);
+        if(str_contains($sender, '@g.us')){
+            $sendData['chat'] = $sender;
+        }else{
+            $sendData['phone'] = str_replace('@c.us', '', $sender);
+        }
 
         if ($botObj->reply_type == 1) {
             $message_type = 'text';
@@ -441,7 +448,11 @@ class MessagesWebhook extends ProcessWebhookJob
             }
             $sendData['footer'] = $botObj->footer;
             $sendData['buttons'] = $buttons;
-            $sendData['phone'] = str_replace('@c.us', '', $sender);
+            if(str_contains($sender, '@g.us')){
+                $sendData['chat'] = $sender;
+            }else{
+                $sendData['phone'] = str_replace('@c.us', '', $sender);
+            }
             $result = $mainWhatsLoopObj->sendButtons($sendData);
 
             $sendData['chatId'] = $sender;
@@ -471,7 +482,11 @@ class MessagesWebhook extends ProcessWebhookJob
 	        }
     	    if (isset($replyData['reply_type']) && $replyData['reply_type'] == 1) {
                 $sendData['body'] = $replyData['msg'];
-                $sendData['phone'] = str_replace('@c.us', '', $sender);
+                if(str_contains($sender, '@g.us')){
+                    $sendData['chat'] = $sender;
+                }else{
+                    $sendData['phone'] = str_replace('@c.us', '', $sender);
+                }
                 $result = $mainWhatsLoopObj->sendMessage($sendData);
                 $sendData['chatId'] = $sender;
                 $this->handleRequest($message, $userObj->domain, $result, $sendData, 'BOT PLUS', 'text', 'BotMessage');
@@ -518,7 +533,11 @@ class MessagesWebhook extends ProcessWebhookJob
             $sendData['footer'] = $botObj->footer;
             $sendData['buttonText'] = $botObj->buttonText;
             $sendData['sections'] = $sections;
-            $sendData['phone'] = str_replace('@c.us', '', $sender);
+            if(str_contains($sender, '@g.us')){
+                $sendData['chat'] = $sender;
+            }else{
+                $sendData['phone'] = str_replace('@c.us', '', $sender);
+            }
             $result = $mainWhatsLoopObj->sendList($sendData);
             $sendData['chatId'] = $sender;
             return $this->handleRequest($message, $domain, $result, $sendData, 'List Message', 'list', 'BotMessage', $botObj,$botObj->id);
@@ -549,7 +568,11 @@ class MessagesWebhook extends ProcessWebhookJob
 	        }
     	    if (isset($replyData['reply_type']) && $replyData['reply_type'] == 1) {
                 $sendData['body'] = $replyData['msg'];
-                $sendData['phone'] = str_replace('@c.us', '', $sender);
+                if(str_contains($sender, '@g.us')){
+                    $sendData['chat'] = $sender;
+                }else{
+                    $sendData['phone'] = str_replace('@c.us', '', $sender);
+                }
                 $result = $mainWhatsLoopObj->sendMessage($sendData);
                 $sendData['chatId'] = $sender;
                 $this->handleRequest($message, $userObj->domain, $result, $sendData, 'BOT PLUS', 'text', 'BotMessage');
@@ -583,7 +606,11 @@ class MessagesWebhook extends ProcessWebhookJob
             $sendData['body'] = $botObj->body;
             $sendData['selectableOptionsCount'] = $botObj->selected_options;
             $sendData['options'] = $options;
-            $sendData['phone'] = str_replace('@c.us', '', $sender);
+            if(str_contains($sender, '@g.us')){
+                $sendData['chat'] = $sender;
+            }else{
+                $sendData['phone'] = str_replace('@c.us', '', $sender);
+            }
             $result = $mainWhatsLoopObj->sendPoll($sendData);
 
             $sendData['chatId'] = $sender;
@@ -613,7 +640,11 @@ class MessagesWebhook extends ProcessWebhookJob
 	        }
     	    if (isset($replyData['reply_type']) && $replyData['reply_type'] == 1) {
                 $sendData['body'] = $replyData['msg'];
-                $sendData['phone'] = str_replace('@c.us', '', $sender);
+                if(str_contains($sender, '@g.us')){
+                    $sendData['chat'] = $sender;
+                }else{
+                    $sendData['phone'] = str_replace('@c.us', '', $sender);
+                }
                 $result = $mainWhatsLoopObj->sendMessage($sendData);
                 $sendData['chatId'] = $sender;
                 $this->handleRequest($message, $userObj->domain, $result, $sendData, 'BOT PLUS', 'text', 'BotMessage');

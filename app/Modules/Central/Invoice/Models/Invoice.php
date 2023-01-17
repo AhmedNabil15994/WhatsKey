@@ -82,8 +82,8 @@ class Invoice extends Model{
         $data->total = $source->total;
         $data->sort = $source->sort;
         $data->main = $source->main;
-        $data->whmcs_order_id = $source->whmcs_order_id;
-        $data->whmcs_invoice_id = $source->whmcs_invoice_id;
+        $data->user_credits = $source->user_credits;
+        $data->coupon_code = $source->coupon_code;
         $data->discount_type = $source->discount_type;
         $data->discount_value = $source->discount_value;
         $data->coupon = $source->coupon;
@@ -94,146 +94,11 @@ class Invoice extends Model{
         return $data;
     }
 
-    static function calcPrices($source,$domainData){
-        $zidOrSalla = 0;
-        $items = $source->items != null ? unserialize($source->items) : [];
-
-        $hostingTax = $domainData[1] == 1 ? \Helper::calcTax($domainData[0]) : 0;
-        $hostingGrandTotal = $domainData[1] == 1 ? $domainData[0] - $hostingTax : 0;
-
-        $extraQuotasTotal = self::calcExtraPrices($items);
-        $extraQuotasTax = \Helper::calcTax($extraQuotasTotal);
-        $extraQuotasGrandTotal = $extraQuotasTotal - $extraQuotasTax;
-
-        $oldPrice = 0 ;
-
-        
-        if($oldPrice == 0){
-            $datas = self::checkZidOrSalla($items,$source->total);
-            $oldPrice = $datas[0] == 0 ? $source->total : $datas[0] ;
-            $zidOrSalla = $datas[1];
-        }
-
-        $oldPriceTax = \Helper::calcTax($oldPrice);
-        $oldPriceGrandTotal = $oldPrice - $oldPriceTax;
-        
-        $grandTax = $hostingTax + $oldPriceTax + $extraQuotasTax;
-        $grandTotal = $hostingGrandTotal + $oldPriceGrandTotal + $extraQuotasGrandTotal;
-
-        $discount = $oldPrice == 0 ? 0 : abs($source->total - $oldPrice) - ($domainData[1] == 1 ? $domainData[0] : 0) - $extraQuotasTotal;
-        $discountTax = \Helper::calcTax($discount);
-        $discountGrand = $discount - $discountTax;
-        if($source->main && count($items) == 1){
-            $discount = 0;
-        }
-        $oldDiscount = $discount;
-
-        $total = $source->total;
-
-        return [
-            'zidOrSalla' => $zidOrSalla,
-            'hostingTax' => $hostingTax,
-            'hostingGrandTotal' => $hostingGrandTotal,
-            'oldPrice' => $oldPrice,
-            'oldPriceTax' => $oldPriceTax,
-            'oldPriceGrandTotal' => $oldPriceGrandTotal,
-            'grandTax' => $grandTax,
-            'grandTotal' => $grandTotal,
-            'discount' => $discount,
-            'discountTax' => $discountTax,
-            'discountGrand' => $discountGrand,
-            'oldDiscount' => $oldDiscount,
-            'total' => $total,
-        ];
-
-        // if($source->discount_type != null && $source->discount_value != null){
-        //     if($data->zidOrSalla == 1 || $data->oldPrice > 0){
-        //         if($domainData[1] == 1){
-        //             $data->tax = 0;
-        //             $data->discount = $data->oldPrice == 0 ? 0 : abs($source->total - $data->oldPrice - ($domainData[1] == 1 ? $domainData[0] : 0));
-        //             $data->oldDiscount =  round($data->discount - \Helper::calcTax($data->discount),2);
-        //             $data->tax = \Helper::calcTax($data->oldPrice + ($domainData[1] == 1 ? $domainData[0] : 0));
-        //             $data->grandTotal =  round($data->oldPrice - $data->tax + ($domainData[1] == 1 ? $domainData[0] : 0),2);
-                    
-        //             $coupDis = $source->discount_type == 1 ? $source->discount_value : round($source->discount_value*$data->grandTotal/100,2);
-    
-        //             $data->discount = $data->oldDiscount + $coupDis ;
-        //             $data->grandTotal = round($data->grandTotal - $coupDis,2);
-    
-        //             $data->tax = round(((15/100) * $data->grandTotal),2); 
-        //             $data->roTtotal = round($data->grandTotal + $data->tax,2);
-        //             $data->total = round($data->grandTotal + $data->tax,2);
-        //         }else{
-        //             $data->tax = 0;
-        //             $data->oldDiscount =  round($data->discount - \Helper::calcTax($data->discount),2);
-        //             $data->tax = \Helper::calcTax($data->oldPrice);
-        //             $data->grandTotal =  round($data->oldPrice - $data->tax,2);
-    
-        //             $coupDis = $source->discount_type == 1 ? $source->discount_value : round($source->discount_value*$data->grandTotal/100,2);
-    
-        //             $data->discount = $data->oldDiscount + $coupDis - ($domainData[1] == 1 ? $domainData[0] : 0);
-        //             $data->grandTotal = round($data->grandTotal - $coupDis,2);
-    
-        //             $data->tax = round(((15/100) * $data->grandTotal),2); 
-        //             // $data->tax = round($data->tax - ((15/100) * $data->tax),2); 
-        //             $data->roTtotal = round($data->grandTotal + $data->tax,2);
-        //             $data->total = round($data->grandTotal + $data->tax,2);
-        //         }
-                
-        //     }else{
-        //         $data->oldDiscount =  $data->discount;
-        //         $data->oldPrice =  0 ;
-        //         $data->zidOrSalla = 0;
-        //         $data->tax = round(\Helper::calcTax($data->total),2);
-        //         $data->grandTotal =  round($data->total - $data->tax,2);
-        //         $data->discount = (round($source->discount_type == 1 ? $data->oldDiscount + $source->discount_value : $data->oldDiscount + (($source->discount_value*$data->grandTotal)/100),2))- ($domainData[1] == 1 ? $domainData[0] : 0);
-        //         $data->grandTotal = round($data->grandTotal - $data->discount,2);
-        //         $data->tax = round(($data->grandTotal * 15) / 100,2);
-        //         $data->total = round($data->grandTotal + $data->tax,2);
-        //         $data->roTtotal = round($data->total,2);
-        //     }
-        // }
-    }
-
-    static function calcExtraPrices($items){
-        $price = 0;
-        foreach ($items as $key => $value) {
-            if($value['type'] == 'extra_quota'){
-                $price += $value['data']['price_after_vat'];
-            }
-        }
-        return $price;
-    }
-
-    static function checkZidOrSalla($items,$total){
-        $hasSalla = 0 ;
-        $hasZid = 0 ;
-        $hasBot = 0 ;
-        $duration_type = $items[0]['data']['duration_type'];
-        foreach ($items as $key => $value) {
-            if($value['type'] == 'addon' && $value['data']['title_en'] == 'Salla'){
-                $hasSalla = 1;
-            }
-            if($value['type'] == 'addon' && $value['data']['title_en'] == 'Zid'){
-                $hasZid = 1;
-            }
-            if($value['type'] == 'addon' && $value['data']['title_en'] == 'Bot'){
-                $hasBot = 1;
-            }
-        }
-
-        if(($hasBot && $hasSalla) || ($hasBot  && $hasZid)){
-            return [$total - ($duration_type == 1 ? 230 : 2300),1];
-        }
-
-        return [0,0];
-    }
-
     static function checkDomain($items,$total){
         $hasData = 0 ;
-        $duration_type = $items[0]['data']['duration_type'];
+        $duration_type = $items[0]['duration_type'];
         foreach ($items as $key => $value) {
-            if($value['type'] == 'addon' && $value['data']['title_en'] == 'Hosting'){
+            if($value['type'] == 'addon' && $value['title'] == 'Hosting'){
                 $hasData = 1;
             }
         }

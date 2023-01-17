@@ -98,32 +98,23 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @php 
-                                        $mainPrices = 0; 
-                                        $hasAddons = 0;
-                                        $isOld = App\Models\CentralUser::find($data->data->client_id)->is_old;
-                                    @endphp
+                                    @php $prices = 0; @endphp
                                     @foreach($data->data->items as $key => $item)
-                                    @php 
-                                        if($item['type'] == 'addon'){
-                                            $hasAddons = 1;
-                                        }
-                                        $mainPrices+=$item['data']['price'] * $item['data']['quantity']; 
+                                    @php
+                                        $prices += $item['price']; 
                                     @endphp
                                     <tr class="mainRow">
                                         <td>{{ $key+1 }}</td>
                                         <td colspan="3">
                                             <p class="m-0 d-inline-block align-middle font-16">
-                                                <a href="#" class="text-reset font-family-secondary">{{ $item['data']['title_'.LANGUAGE_PREF] }}</a><br>
+                                                <a href="#" class="text-reset font-family-secondary">{{ $item['title'] }}</a><br>
                                                 <small class="mr-2"><b>{{ trans('main.extra_type') }}:</b> {{ trans('main.'.$item['type']) }} </small>
                                             </p>
                                         </td>
-                                        <td>{{ $item['data']['quantity'] }}</td>
-                                        {{-- <td>{{ $data->data->due_date }}</td> --}}
-                                        {{-- <td>{{ $item['data']['duration_type'] == 1 ? date('Y-m-d',strtotime('+1 month',strtotime($data->data->due_date)- 86400))  : date('Y-m-d',strtotime('+1 year',strtotime($data->data->due_date)- 86400)) }}</td> --}}
+                                        <td>{{ $item['quantity'] }}</td>
                                         <td class="text-center">
                                             @php 
-                                            $total = $item['data']['quantity'] * $item['data']['price_after_vat'];
+                                            $total = $item['quantity'] * $item['price'];
                                             $tax=  \Helper::calcTax($total);
                                             @endphp
                                             {{ $total - $tax }} 
@@ -132,41 +123,38 @@
                                     </tr>
                                     @endforeach
                                     @php
-                                        $oldDiscount = $data->data->discount;
-                                        $tax = $data->data->tax;
-                                        $grandTotal =  $data->data->grandTotal;
-                                        $total = $tax + $grandTotal;
-                                        
+                                        $userCredits = $data->data->user_credits;
+                                        $discount = $data->data->coupon_code != null ? ($data->data->discount_type == 1 ? $data->data->discount_value : round($prices-$userCredits * $data->data->discount_value / 100 ,2)) : 0;
+                                        $tax = \Helper::calcTax($prices - $discount - $userCredits);
+                                        $grandTotal = $prices - $userCredits - $discount - $tax;
                                     @endphp
+                                    @if($userCredits > 0)
                                     <tr>
-                                        <td colspan="5"></td>
-                                        <td class="text-left">
-                                            @if($data->data->oldDiscount != 0)
-                                            <p class="mb-2">
-                                                <span class="tx-bold">{{ trans('main.discount') }} :</span>
-                                                <span class="float-right">{{ $data->data->oldDiscount }} {{ trans('main.sar') }}</span>
-                                                <div class="clearfix"></div>
-                                            </p>
+                                        <td colspan="5" class="font-size-h6 text-right">{{trans('main.userCredits')}}</td>
+                                        <td class="font-weight-bolder font-size-h6 text-right"> <span class="userCredits">{{$userCredits}}</span> <sup>{{trans('main.sar2')}}</sup> </td>
+                                    </tr>
+                                    @endif
+                                    <tr>
+                                        <td colspan="5" class="font-size-h6 text-right">{{trans('main.discount')}}</td>
+                                        <td class="font-weight-bolder font-size-h6 text-right"> 
+                                            <span class="discount">{{$discount}}</span> <sup>{{trans('main.sar2')}}</sup> 
+                                            @if($data->data->coupon_code != null)
+                                            <p class="mb-0">{{trans('main.coupon_code')}} : {{$data->data->coupon_code}}</p>
                                             @endif
-                                            @if($data->data->discount_value != null && $data->data->discount_type != null && $oldDiscount - $data->data->oldDiscount != 0)
-                                            <p class="mb-2">
-                                                <span class="tx-bold">{{ trans('main.coupons') }} ({{$data->data->discount_type == 1 ? $data->data->discount_value : $data->data->discount_value.'%' }}) :</span>
-                                                <span class="float-right">{{ $oldDiscount - $data->data->oldDiscount }} {{ trans('main.sar') }}</span>
-                                                <div class="clearfix"></div>
-                                            </p>
-                                            @endif
-                                            <p>
-                                                <span class="tx-bold">{{ trans('main.grandTotal') }} :</span>
-                                                <span>{{ $grandTotal }} {{ trans('main.sar') }}</span>
-                                            </p>
-                                            <p>
-                                                <span class="tx-bold">{{ trans('main.estimatedTax') }} :</span>
-                                                <span>{{ $tax }} {{ trans('main.sar') }}</span>
-                                            </p>
-                                            <p>
-                                                <span class="tx-bold">{{ trans('main.total') }} :</span>
-                                                <span>{{ $total }}  {{ trans('main.sar') }}</span>
-                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5" class="font-size-h6 text-right">{{trans('main.grandTotal')}}</td>
+                                        <td class="font-weight-bolder font-size-h6 text-right"> <span class="grandTotal">{{$grandTotal}}</span> <sup>{{trans('main.sar2')}}</sup> </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5" class="font-size-h6 text-right">{{trans('main.estimatedTax')}}</td>
+                                        <td class="font-weight-bolder font-size-h6 text-right"> <span class="tax">{{$tax}}</span> <sup>{{trans('main.sar2')}}</sup> </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5" class="font-weight-bolder font-size-h4 text-right">{{trans('main.subTotal')}}</td>
+                                        <td class="font-weight-bolder font-size-h4 text-right"> 
+                                            <span class="total">{{$grandTotal + $tax}}</span> <sup>{{trans('main.sar2')}}</sup> 
                                         </td>
                                     </tr>
                                 </tbody>
@@ -193,7 +181,7 @@
                                 <tbody>
                                     @php $mainPrices = 0; @endphp
                                     @foreach($data->data->items as $key => $item)
-                                    @php $mainPrices+=$item['data']['price'] * $item['data']['quantity'] @endphp
+                                    @php $mainPrices+=$item['price'] * $item['quantity'] @endphp
                                     @endforeach
                                     <tr class="mainRow">
                                         <td>{{ $key+1 }}</td>
@@ -204,7 +192,7 @@
                                         </td>
                                         <td>{{ $data->data->payment_gateaway }}</td>
                                         <td>{{ $data->data->transaction_id }}</td>
-                                        <td>{{ $total }} {{ trans('main.sar') }}</td>
+                                        <td>{{ $data->data->total }} {{ trans('main.sar') }}</td>
                                     </tr>
                                 </tbody>
                             </table>

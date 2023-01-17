@@ -142,6 +142,6 @@ class Category extends Model{
             $contactObj->created_at = date('Y-m-d H:i:s');
         }
         $contactObj->status = 1;
-        $contactObj->save();
+        return $contactObj->save();
     }
 }

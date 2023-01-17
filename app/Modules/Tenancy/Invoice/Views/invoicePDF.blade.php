@@ -7,7 +7,7 @@
 		<title>واتس كي | WhatsKey | @yield('title')</title>
 		<meta name="description" content="#" />
 		<meta name="csrf-token" content="{{ csrf_token() }}">
-		<link rel="stylesheet" href="{{ asset('assets/tenant/css/font.css') }}" />
+		<link rel="stylesheet" href="{{ !isset($data->fontFile) ? asset('assets/tenant/css/font.css') : $data->fontFile }}" />
 		{{-- <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" rel="stylesheet"> --}}
 		<style type="text/css">
 			html,body{
@@ -80,7 +80,6 @@
 			    width: 100%;
 			    display:inline-block;
 			}
-			
 			.justify-content-between {
 			    -webkit-box-pack: justify!important;
 			    -ms-flex-pack: justify!important;
@@ -194,7 +193,6 @@
 			    color: #3f4254;
 			    background-color: transparent;
 			}
-
 			table {
 			    border-collapse: collapse;
 			}
@@ -293,8 +291,6 @@
 			.totals{
 				margin-right: 120px;
 			}
-			
-
 			#kt_header,.subheader,#kt_header_mobile,.alert,.inv-footer,.footer,#kt_scrolltop{
 		        display: none !important;
 		    }
@@ -326,7 +322,7 @@
 			                    <div class="d-flex flex-column align-items-md-end px-0">
 			                        <a href="#" class="mb-5 max-w-200px">
 			                            <span class="svg-icon svg-icon-full">
-			                                <img src="{{asset('assets/images/whiteLogo.png')}}" alt="">
+			                                <img src="{{!isset($data->logoFile) ? asset('assets/images/whiteLogo.png') : $data->logoFile}}" alt="">
 			                            </span>
 			                        </a>
 			                        <span class="spans align-items-md-end font-size-h5 font-weight-bold text-muted">
@@ -340,7 +336,7 @@
 			                </div>
 		                </div>
 		                <div class="rounded-xl overflow-hidden w-100 max-h-md-250px mb-10">
-		                    <img src="{{asset('assets/tenant/media/bg/bg-invoice-5.jpg')}}" class="w-100" alt="">
+		                    <img src="{{!isset($data->backFile) ? asset('assets/tenant/media/bg/bg-invoice-5.jpg') : $data->backFile}}" class="w-100" alt="">
 		                </div>
 		                <!--begin: Invoice body-->
 		                <div class="row border-bottom pb-10">
@@ -356,17 +352,21 @@
 		                                    </tr>
 		                                </thead>
 		                                <tbody>
+		                                	@php $prices = 0; @endphp
 		                                    @foreach($data->invoice->items as $key => $item)
+		                                    @php
+		                                        $prices += $item['price']; 
+		                                    @endphp
 		                                    <tr class="font-weight-bolder font-size-lg">
 		                                        <td class="border-top-0 pl-0 pt-7 d-flex align-items-center">{{ $key+1 }}</td>
 		                                        <td class="text-right pt-7">
-		                                            {{ $item['data']['title_'.LANGUAGE_PREF] }} <br>
+		                                            {{ $item['title'] }} <br>
 		                                            <small><b>{{ trans('main.extra_type') }}:</b> {{ trans('main.'.$item['type']) }} </small>
 		                                        </td>
-		                                        <td class="text-right pt-7">{{ $item['data']['quantity'] }}</td>
+		                                        <td class="text-right pt-7">{{ $item['quantity'] }}</td>
 		                                        <td class="pr-0 pt-7 font-size-h6 font-weight-boldest text-right">
 		                                            @php 
-		                                            $total = $item['data']['quantity'] * $item['data']['price_after_vat'];
+		                                            $total = $item['quantity'] * $item['price'];
 		                                            $tax=  \Helper::calcTax($total);
 		                                            @endphp
 		                                            {{ $total }} 
@@ -374,10 +374,45 @@
 		                                        </td>
 		                                    </tr>
 		                                    @endforeach
+		                                    @php
+		                                        $userCredits = $data->invoice->user_credits;
+                                        		$discount = $data->invoice->coupon_code != null ? ($data->invoice->discount_type == 1 ? $data->invoice->discount_value : round($prices-$userCredits * $data->invoice->discount_value / 100 ,2)) : 0;
+		                                        $tax = \Helper::calcTax($prices - $discount - $userCredits);
+		                                        $grandTotal = $prices - $userCredits - $discount - $tax;
+		                                    @endphp
+		                                    @if($userCredits > 0)
+		                                    <tr>
+		                                        <td colspan="2" class="font-size-h6 text-right">{{trans('main.userCredits')}}</td>
+		                                        <td colspan="2" class="font-weight-bolder font-size-h6 text-right"> <span class="userCredits">{{$userCredits}}</span> <sup>{{trans('main.sar2')}}</sup> </td>
+		                                    </tr>
+		                                    @endif
+		                                    <tr>
+		                                        <td colspan="2" class="font-size-h6 text-right">{{trans('main.discount')}}</td>
+		                                        <td colspan="2" class="font-weight-bolder font-size-h6 text-right"> 
+		                                            <span class="discount">{{$discount}}</span> <sup>{{trans('main.sar2')}}</sup> 
+		                                            @if($data->invoice->coupon_code != null)
+		                                            <p class="mb-0">{{trans('main.coupon_code')}} : {{$data->invoice->coupon_code}}</p>
+		                                            @endif
+		                                        </td>
+		                                    </tr>
+		                                    <tr>
+		                                        <td colspan="2" class="font-size-h6 text-right">{{trans('main.grandTotal')}}</td>
+		                                        <td colspan="2" class="font-weight-bolder font-size-h6 text-right"> <span class="grandTotal">{{$grandTotal}}</span> <sup>{{trans('main.sar2')}}</sup> </td>
+		                                    </tr>
+		                                    <tr>
+		                                        <td colspan="2" class="font-size-h6 text-right">{{trans('main.estimatedTax')}}</td>
+		                                        <td colspan="2" class="font-weight-bolder font-size-h6 text-right"> <span class="tax">{{$tax}}</span> <sup>{{trans('main.sar2')}}</sup> </td>
+		                                    </tr>
+		                                    <tr>
+		                                        <td colspan="2" class="font-weight-bolder font-size-h4 text-right">{{trans('main.subTotal')}}</td>
+		                                        <td colspan="2" class="font-weight-bolder font-size-h4 text-right"> 
+		                                            <span class="total">{{$grandTotal + $tax}}</span> <sup>{{trans('main.sar2')}}</sup> 
+		                                        </td>
+		                                    </tr>
 		                                </tbody>
 		                            </table>
 		                        </div>
-		                        <div class="border-bottom w-100 mt-7 mb-10"></div>
+		                        <div class="border-bottom w-100 mt-0 mb-10"></div>
 		                        @if($data->invoice->transaction_id)
 		                        <div class="row pl-md-10 py-md-10 text-left">
 		                            <div class="mb-10 mb-md-0">

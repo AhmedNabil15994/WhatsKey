@@ -4,7 +4,17 @@
 @section('pageName',$data->designElems['mainData']['title'])
 
 @section('styles')
-
+<style>
+    .form-group.textWrap emoji-picker{
+        top: 40px;
+    }
+    html[dir="ltr"] .form-group.textWrap emoji-picker{
+        right: 30px;
+    }
+    html[dir="rtl"] .form-group.textWrap emoji-picker{
+        left: 30px;
+    }
+</style>
 @endsection
 @section('breadcrumbs')
 @include('tenant.Layouts.breadcrumb',[
@@ -108,16 +118,20 @@
 
             {{-- Text Messages Design --}}
             <div class="reply hidden" data-id="1">
-                <div class="form-group">
+                <div class="form-group textWrap">
                     <label> {{ trans('main.messageContent') }}</label>                   
                     <textarea class="form-control" name="replyText" placeholder="{{ trans('main.messageContent') }}">{{ old('reply') }}</textarea>
+                    <i class="la la-smile icon-xl emoji-icon"></i>
+                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                 </div> 
             </div>
             {{-- Photo Messages Design --}}
             <div class="reply hidden" data-id="2">
-                <div class="form-group">
+                <div class="form-group textWrap">
                     <label> {{ trans('main.caption') }}</label>            
                     <input type="text" class="form-control" name="reply" placeholder="{{ trans('main.caption') }}" value="{{ old('reply') }}">
+                    <i class="la la-smile icon-xl emoji-icon"></i>
+                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                 </div>
                 <div class="form-group">
                     <label class="titleLabel" for="attachFile"> {{ trans('main.attachFile') }}</label>   
@@ -130,9 +144,11 @@
             </div>
             {{-- Video Messages Design --}}
             <div class="reply hidden" data-id="3">
-                <div class="form-group">
+                <div class="form-group textWrap">
                     <label> {{ trans('main.caption') }}</label>            
                     <input type="text" class="form-control" name="caption" placeholder="{{ trans('main.caption') }}" value="{{ old('reply') }}">
+                    <i class="la la-smile icon-xl emoji-icon"></i>
+                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                 </div>
                 <div class="form-group">
                     <label class="titleLabel" for="attachFile"> {{ trans('main.attachFile') }}</label>   
@@ -175,9 +191,11 @@
                     <label> {{ trans('main.lng') }}</label>            
                     <input class="form-control" type="text" value="{{ old('lng') }}" name="lng" placeholder="{{ trans('main.lng') }}">
                 </div>
-                <div class="form-group">
+                <div class="form-group textWrap">
                     <label> {{ trans('main.location') }}</label>            
                     <input class="form-control" type="text" value="{{ old('address') }}" name="address" placeholder="{{ trans('main.location') }}">
+                    <i class="la la-smile icon-xl emoji-icon"></i>
+                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                 </div>
             </div>
             {{-- Contact Messages Design --}}
@@ -190,9 +208,11 @@
             </div>
             {{-- Disappearing Messages Design --}}
             <div class="reply hidden" data-id="10">
-                <div class="form-group">
+                <div class="form-group textWrap">
                     <label> {{ trans('main.messageContent') }}</label>            
                     <textarea class="form-control" name="disappearingText" placeholder="{{ trans('main.messageContent') }}">{{ old('disappearingText') }}</textarea>
+                    <i class="la la-smile icon-xl emoji-icon"></i>
+                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                 </div>
                 <div class="form-group">
                     <label> {{ trans('main.expires_in') }} ( {{trans('main.minute')}} )</label>            
@@ -217,25 +237,33 @@
                     <label> {{ trans('main.urlTitle') }}</label>            
                     <input class="form-control" type="text" value="{{ old('url_title') }}" name="url_title" placeholder="{{ trans('main.urlTitle') }}">
                 </div>
-                <div class="form-group">
+                <div class="form-group textWrap">
                     <label> {{ trans('main.urlDesc') }}</label>            
                     <input class="form-control" type="text" value="{{ old('url_desc') }}" name="url_desc" placeholder="{{ trans('main.urlDesc') }}">
+                    <i class="la la-smile icon-xl emoji-icon"></i>
+                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                 </div>
             </div>
 
             @if($data->checkAvailBotPlus == 1)
             <div class="reply hidden" data-id="30">
-                <div class="form-group textRow">
+                <div class="form-group textRow textWrap">
                     <label>{{ trans('main.title') }} :</label>
                     <input class="form-control" type="text" value="{{ old('title') }}" name="BPtitle" placeholder="{{ trans('main.title') }}">
+                    <i class="la la-smile icon-xl emoji-icon"></i>
+                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                 </div>
-                <div class="form-group">
+                <div class="form-group textWrap">
                     <label>{{ trans('main.body') }} :</label>
                     <textarea class="form-control" name="BPbody" placeholder="{{ trans('main.body') }}">{{ old('body') }}</textarea>
+                    <i class="la la-smile icon-xl emoji-icon"></i>
+                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                 </div>
-                <div class="form-group">
+                <div class="form-group textWrap">
                     <label>{{ trans('main.footer') }} :</label>
                     <input class="form-control" type="text" value="{{ old('footer') }}" name="BPfooter" placeholder="{{ trans('main.footer') }}">
+                    <i class="la la-smile icon-xl emoji-icon"></i>
+                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                 </div>
                 <div class="form-group">
                     <label>{{ trans('main.buttons') }} :</label>
@@ -253,11 +281,15 @@
                     </select>
                     <div class="clearfix"></div>
                     <div class="buts mt-5">
-                        <div class='form-group mains'>
+                        <div class='form-group mains buttons'>
                             <label class='titleLabel'>{{ trans('main.btnData',['button'=>1]) }} :</label>
                             <div class='row'>
                                 <div class='col-md-4'>
-                                    <input class="form-control" type='text' name='btn_text_1' value="" placeholder='{{ trans('main.text') }}'>
+                                    <div class="form-group textWrap">
+                                        <input class="form-control" type='text' name='btn_text_1' value="" placeholder='{{ trans('main.text') }}'>
+                                        <i class="la la-smile icon-xl emoji-icon"></i>
+                                        <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
+                                    </div>
                                 </div>
                                 <div class='col-md-4'>
                                     <select class="form-control reply_types" data-toggle='select2' name='btn_reply_type_1'>
@@ -266,7 +298,11 @@
                                     </select>
                                 </div>
                                 <div class='col-md-4 repy'>
-                                    <textarea class="form-control" name='btn_reply_1' placeholder='{{ trans('main.messageContent') }}' maxlength="140"></textarea>
+                                    <div class="form-group textWrap">
+                                        <textarea class="form-control" name='btn_reply_1' placeholder='{{ trans('main.messageContent') }}' maxlength="140"></textarea>
+                                        <i class="la la-smile icon-xl emoji-icon"></i>
+                                        <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
+                                    </div>
                                     <select data-toggle="" class='form-control dets hidden' name='btn_msg_1'>
                                         <option value='' selected>{{ trans('main.choose') }}</optin>
                                         @foreach($data->bots as $bot)
@@ -285,21 +321,29 @@
             </div>
             @endif
             <div class="reply hidden" data-id="31">
-                <div class="form-group">
+                <div class="form-group textWrap">
                     <label>{{ trans('main.title') }} :</label>
                     <input class="form-control" type="text" value="{{ old('title') }}" name="LMtitle" placeholder="{{ trans('main.title') }}">
+                    <i class="la la-smile icon-xl emoji-icon"></i>
+                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                 </div>
-                <div class="form-group">
+                <div class="form-group textWrap">
                     <label>{{ trans('main.body') }} :</label>
                     <textarea class="form-control" name="LMbody" placeholder="{{ trans('main.body') }}">{{ old('body') }}</textarea>
+                    <i class="la la-smile icon-xl emoji-icon"></i>
+                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                 </div>
-                <div class="form-group">
+                <div class="form-group textWrap">
                     <label>{{ trans('main.footer') }} :</label>
                     <input class="form-control" type="text" value="{{ old('footer') }}" name="LMfooter" placeholder="{{ trans('main.footer') }}">
+                    <i class="la la-smile icon-xl emoji-icon"></i>
+                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                 </div>
-                <div class="form-group">
+                <div class="form-group textWrap">
                     <label>{{ trans('main.buttonText') }} :</label>
                     <input class="form-control" type="text" value="{{ old('buttonText') }}" name="buttonText" placeholder="{{ trans('main.buttonText') }}">
+                    <i class="la la-smile icon-xl emoji-icon"></i>
+                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                 </div>
                 <div class="form-group">
                     <label>{{ trans('main.sections') }} :</label>
@@ -318,14 +362,16 @@
                     <div class="clearfix"></div>
                     <hr>
                     <div class="secs mt-5">
-                        <div class='form-group mains'>
+                        <div class='form-group mains lists'>
                             <label>{{ trans('main.sectionData',['section'=>1]) }} :</label>
                             <div class='optionsRow'>
                                 <div class='row'>
                                     <div class='col-md-6'>
-                                        <div class="form-group">
+                                        <div class="form-group textWrap">
                                             <label>{{ trans('main.title') }} :</label>
                                             <input class="form-control" type='text' name='title_1' value="" placeholder='{{ trans('main.title') }}'>
+                                            <i class="la la-smile icon-xl emoji-icon"></i>
+                                            <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                                         </div>
                                     </div>
                                     <div class='col-md-6'>
@@ -354,10 +400,18 @@
                                     <input type='hidden' name='btn_msg_type_1_1' value=''>
 
                                     <div class="col-md-3">
-                                        <input type="text" class="form-control" name="item_title_1_1" placeholder='{{ trans('main.title') }}'>
+                                        <div class="form-group textWrap">
+                                            <input type="text" class="form-control" name="item_title_1_1" placeholder='{{ trans('main.title') }}'>
+                                            <i class="la la-smile icon-xl emoji-icon"></i>
+                                            <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
+                                        </div>
                                     </div>
                                     <div class="col-md-3">
-                                        <textarea class="form-control" name='item_description_1_1' placeholder='{{ trans('main.desc') }}' maxlength="140"></textarea>
+                                        <div class="form-group textWrap">
+                                            <textarea class="form-control" name='item_description_1_1' placeholder='{{ trans('main.desc') }}' maxlength="140"></textarea>
+                                            <i class="la la-smile icon-xl emoji-icon"></i>
+                                            <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
+                                        </div>
                                     </div>
                                     <div class="col-md-3">
                                         <select data-toggle='select2' class='reply_types form-control' name='item_reply_type_1_1'>
@@ -366,7 +420,11 @@
                                         </select>
                                     </div>
                                     <div class="col-md-3">
-                                        <textarea name='btn_reply_1_1' class="replyText form-control" placeholder='{{ trans('main.messageContent') }}' maxlength="140"></textarea>
+                                        <div class="form-group textWrap textReply">
+                                            <textarea name='btn_reply_1_1' class="replyText form-control" placeholder='{{ trans('main.messageContent') }}' maxlength="140"></textarea>
+                                            <i class="la la-smile icon-xl emoji-icon"></i>
+                                            <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
+                                        </div>
 
                                         <select data-toggle="" class='form-control dets hidden' name='btn_msg_1_1'>
                                             <option value='' selected>{{ trans('main.choose') }}</optin>
@@ -386,9 +444,11 @@
                 </div>
             </div>
             <div class="reply hidden" data-id="32">
-                <div class="form-group">
+                <div class="form-group textWrap">
                     <label>{{ trans('main.body') }} :</label>
                     <textarea class="form-control" name="PLbody" placeholder="{{ trans('main.body') }}">{{ old('body') }}</textarea>
+                    <i class="la la-smile icon-xl emoji-icon"></i>
+                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                 </div>
                 <div class="form-group">
                     <label>{{ trans('main.selectableOptionsCount') }} :</label>
@@ -410,11 +470,15 @@
                     </select>
                     <div class="clearfix"></div>
                     <div class="polls mt-5">
-                        <div class='form-group mains'>
+                        <div class='form-group mains polls'>
                             <label class='titleLabel'>{{ trans('main.btnData',['button'=>1]) }} :</label>
                             <div class='row'>
                                 <div class='col-md-4'>
-                                    <input class="form-control" type='text' name='poll_text_1' value="" placeholder='{{ trans('main.text') }}'>
+                                    <div class="form-group textWrap">
+                                        <input class="form-control" type='text' name='poll_text_1' value="" placeholder='{{ trans('main.text') }}'>
+                                        <i class="la la-smile icon-xl emoji-icon"></i>
+                                        <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
+                                    </div>
                                 </div>
                                 <div class='col-md-4'>
                                     <select class="form-control reply_types" data-toggle='select2' name='poll_reply_type_1'>
@@ -423,7 +487,11 @@
                                     </select>
                                 </div>
                                 <div class='col-md-4 repy'>
-                                    <textarea class="form-control" name='poll_reply_1' placeholder='{{ trans('main.messageContent') }}' maxlength="140"></textarea>
+                                    <div class="form-group textWrap">
+                                        <textarea class="form-control" name='poll_reply_1' placeholder='{{ trans('main.messageContent') }}' maxlength="140"></textarea>
+                                        <i class="la la-smile icon-xl emoji-icon"></i>
+                                        <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
+                                    </div>
                                     <select data-toggle="" class='form-control dets hidden' name='poll_msg_1'>
                                         <option value='' selected>{{ trans('main.choose') }}</optin>
                                         @foreach($data->bots as $bot)
@@ -459,4 +527,6 @@
 <script src="{{ asset('assets/tenant/components/addBotPlus.js') }}"></script>
 <script src="{{ asset('assets/tenant/components/addListMsg.js') }}"></script>
 <script src="{{ asset('assets/tenant/components/addPoll.js') }}"></script>
+<script type="module" src="{{asset('assets/tenant/js/emojiIndex.js')}}"></script>
+<script src="{{ asset('assets/tenant/components/initEmoji.js') }}"></script>
 @endsection

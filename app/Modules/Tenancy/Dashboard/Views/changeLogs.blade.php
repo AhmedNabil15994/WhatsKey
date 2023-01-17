@@ -4,8 +4,16 @@
 @section('pageName',trans('main.changeLogs'))
 
 @section('styles')
-<style type="text/css" media="screen">
-   
+<style>
+    .form-group.textWrap emoji-picker{
+        top: 40px;
+    }
+    html[dir="ltr"] .form-group.textWrap emoji-picker{
+        right: 30px;
+    }
+    html[dir="rtl"] .form-group.textWrap emoji-picker{
+        left: 30px;
+    }
 </style>
 @endsection
 @section('breadcrumbs')
@@ -84,8 +92,10 @@
             @endif
         </div>
         <div class="separator separator-solid mt-9 mb-4"></div>
-        <form class="position-relative par">
+        <form class="position-relative par textWrap form-group">
             <textarea  id="kt_forms_widget_11_input" class="form-control px-2 py-2 p-0 pr-10 resize-none" rows="1" name="reply" placeholder="{{ trans('main.postComment') }}" style="overflow: hidden; overflow-wrap: break-word; height: 50px;"></textarea>
+            <i class="la la-smile icon-xl emoji-icon"></i>
+            <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
             <div class="position-absolute top-0 right-0 mt-n1 mr-n2">
                 <span class="btn btn-icon btn-sm btn-hover-icon-primary">
                     <i class="flaticon2-send-1 icon-ms addRate" data-area="{{$one->id}}"></i>
@@ -99,4 +109,6 @@
 
 
 @section('scripts')
+<script type="module" src="{{asset('assets/tenant/js/emojiIndex.js')}}"></script>
+<script src="{{ asset('assets/tenant/components/initEmoji.js') }}"></script>
 @endsection

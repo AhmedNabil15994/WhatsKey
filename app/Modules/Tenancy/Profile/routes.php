@@ -3,6 +3,7 @@
 /*----------------------------------------------------------
 Users
 ----------------------------------------------------------*/
+Route::post('/checkout', [\App\Http\Controllers\ProfileControllers::class,'checkout']);
 Route::group(['prefix' => '/profile'] , function () {
     $controller = \App\Http\Controllers\ProfileControllers::class;    
     Route::get('/personalInfo', [$controller,'personalInfo']);
@@ -17,11 +18,19 @@ Route::group(['prefix' => '/profile'] , function () {
     Route::get('/addons', [$controller,'addons']);
     Route::post('/addons/{id}', [$controller,'postAddons']);
 
-    Route::group(['prefix' => '/subscription'] , function () {
+    Route::group(['prefix' => '/subscription'] , function () use ($controller) {
         $controller2 = \App\Http\Controllers\WAAccountController::class;
+
+        Route::get('/memberships', [$controller,'memberships']);
+        Route::get('/memberships/updateMembership', [$controller,'updateMembership']);
+        Route::post('/memberships/updateMembership/coupon', [$controller,'addCoupon']);
+        Route::get('/activate', [$controller,'activate']);
+
+
         Route::get('/', [$controller2,'subscription']);
         Route::get('/unBlock/{chatId}', [$controller2,'unBlock']);
         Route::get('/screenshot', [$controller2,'screenshot']);
+        Route::get('/resyncAll', [$controller2,'resyncAll']);
         Route::get('/syncAll', [$controller2,'syncAll']);
         Route::get('/closeConn', [$controller2,'closeConn']);
         Route::get('/read/{status}', [$controller2,'read']);
@@ -34,6 +43,8 @@ Route::group(['prefix' => '/profile'] , function () {
         Route::get('/syncOrders', [$controller2,'syncOrders']);
         Route::get('/restoreAccountSettings', [$controller2,'restoreAccountSettings']);
         Route::get('/clearMessagesQueue', [$controller2,'clearMessagesQueue']);
+        Route::post('/updateChannelSetting', [$controller2,'updateChannelSetting']);
+        
     }); 
     
     Route::get('/apiSetting', [\App\Http\Controllers\ApiSettingController::class,'apiSetting']);

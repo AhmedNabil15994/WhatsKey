@@ -4,7 +4,17 @@
 @section('pageName',$data->designElems['mainData']['title'])
 
 @section('styles')
-
+<style>
+    .form-group.textWrap emoji-picker{
+        top: 40px;
+    }
+    html[dir="ltr"] .form-group.textWrap emoji-picker{
+        right: 30px;
+    }
+    html[dir="rtl"] .form-group.textWrap emoji-picker{
+        left: 30px;
+    }
+</style>
 @endsection
 @section('breadcrumbs')
 @include('tenant.Layouts.breadcrumb',[
@@ -51,25 +61,35 @@
                     <option value="2" {{ $data->data->message_type == 2 ? 'selected' : '' }}>{{ trans('main.part') }}</option>
                 </select>                     
             </div> 
-            <div class="form-group">
+            <div class="form-group textWrap">
                 <label>{{ trans('main.clientMessage') }} :</label>
                 <input class="form-control" type="text" value="{{ $data->data->message }}" name="message" placeholder="{{ trans('main.clientMessage') }}">
+                <i class="la la-smile icon-xl emoji-icon"></i>
+                <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
             </div>
-            <div class="form-group">
+            <div class="form-group textWrap">
                 <label>{{ trans('main.title') }} :</label>
                 <input class="form-control" type="text" value="{{ $data->data->title }}" name="title" placeholder="{{ trans('main.title') }}">
+                <i class="la la-smile icon-xl emoji-icon"></i>
+                <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
             </div>
-            <div class="form-group">
+            <div class="form-group textWrap">
                 <label>{{ trans('main.body') }} :</label>
                 <textarea class="form-control" name="body" placeholder="{{ trans('main.body') }}">{{ $data->data->body }}</textarea>
+                <i class="la la-smile icon-xl emoji-icon"></i>
+                <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
             </div>
-            <div class="form-group">
+            <div class="form-group textWrap">
                 <label>{{ trans('main.footer') }} :</label>
                 <input class="form-control" type="text" value="{{ $data->data->footer }}" name="footer" placeholder="{{ trans('main.footer') }}">
+                <i class="la la-smile icon-xl emoji-icon"></i>
+                <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
             </div>
-            <div class="form-group">
+            <div class="form-group textWrap">
                 <label>{{ trans('main.buttonText') }} :</label>
                 <input class="form-control" type="text" value="{{ $data->data->buttonText }}" name="buttonText" placeholder="{{ trans('main.buttonText') }}">
+                <i class="la la-smile icon-xl emoji-icon"></i>
+                <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
             </div>
             <div class="form-group">
                 <label>{{ trans('main.sections') }} :</label>
@@ -89,14 +109,16 @@
                 <hr>
                 <div class="secs mt-5">
                     @foreach($data->data->sectionsData as $oneItem)
-                    <div class='form-group mains'>
+                    <div class='form-group mains lists'>
                         <label>{{ trans('main.sectionData',['section'=>$oneItem['id']]) }} :</label>
                         <div class='optionsRow'>
                             <div class='row'>
                                 <div class='col-md-6'>
-                                    <div class="form-group">
+                                    <div class="form-group textWrap">
                                         <label>{{ trans('main.title') }} :</label>
                                         <input class="form-control" type='text' name='{{'title_'.$oneItem['id']}}' value="{{$oneItem['title']}}" placeholder='{{ trans('main.title') }}'>
+                                        <i class="la la-smile icon-xl emoji-icon"></i>
+                                        <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                                     </div>
                                 </div>
                                 <div class='col-md-6'>
@@ -126,10 +148,18 @@
                                 <input type='hidden' name='{{'btn_msg_type_'.$oneItem['id'].'_'.($key+1)}}' value='{{ $oneRow['msg_type'] }}'>
 
                                 <div class="col-md-3">
-                                    <input type="text" class="form-control" name="{{'item_title_'.$oneItem['id'].'_'.($key+1)}}" placeholder='{{ trans('main.title') }}' value="{{$oneRow['title']}}">
+                                    <div class="form-group textWrap">
+                                        <input type="text" class="form-control" name="{{'item_title_'.$oneItem['id'].'_'.($key+1)}}" placeholder='{{ trans('main.title') }}' value="{{$oneRow['title']}}">
+                                        <i class="la la-smile icon-xl emoji-icon"></i>
+                                        <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
+                                    </div>
                                 </div>
                                 <div class="col-md-3">                                    
-                                    <textarea class="form-control" name='{{'item_description_'.$oneItem['id'].'_'.($key+1)}}' placeholder='{{ trans('main.desc') }}' maxlength="140">{{$oneRow['description']}}</textarea>
+                                    <div class="form-group textWrap">
+                                        <textarea class="form-control" name='{{'item_description_'.$oneItem['id'].'_'.($key+1)}}' placeholder='{{ trans('main.desc') }}' maxlength="140">{{$oneRow['description']}}</textarea>
+                                        <i class="la la-smile icon-xl emoji-icon"></i>
+                                        <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
+                                    </div>
                                 </div>
                                 <div class="col-md-3">
                                     <select data-toggle='select2' class='reply_types form-control' name='{{'item_reply_type_'.$oneItem['id'].'_'.($key+1)}}'>
@@ -138,7 +168,11 @@
                                     </select>
                                 </div>
                                 <div class="col-md-3">
-                                    <textarea class="replyText form-control {{ $oneRow['msg_type'] == null ? '' : 'hidden'}}" name='{{ 'btn_reply_'.$oneItem['id'].'_'.($key+1) }}' placeholder='{{ trans('main.messageContent') }}' maxlength="140">{{ $oneRow['msg_type'] == 0 ? $oneRow['msg'] : ''  }}</textarea>
+                                    <div class="form-group textWrap textReply {{ $oneRow['msg_type'] == null ? '' : 'hidden'}}">
+                                        <textarea class="replyText form-control" name='{{ 'btn_reply_'.$oneItem['id'].'_'.($key+1) }}' placeholder='{{ trans('main.messageContent') }}' maxlength="140">{{ $oneRow['msg_type'] == 0 ? $oneRow['msg'] : ''  }}</textarea>
+                                        <i class="la la-smile icon-xl emoji-icon"></i>
+                                        <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
+                                    </div>
 
                                     <select data-toggle="{{ $oneRow['msg_type'] != null ? 'select2' : ''  }}" class='form-control dets {{ $oneRow['msg_type'] != null ? '' : 'hidden'  }}' name='{{ 'btn_msg_'.$oneItem['id'].'_'.($key+1) }}'>
                                         <option value='' selected>{{ trans('main.choose') }}</optin>
@@ -169,4 +203,6 @@
 
 @section('scripts')
 <script src="{{ asset('assets/tenant/components/addListMsg.js') }}"></script>
+<script type="module" src="{{asset('assets/tenant/js/emojiIndex.js')}}"></script>
+<script src="{{ asset('assets/tenant/components/initEmoji.js') }}"></script>
 @endsection

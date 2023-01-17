@@ -163,12 +163,6 @@ class ImagesHelper {
             //     return is_file($checkFile) ? URL::to($fullPath) : $default;
             //     break;
            
-            // case "bank_transfers":
-            //     $checkFile = public_path() . '/uploads';
-            //     $fullPath = $path.'/uploads' . '/bank_transfers/' . $id . '/' . $filename;
-            //     $checkFile = $checkFile . '/bank_transfers/' . $id . '/' . $filename;
-            //     return is_file($checkFile) ? URL::to($fullPath) : $default;
-            //     break;
             // case "bankAccounts":
             //     $checkFile = public_path() . '/uploads';
             //     $fullPath = $path.'/uploads' . '/bankAccounts/' . $id . '/' . $filename;
@@ -198,6 +192,12 @@ class ImagesHelper {
             case "chats":
                 $fullPath = $path.'/uploads'.($tenant != '' ? '/'.$tenant : '') . '/chats/'. $filename;
                 $checkFile = $checkFile . '/chats/' . $filename;
+                return is_file($checkFile) ? URL::to($fullPath) : $default;
+                break;
+            case "bank_transfers":
+                $checkFile = public_path() . '/uploads';
+                $fullPath = $path.'/uploads' . '/bank_transfers/' . $id . '/' . $filename;
+                $checkFile = $checkFile . '/bank_transfers/' . $id . '/' . $filename;
                 return is_file($checkFile) ? URL::to($fullPath) : $default;
                 break;
             case "users":
@@ -348,10 +348,10 @@ class ImagesHelper {
         //     $directory = $path . 'ZidCarts/' . $id;
         // }
 
-        // if ($strAction == 'bank_transfers') {
-        //     $path = public_path() . '/uploads/';
-        //     $directory = $path . 'bank_transfers/' . $id;
-        // }
+        if ($strAction == 'bank_transfers') {
+            $path = public_path() . '/uploads/';
+            $directory = $path . 'bank_transfers/' . $id;
+        }
 
         // if ($strAction == 'bankAccounts') {
         //     $path = public_path() . '/uploads/';
@@ -480,10 +480,10 @@ class ImagesHelper {
             $directory = $path . 'groupMessages/' . $id;
         }
 
-        // if ($strAction == 'bank_transfers') {
-        //     $path = public_path() . '/uploads/';
-        //     $directory = $path . 'bank_transfers/' . $id;
-        // }
+        if ($strAction == 'bank_transfers') {
+            $path = public_path() . '/uploads/';
+            $directory = $path . 'bank_transfers/' . $id;
+        }
 
         // if ($strAction == 'bankAccounts') {
         //     $path = public_path() . '/uploads/';
@@ -603,10 +603,10 @@ class ImagesHelper {
             $directory = $path . 'chats/';
         }
 
-        // if ($strAction == 'bank_transfers') {
-        //     $path = public_path() . '/uploads/';
-        //     $directory = $path . 'bank_transfers/' . $id;
-        // }
+        if ($strAction == 'bank_transfers') {
+            $path = public_path() . '/uploads/';
+            $directory = $path . 'bank_transfers/' . $id;
+        }
         
         if ($strAction == 'tickets') {
             $path = public_path() . '/uploads/';

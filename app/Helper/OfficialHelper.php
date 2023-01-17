@@ -58,6 +58,12 @@ class OfficialHelper
         return Http::withToken($this->authToken)->post($mainURL, $data);
     }
 
+    public function transferDays($data)
+    {
+        $mainURL = $this->baseUrl . 'channels/transferDays';
+        return Http::withToken($this->authToken)->post($mainURL, $data);
+    }
+
     /*----------------------------------------------------------
     Instances
     ----------------------------------------------------------*/

@@ -7,11 +7,19 @@ use Livewire\Component;
 class ChatActions extends Component
 {
     public $name;
-    protected $listeners = ['newGroup','newMessage'];
+    protected $listeners = ['newGroup','newMessage','updateSelected'];
     
+    public function mount(){
+
+    }
+
     public function render()
     {
         return view('livewire.chat-actions');
+    }
+
+    public function updateSelected($name){
+        $this->name = $name;
     }
 
     public function newGroup($name,$numbers,$phones){

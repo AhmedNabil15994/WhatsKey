@@ -123,13 +123,8 @@
 		  		@php $memberships = array_chunk($data->memberships, 4); @endphp
 
 		  		@foreach($memberships as $key => $oneArray)
-		  		@if($key == 0)
-		    	<div class="carousel-item active">
+		    	<div class="carousel-item {{$key  == 0 ? 'active' : ''}}">
 		    		<div class="row">
-		  		@else
-		    	<div class="carousel-item">
-		    		<div class="row">
-		  		@endif
 		  				@foreach($oneArray as $memberKey => $membership)
 		    			<div class="col-md-3">
 							<div class="package {{$memberKey == 0 && $key == 0 ? "" : "closed"}}">

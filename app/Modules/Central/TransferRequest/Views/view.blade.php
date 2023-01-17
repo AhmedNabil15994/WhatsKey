@@ -61,25 +61,72 @@
                                         <thead>
                                             <tr>
                                                 <th>#</th>
-                                                <th colspan="3">{{ trans('main.item') }}</th>
+                                                <th colspan="2">{{ trans('main.item') }}</th>
                                                 <th>{{ trans('main.quantity') }}</th>
+                                                <th>{{ trans('main.date') }}</th>
                                                 <th class="text-center">{{ trans('main.total') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            @php $prices = 0; @endphp
                                             @foreach($data->data->items as $key => $item)
+                                            @php
+                                                $prices += $item['price']; 
+                                            @endphp
                                             <tr class="mainRow">
                                                 <td>{{ $key+1 }}</td>
-                                                <td colspan="3">
+                                                <td colspan="2">
                                                     <p class="m-0 d-inline-block align-middle font-16">
-                                                        <a href="#" class="text-reset font-family-secondary">{{ $item['data']['title_'.LANGUAGE_PREF] }}</a><br>
+                                                        <a href="#" class="text-reset font-family-secondary">{{ $item['title'] }}</a><br>
                                                         <small class="mr-2"><b>{{ trans('main.extra_type') }}:</b> {{ trans('main.'.$item['type']) }} </small>
                                                     </p>
                                                 </td>
-                                                <td>{{ $item['data']['quantity'] }}</td>
-                                                <td class="text-center">{{ $item['data']['quantity'] * $item['data']['price_after_vat'] }} {{ trans('main.sar') }}</td>
+                                                <td>{{ $item['quantity'] }}</td>
+                                                <td>{{$item['start_date'] . ' - ' . $item['end_date']}}</td>
+                                                <td class="text-center">{{ $item['quantity'] * $item['price'] }} {{ trans('main.sar') }}</td>
                                             </tr>
                                             @endforeach
+                                            @php
+                                                $userCredits = $data->data->invoice->user_credits;
+                                                $discount = $data->data->invoice->coupon_code != null ? ($data->data->invoice->discount_type == 1 ? $data->data->invoice->discount_value : round($prices-$userCredits * $data->data->invoice->discount_value / 100 ,2)) : 0;
+                                                $tax = \Helper::calcTax($prices - $discount - $userCredits);
+                                                $grandTotal = $prices - $userCredits - $discount - $tax;
+                                            @endphp
+                                            @if($userCredits > 0)
+                                            <tr>
+                                                <td colspan="4"></td>
+                                                <td class="font-size-h6 text-right">{{trans('main.userCredits')}}</td>
+                                                <td class="font-weight-bolder font-size-h6 text-right"> <span class="userCredits">{{$userCredits}}</span> <sup>{{trans('main.sar2')}}</sup> </td>
+                                            </tr>
+                                            @endif
+                                            <tr>
+                                                <td colspan="4"></td>
+                                                <td class="font-size-h6 text-right">{{trans('main.discount')}}</td>
+                                                <td class="font-weight-bolder font-size-h6 text-right"> 
+                                                    <span class="discount">{{$discount}}</span> <sup>{{trans('main.sar2')}}</sup> 
+                                                    @if($data->data->invoice->coupon_code != null)
+                                                    <p class="mb-0">{{trans('main.coupon_code')}} : {{$data->data->invoice->coupon_code}}</p>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4"></td>
+                                                <td class="font-size-h6 text-right">{{trans('main.grandTotal')}}</td>
+                                                <td class="font-weight-bolder font-size-h6 text-right"> <span class="grandTotal">{{$grandTotal}}</span> <sup>{{trans('main.sar2')}}</sup> </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4"></td>
+                                                <td class="font-size-h6 text-right">{{trans('main.estimatedTax')}}</td>
+                                                <td class="font-weight-bolder font-size-h6 text-right"> <span class="tax">{{$tax}}</span> <sup>{{trans('main.sar2')}}</sup> </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4"></td>
+                                                <td class="font-weight-bolder font-size-h4 text-right">{{trans('main.subTotal')}}</td>
+                                                <td class="font-weight-bolder font-size-h4 text-right"> 
+                                                    <span class="total">{{$grandTotal + $tax}}</span> <sup>{{trans('main.sar2')}}</sup> 
+                                                    <p class="mb-0">{{trans('main.taxesIncluded')}}</p>
+                                                </td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div> <!-- end table-responsive -->

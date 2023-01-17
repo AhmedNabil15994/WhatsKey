@@ -4,6 +4,17 @@
 
 @section('styles')
 <link rel="stylesheet" href="{{ asset('assets/tenant/css/photoswipe.css') }}" />
+<style>
+    .form-group.textWrap emoji-picker{
+        top: 40px;
+    }
+    html[dir="ltr"] .form-group.textWrap emoji-picker{
+        right: 30px;
+    }
+    html[dir="rtl"] .form-group.textWrap emoji-picker{
+        left: 30px;
+    }
+</style>
 @endsection
 
 @section('breadcrumbs')
@@ -36,7 +47,7 @@
         <div class="card-body">
             <input type="hidden" name="status" value="{{ $data->data->status }}">
             @foreach($data->designElems['modelData'] as $propKey => $propValue)
-            <div class="form-group">
+            <div class="form-group textWrap">
                 <label for="exampleInputPassword1">{{ $propValue['label'] }} 
                     @if(isset($propValue['required']) && $propValue['required'] == true )<span class="text-danger">*</span>@endif
                 </label>
@@ -47,11 +58,17 @@
                 <input class="form-control {{ $propValue['class'] }}" {{ $propValue['specialAttr'] }} type="{{ $propValue['type'] }}" name="{{ $propKey }}" value="{{ $propValue['type'] != 'password' ? ($propKey == 'telephone' ? '+'.$data->data->phone : $data->data->$propKey) : '' }}" placeholder="{{ $propValue['label'] }}" {{ $propValue['type'] == 'tel' ? "dir=ltr" : '' }}>
                 @else
                 <input class="form-control {{ $propValue['class'] }}" {{ $propValue['specialAttr'] }} type="{{ $propValue['type'] }}" name="{{ $propKey }}" value="{{ $propValue['type'] != 'password' ? $data->data->$propKey : '' }}" placeholder="{{ $propValue['label'] }}" {{ $propValue['type'] == 'tel' ? "dir=ltr" : '' }}>
+                    @if($propValue['type'] == 'text' && in_array($data->designElems['mainData']['url'], ['replies','quickReplies','templates','groupNumbers','groups','users']))
+                    <i class="la la-smile icon-xl emoji-icon"></i>
+                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
+                    @endif
                 @endif
                 @endif
 
                 @if($propValue['type'] == 'textarea')
                     <textarea {{ $propValue['specialAttr'] }} name="{{ $propKey }}" class="form-control {{ $propValue['class'] }}" placeholder="{{ $propValue['label'] }}">{{ $data->data->$propKey }}</textarea>
+                    <i class="la la-smile icon-xl emoji-icon"></i>
+                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                 @endif
 
                 @if($propValue['type'] == 'select')
@@ -141,4 +158,6 @@
 <script src="{{ asset('assets/tenant/js/photoswipe.min.js') }}"></script>
 <script src="{{ asset('assets/tenant/js/photoswipe-ui-default.min.js') }}"></script>
 <script src="{{ asset('assets/tenant/components/myPhotoSwipe.js') }}"></script>      
+<script type="module" src="{{asset('assets/tenant/js/emojiIndex.js')}}"></script>
+<script src="{{ asset('assets/tenant/components/initEmoji.js') }}"></script>
 @endsection

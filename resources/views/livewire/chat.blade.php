@@ -68,13 +68,14 @@
         }
     @endphp
     @if($chat['lastMessage'])
-    <div class="card py-3 px-3 mb-1 chatItem {{$chat['pinned'] > 0 ? 'pinned' : ''}}" data-pin="{{$chat['pinned']}}">
+    <div class="card py-3 px-3 mb-1 chatItem {{$chat['pinned'] > 0 ? 'pinned' : ''}}" data-pin="{{$chat['pinned']}}" data-id="{{$chat['id']}}">
         <div class="d-flex">
             <div class="symbol symbol-circle symbol-50 mr-3">
                 <img alt="Pic" src="{{$chat['image']}}" />
             </div>
             <div class="d-flex flex-column mx-2" style="width: 60%;" wire:click="openMessages('{{$chat['id']}}')">
                 <a href="#" class="text-dark-75 text-hover-primary font-weight-bold font-size-lg" dir="ltr">{{$chat['name']}}</a>
+                <span class="chatPresence text-muted font-weight-bold font-size-sm"></span>
                 <span class="chatMsg text-muted font-weight-bold font-size-sm">{!! $msgIcon.' '.$senderText.' '.$msgBody !!}</span>
             </div>
         </div>

@@ -45,7 +45,7 @@
                     </a>
                 </li>
 
-                @if(\Helper::checkRules('list-livechat') || IS_ADMIN)
+                @if(\Helper::checkRules('list-livechat') )
                 <li class="menu-item  {{ Active(URL::to('/livechat*'),'menu-item-active') }}" aria-haspopup="true">
                     <a href="{{URL::to('/livechat')}}" class="menu-link">
                         <span class="svg-icon svg-icon-primary svg-icon-2x"><!--begin::Svg Icon | path:C:\wamp64\www\keenthemes\themes\metronic\theme\html\demo1\dist/../src/media/svg/icons\Communication\Chat1.svg-->
@@ -62,7 +62,7 @@
                 </li>
                 @endif
 
-                @if(\Helper::checkRules('list-bots') || IS_ADMIN)
+                @if(\Helper::checkRules('list-bots') )
                 <li class="menu-item  {{ Active(URL::to('/bots*'),'menu-item-active') }}" aria-haspopup="true">
                     <a href="{{URL::to('/bots')}}" class="menu-link">
                         <span class="fa-icon fa-icon-2x">
@@ -73,7 +73,7 @@
                 </li>
                 @endif
 
-                @if(\Helper::checkRules('list-bots-plus') || IS_ADMIN)
+                @if(\Helper::checkRules('list-bots-plus') )
                 <li class="menu-item  {{ Active(URL::to('/botPlus*'),'menu-item-active') }}" aria-haspopup="true">
                     <a href="{{URL::to('/botPlus')}}" class="menu-link">
                         <span class="fa-icon fa-icon-2x">
@@ -84,7 +84,7 @@
                 </li>
                 @endif
 
-                @if(\Helper::checkRules('list-group-messages,add-group-message') || IS_ADMIN)
+                @if(\Helper::checkRules('list-group-messages,add-group-message') )
                 <li class="menu-item menu-item-submenu {{Active(URL::to('/groupMsgs*'),'menu-item-open')}}" aria-haspopup="true" data-menu-toggle="hover">
                     <a href="javascript:;" class="menu-link menu-toggle">
                         <span class="fa-icon fa-icon-2x">
@@ -102,7 +102,7 @@
                                 </span>
                             </li>
 
-                            @if(\Helper::checkRules('list-group-messages') || IS_ADMIN)
+                            @if(\Helper::checkRules('list-group-messages') )
                             <li class="menu-item {{ Active(URL::to('/groupMsgs'),'menu-item-active') }}" aria-haspopup="true">
                                 <a href="{{URL::to('/groupMsgs')}}" class="menu-link">
                                     <i class="menu-bullet menu-bullet-dot">
@@ -112,7 +112,7 @@
                                 </a>
                             </li>
                             @endif
-                            @if(\Helper::checkRules('add-group-message') || IS_ADMIN)
+                            @if(\Helper::checkRules('add-group-message') )
                             <li class="menu-item {{ Active(URL::to('/groupMsgs/*'),'menu-item-active') }}" aria-haspopup="true">
                                 <a href="{{URL::to('/groupMsgs/add')}}" class="menu-link">
                                     <i class="menu-bullet menu-bullet-dot">
@@ -127,7 +127,7 @@
                 </li>
                 @endif
 
-                @if(\Helper::checkRules('apiSetting,apiGuide,webhookSetting') || IS_ADMIN)
+                @if(\Helper::checkRules('apiSetting,apiGuide,webhookSetting') )
                 <li class="menu-item menu-item-submenu {{Active(URL::to('/profile/apiSetting'),'menu-item-open')}} {{Active(URL::to('/profile/apiGuide'),'menu-item-open')}} {{Active(URL::to('/profile/webhookSetting'),'menu-item-open')}}" aria-haspopup="true" data-menu-toggle="hover">
                     <a href="javascript:;" class="menu-link menu-toggle">
                         <span class="svg-icon svg-icon-primary svg-icon-2x"><!--begin::Svg Icon | path:C:\wamp64\www\keenthemes\themes\metronic\theme\html\demo1\dist/../src/media/svg/icons\General\Settings-1.svg-->
@@ -151,7 +151,7 @@
                                 </span>
                             </li>
 
-                            @if(\Helper::checkRules('apiSetting') || IS_ADMIN)
+                            @if(\Helper::checkRules('apiSetting') )
                             <li class="menu-item {{ Active(URL::to('/profile/apiSetting'),'menu-item-active') }}" aria-haspopup="true">
                                 <a href="{{URL::to('/profile/apiSetting')}}" class="menu-link">
                                     <i class="menu-bullet menu-bullet-dot">
@@ -161,7 +161,7 @@
                                 </a>
                             </li>
                             @endif
-                            @if(\Helper::checkRules('apiGuide') || IS_ADMIN)
+                            @if(\Helper::checkRules('apiGuide') )
                             <li class="menu-item {{ Active(URL::to('/profile/apiGuide'),'menu-item-active') }}" aria-haspopup="true">
                                 <a href="{{URL::to('/profile/apiGuide')}}" class="menu-link">
                                     <i class="menu-bullet menu-bullet-dot">
@@ -171,7 +171,7 @@
                                 </a>
                             </li>
                             @endif
-                            @if(\Helper::checkRules('webhookSetting') || IS_ADMIN)
+                            @if(\Helper::checkRules('webhookSetting') )
                             <li class="menu-item {{ Active(URL::to('/profile/webhookSetting'),'menu-item-active') }}" aria-haspopup="true">
                                 <a href="{{URL::to('/profile/webhookSetting')}}" class="menu-link">
                                     <i class="menu-bullet menu-bullet-dot">
@@ -186,7 +186,7 @@
                 </li>
                 @endif
 
-                @if(\Helper::checkRules('list-lists,list-polls,list-templates-messages') || IS_ADMIN)
+                @if(\Helper::checkRules('list-lists,list-polls,list-templates-messages') )
                 <li class="menu-item menu-item-submenu {{Active(URL::to('/lists*'),'menu-item-open')}} {{Active(URL::to('/polls*'),'menu-item-open')}} {{Active(URL::to('/templateMsg*'),'menu-item-open')}}" aria-haspopup="true" data-menu-toggle="hover">
                     <a href="javascript:;" class="menu-link menu-toggle">
                         <span class="fa-icon fa-icon-2x">
@@ -204,7 +204,7 @@
                                 </span>
                             </li>
 
-                            @if(\Helper::checkRules('list-lists') || IS_ADMIN)
+                            @if(\Helper::checkRules('list-lists') )
                             <li class="menu-item {{ Active(URL::to('/lists*'),'menu-item-active') }}" aria-haspopup="true">
                                 <a href="{{URL::to('/lists')}}" class="menu-link">
                                     <i class="menu-bullet menu-bullet-dot">
@@ -214,7 +214,7 @@
                                 </a>
                             </li>
                             @endif
-                            @if(\Helper::checkRules('list-polls') || IS_ADMIN)
+                            @if(\Helper::checkRules('list-polls') )
                             <li class="menu-item {{ Active(URL::to('/polls*'),'menu-item-active') }}" aria-haspopup="true">
                                 <a href="{{URL::to('/polls')}}" class="menu-link">
                                     <i class="menu-bullet menu-bullet-dot">
@@ -225,7 +225,7 @@
                             </li>
                             @endif
 
-                            @if(\Helper::checkRules('list-templates-messages') || IS_ADMIN)
+                            @if(\Helper::checkRules('list-templates-messages') )
 {{--                             <li class="menu-item {{ Active(URL::to('/templateMsg*'),'menu-item-active') }}" aria-haspopup="true">
                                 <a href="{{URL::to('/templateMsg')}}" class="menu-link">
                                     <i class="menu-bullet menu-bullet-dot">
@@ -243,7 +243,7 @@
                 $varObj = \App\Models\Variable::getVar('ME');
                 @endphp
                 @if($varObj && json_decode($varObj)->isBussines)
-                @if(\Helper::checkRules('list-categories,list-businessInfo,list-quickReplies,list-collections,list-products,list-orders') || IS_ADMIN)
+                @if(\Helper::checkRules('list-categories,list-businessInfo,list-quickReplies,list-collections,list-products,list-orders') )
                 <li class="menu-item menu-item-submenu {{Active(URL::to('/categories*'),'menu-item-open')}} {{Active(URL::to('/quickReplies*'),'menu-item-open')}} {{Active(URL::to('/orders*'),'menu-item-open')}} {{Active(URL::to('/collections*'),'menu-item-open')}} {{Active(URL::to('/products*'),'menu-item-open')}} {{Active(URL::to('/businessProfile*'),'menu-item-open')}}" aria-haspopup="true" data-menu-toggle="hover">
                     <a href="javascript:;" class="menu-link menu-toggle">
                         <span class="fa-icon fa-icon-2x">
@@ -261,7 +261,7 @@
                                 </span>
                             </li>
 
-                            @if(\Helper::checkRules('list-businessInfo') || IS_ADMIN)
+                            @if(\Helper::checkRules('list-businessInfo') )
                             <li class="menu-item {{ Active(URL::to('/businessProfile*'),'menu-item-active') }}" aria-haspopup="true">
                                 <a href="{{URL::to('/businessProfile')}}" class="menu-link">
                                     <i class="menu-bullet menu-bullet-dot">
@@ -272,7 +272,7 @@
                             </li>
                             @endif
 
-                            @if(\Helper::checkRules('list-categories') || IS_ADMIN)
+                            @if(\Helper::checkRules('list-categories') )
                             <li class="menu-item {{ Active(URL::to('/categories*'),'menu-item-active') }}" aria-haspopup="true">
                                 <a href="{{URL::to('/categories')}}" class="menu-link">
                                     <i class="menu-bullet menu-bullet-dot">
@@ -283,7 +283,7 @@
                             </li>
                             @endif
 
-                            @if(\Helper::checkRules('list-quickReplies') || IS_ADMIN)
+                            @if(\Helper::checkRules('list-quickReplies') )
                             <li class="menu-item {{ Active(URL::to('/quickReplies*'),'menu-item-active') }}" aria-haspopup="true">
                                 <a href="{{URL::to('/quickReplies')}}" class="menu-link">
                                     <i class="menu-bullet menu-bullet-dot">
@@ -294,7 +294,7 @@
                             </li>
                             @endif
                             
-                            @if(\Helper::checkRules('list-collections') || IS_ADMIN)
+                            @if(\Helper::checkRules('list-collections') )
                             <li class="menu-item {{ Active(URL::to('/collections*'),'menu-item-active') }}" aria-haspopup="true">
                                 <a href="{{URL::to('/collections')}}" class="menu-link">
                                     <i class="menu-bullet menu-bullet-dot">
@@ -305,7 +305,7 @@
                             </li>
                             @endif
 
-                            @if(\Helper::checkRules('list-products') || IS_ADMIN)
+                            @if(\Helper::checkRules('list-products') )
                             <li class="menu-item {{ Active(URL::to('/products*'),'menu-item-active') }}" aria-haspopup="true">
                                 <a href="{{URL::to('/products')}}" class="menu-link">
                                     <i class="menu-bullet menu-bullet-dot">
@@ -316,7 +316,7 @@
                             </li>
                             @endif
 
-                            @if(\Helper::checkRules('list-orders') || IS_ADMIN)
+                            @if(\Helper::checkRules('list-orders') )
                             <li class="menu-item {{ Active(URL::to('/orders*'),'menu-item-active') }}" aria-haspopup="true">
                                 <a href="{{URL::to('/orders')}}" class="menu-link">
                                     <i class="menu-bullet menu-bullet-dot">
@@ -380,7 +380,7 @@
                 </li>
                 @endif
 
-                @if(\Helper::checkRules('list-group-numbers,add-number-to-group,list-groupNumberReports') || IS_ADMIN)
+                @if(\Helper::checkRules('list-group-numbers,add-number-to-group,list-groupNumberReports') )
                 <li class="menu-item menu-item-submenu {{Active(URL::to('/groupNumbers*'),'menu-item-open')}}" aria-haspopup="true" data-menu-toggle="hover">
                     <a href="javascript:;" class="menu-link menu-toggle">
                         <span class="svg-icon svg-icon-primary svg-icon-2x"><!--begin::Svg Icon | path:C:\wamp64\www\keenthemes\themes\metronic\theme\html\demo1\dist/../src/media/svg/icons\Communication\Group.svg-->
@@ -404,7 +404,7 @@
                                 </span>
                             </li>
 
-                            @if(\Helper::checkRules('list-group-numbers') || IS_ADMIN)
+                            @if(\Helper::checkRules('list-group-numbers') )
                             <li class="menu-item {{ Active(URL::to('/groupNumbers'),'menu-item-active') }} {{ Active(URL::to('/groupNumbers/add'),'menu-item-active') }} {{ Active(URL::to('/groupNumbers/edit*'),'menu-item-active') }}" aria-haspopup="true">
                                 <a href="{{URL::to('/groupNumbers')}}" class="menu-link">
                                     <i class="menu-bullet menu-bullet-dot">
@@ -414,7 +414,7 @@
                                 </a>
                             </li>
                             @endif
-                            @if(\Helper::checkRules('add-number-to-group') || IS_ADMIN)
+                            @if(\Helper::checkRules('add-number-to-group') )
                             <li class="menu-item {{ Active(URL::to('/groupNumbers/addGroupNumbers'),'menu-item-active') }}" aria-haspopup="true">
                                 <a href="{{URL::to('/groupNumbers/addGroupNumbers')}}" class="menu-link">
                                     <i class="menu-bullet menu-bullet-dot">
@@ -424,7 +424,7 @@
                                 </a>
                             </li>
                             @endif
-                            @if(\Helper::checkRules('list-groupNumberReports') || IS_ADMIN)
+                            @if(\Helper::checkRules('list-groupNumberReports') )
                             <li class="menu-item {{ Active(URL::to('/groupNumbers/reports'),'menu-item-active') }}" aria-haspopup="true">
                                 <a href="{{URL::to('/groupNumbers/reports')}}" class="menu-link">
                                     <i class="menu-bullet menu-bullet-dot">
@@ -589,7 +589,7 @@
                     </a>
                 </li>
 
-                @if(\Helper::checkRules('subscription') || IS_ADMIN)
+                @if(\Helper::checkRules('subscription') )
                 <li class="menu-item  {{ Active(URL::to('/profile/subscription*'),'menu-item-active') }}" aria-haspopup="true">
                     <a href="{{URL::to('/profile/subscription')}}" class="menu-link">
                         <span class="svg-icon svg-icon-primary svg-icon-2x"><!--begin::Svg Icon | path:C:\wamp64\www\keenthemes\themes\metronic\theme\html\demo1\dist/../src/media/svg/icons\General\Settings-2.svg-->

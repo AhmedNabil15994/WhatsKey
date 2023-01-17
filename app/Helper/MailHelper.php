@@ -101,7 +101,8 @@ class MailHelper
     }
 
     static function SendWhatsAppMessage($emailData,$phone,$service){
-        $whatsLoopObj =  new \OfficialHelper;
+        $channelObj = \DB::connection('main')->table('channels')->where('deleted_by',null)->orderBy('id','ASC')->first();
+        $whatsLoopObj =  new \OfficialHelper($channelObj->id,$channelObj->token);
         
         $data['body'] = strip_tags($emailData['content']);
         // $data['body'] = htmlspecialchars_decode($emailData['content']);

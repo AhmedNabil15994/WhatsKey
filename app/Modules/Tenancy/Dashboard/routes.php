@@ -5,6 +5,7 @@ Dashboard
 ----------------------------------------------------------*/
 Route::group(['prefix' => '/'] , function () {
     Route::get('/dashboard', [App\Http\Controllers\DashboardControllers::class,'Dashboard'])->name('userDash');
+    Route::get('/completeJob', [App\Http\Controllers\DashboardControllers::class,'completeJob']);
     Route::get('/QR', [App\Http\Controllers\DashboardControllers::class,'qrIndex']);
     Route::post('/QR/updateName', [App\Http\Controllers\DashboardControllers::class,'updateName']);
     Route::post('/QR/getQR', [App\Http\Controllers\DashboardControllers::class,'getQR']);

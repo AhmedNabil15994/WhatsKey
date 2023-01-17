@@ -540,7 +540,7 @@ return [
 	'estimatedTax' => 'ضريبة القيمه المضافة (15%)',
 	'hello' => 'مرحبا',
 	'print' => 'طباعة',
-	'checkout' => 'التوجه الى صفحة الدفع',
+	'checkout' => 'الذهاب للدفع',
 	'transferPayment' => 'ترحيل الدفع الى بداية الشهر',
 	'month' => 'شهر',
 	'year' => 'سنة',
@@ -674,7 +674,7 @@ return [
 	'valid_type_2' => 'تاريخ معين',
 	'codeFound' => 'هذا الكود مستخدم من قبل',
 	'coupons' => 'كوبونات الخصم',
-	'coupon_code' => 'الكود',
+	'coupon_code' => 'كود الخصم',
 	'discount_type' => 'نوع الخصم',
 	'discount_value' => 'قيمة الخصم',
 	'valid_type' => 'نوع المدة المتاحة',
@@ -775,6 +775,8 @@ return [
     
     'notificationTemplates' => 'قوالب التنبيهات',
 	'templateType' => 'النوع',
+	'itemType' => 'النوع',
+	'userCredits' => 'مستحقات العميل',
 	'whatsAppMessage' => 'رسالة WhatsApp',
 	'emailMessage' => 'بريد الالكتروني',
 	'contentArValidate' => 'يرجي ادخال المحتوي عربي',
@@ -788,8 +790,16 @@ return [
 	'resendUnsent' => 'اعادة ارسال (المعلقة)',
 	'resendTitle' => 'اعادة ارسال',
 	
-	'channelSettings_disableGroupsArchive' => 'تعطيل أرشفة المجموعات',
-	'channelSettings_disableDialogsArchive' => 'تعطيل أرشفة المحادثات',
+	'channelSettings_disableGroupsReply' => 'تعطيل الرد علي المجموعات',
+	'channelSettings_disableDialogsArchive' => 'اخفاء المحادثات المؤرشفة',
+	'channelSettings_disableReceivingCalls' => 'تعطيل اشعارات المكالمات',
+	'channelSettings_contactsNameType' => 'تحديد اسماء المحادثات عند المزامنة',
+	'contactsNameType1' => 'الاسماء المسجلة يدويا علي واتس كي',
+	'contactsNameType2' => 'الاسماء المسجلة علي جوالك',
+	'contactsNameType3' => 'الاسماء المسجلة علي الواتساب',
+	'settingNotFound' => 'يرجي اختيار الاعدادات المراد تعديلها',
+	'valueNotFound' => 'يرجي اختيار قيمة للاعدادات المراد تعديلها',
+
 	'daily' => 'يوميا',
 	'clientsValidate' => 'من فضلك اختر عميل واحد علي الاقل',
 	'sentBefore' => 'تم الارسال من قبل' ,
@@ -882,6 +892,8 @@ return [
 	'send_contact' => 'ارسال جهة اتصال',
 	'transactions' => 'عمليات الدفع',
 	'taxesIncluded' => 'السعر شامل قيمة الضريبة المضافة',
+	'taxesIncluded2' => 'الخصم شامل قيمة الضريبة المضافة',
+
 	'botPhoto' => 'صورة',
 	'disappearing' => 'رسالة تختفي بعد فترة',
 	'mention' => 'اشارة لرقم',
@@ -1033,4 +1045,6 @@ return [
 	'send_msg_business' => 'يجب ان يكون حساب المرسل واتساب بيزنس',
 	'send_msg_groupp1' => 'يجب ارسال المدة الزمنية بين كل رسالة والاخري لضمان نجاح الارسال', 
 	'send_msg_groupp2' => 'يمكنك ارسال رسالة مختلفة كما هو موضح في المثال رقم 22 الخاص برسالة نصية جماعية محتوي الرسالة متغير', 
+
+	'resyncAll' => 'مزامنة كل البيانات',
 ];

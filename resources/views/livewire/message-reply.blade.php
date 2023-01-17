@@ -44,7 +44,7 @@
     </div>
 
     @elseif($msg['metadata'] && isset($msg['metadata']['type']) && $msg['metadata']['type'] == 'forward')
-    <div class="replyHeader py-3 px-1 text-right {{$msg['message_type'] == 'text' ? 'mb-5' : ''}}" style="min-width: 200px;">
+    <div class="replyHeader py-3 px-1 my-2 text-right {{$msg['message_type'] == 'text' ? 'mb-5' : ''}}" style="min-width: 200px;">
         {{trans('main.forwarded')}} <span class="fa-icon w-100"><svg viewBox="0 0 16 16" height="16" width="16" preserveAspectRatio="xMidYMid meet" class="" version="1.1"><path d="M9.51866667,3.87533333 C9.51866667,3.39333333 10.1006667,3.152 10.4406667,3.49266667 L14.4706667,7.52666667 C14.682,7.738 14.682,8.07933333 14.4706667,8.29066667 L10.4406667,12.3246667 C10.1006667,12.6646667 9.51866667,12.424 9.51866667,11.942 L9.51866667,10.1206667 C6.12133333,10.1206667 3.63266667,11.0906667 1.78266667,13.1946667 C1.61866667,13.3806667 1.31466667,13.2226667 1.38133333,12.984 C2.33466667,9.53533333 4.66466667,6.31466667 9.51866667,5.62066667 L9.51866667,3.87533333 Z" fill="currentColor"></path></svg> </span>
     </div>
     @endif

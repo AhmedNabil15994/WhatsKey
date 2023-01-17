@@ -82,7 +82,7 @@ class Variable extends Model
             (isset($me['messageNotifications'])) ? self::create(['var_key' => 'MESSAGE_NOTIFICATIONS', 'var_value' => $me['messageNotifications']]) : "";
             (isset($me['ackNotifications'])) ? self::create(['var_key' => 'ACK_NOTIFICATIONS', 'var_value' => $me['ackNotifications']]) : '';
             (isset($me['chatNotifications'])) ? self::create(['var_key' => 'CHAT_NOTIFICATIONS', 'var_value' => $me['chatNotifications']]) : '';
-            (isset($me['labelNotifications'])) ? self::create(['var_key' => 'LABEL_NOTIFICATIONS', 'var_value' => $me['labelNotifications']]) : '';
+            (isset($me['businessNotifications'])) ? self::create(['var_key' => 'BUSINESS_NOTIFICATIONS', 'var_value' => $me['businessNotifications']]) : '';
         } else {
             $url = $url->var_value;
         }

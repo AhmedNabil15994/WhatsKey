@@ -43,18 +43,30 @@ class SyncContactsJob implements ShouldQueue
                 $blockChats = $block['data'];
             }
 
+            $varObj = Variable::where('var_key','contactsNameType')->first();
+
             foreach ($this->contacts as $contact) {
-                $contactName = isset($contact['notify']) ? $contact['notify'] : $contact['name'];
+                $contactName = str_contains($contact['id'], '@g.us') ? $contact['name'] :  (isset($contact['notify']) ? $contact['notify'] : $contact['name']);
+                if($varObj != null && $varObj->var_value == 2){
+                    $contactName = str_contains($contact['id'], '@g.us') ? $contact['name'] : isset($contact['name']) ? $contact['name'] : $contact['id'];
+                }else if($varObj != null && $varObj->var_value == 3){
+                    $contactName = isset($contact['notify']) ? $contact['notify'] : $contact['name'];
+                }
                 Contact::newPhone($contact['id'], $contactName);
-                ChatDialog::where([
-                    ['id' , '=' , $contact['id']],
-                    ['name' , '=' , ''],
-                ])->orWhere([
-                    ['id' , '=' , $contact['id']],
-                    ['name' , '=' , null],
-                ])->update([
-                    'name' => $contactName,
-                ]);
+                
+                if($varObj == null || $varObj->var_value == 1){
+                    ChatDialog::where([
+                        ['id' , '=' , $contact['id']],
+                        ['name' , '=' , ''],
+                    ])->orWhere([
+                        ['id' , '=' , $contact['id']],
+                        ['name' , '=' , null],
+                    ])->update([
+                        'name' => $contactName,
+                    ]);
+                }else{
+                    ChatDialog::where('id',$contact['id'])->update(['name' => $contactName]);
+                }
 
                 ChatDialog::where('id',$contact['id'])->update(['blocked' => in_array($contact['id'],$blockChats) ? 1 : 0]);
             }

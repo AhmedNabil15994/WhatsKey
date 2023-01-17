@@ -178,4 +178,21 @@ class DashboardControllers extends Controller {
         return \TraitsFunc::SuccessResponse(trans('main.addSuccess'));
     }
 
+    public function completeJob()
+    {
+        $checkHasJob = Variable::getVar('hasJob') == 1 ? 1 : 0;
+        Session::forget('userCredits');
+        Session::forget('package_id');
+        Variable::where('var_key','hasJob')->delete();
+
+        $userObj = User::first();
+        Session::flush();
+        User::setSessions($userObj);
+        
+        if ($checkHasJob) {
+            return redirect()->to('/QR');
+        } else {
+            return redirect()->to('/dashboard');
+        }
+    }
 }

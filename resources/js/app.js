@@ -13,7 +13,17 @@ window.Echo.channel(domain+'-UpdateDialogStatus').listen('DialogUpdateStatus', (
 	window.Livewire.emitTo('chats','changeDialogStatus', data);
 })
 
+window.Echo.channel(domain+'-UpdateDialogPresence').listen('DialogPresenceStatus', (data) => {
+	window.Livewire.emitTo('chats','updateDialogPresence', data);
+})
 
+window.Echo.channel(domain+'-UpdateDialog').listen('DialogUpdate', (data) => {
+	window.Livewire.emitTo('conversation','updateChat', data['chatId']);
+})
+
+window.Echo.channel(domain+'-DeleteDialog').listen('DialogDelete', (data) => {
+	window.Livewire.emitTo('chats','chatsChanges', data['data']['chatId'],true);
+})
 
 //       testBroadUpdateChatReadStatus (domain) {
 //         // Start socket.io listener

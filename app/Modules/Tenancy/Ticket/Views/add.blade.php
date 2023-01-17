@@ -4,7 +4,17 @@
 @section('pageName',$data->designElems['mainData']['title'])
 
 @section('styles')
-
+<style>
+    .form-group.textWrap emoji-picker{
+        top: 40px;
+    }
+    html[dir="ltr"] .form-group.textWrap emoji-picker{
+        right: 30px;
+    }
+    html[dir="rtl"] .form-group.textWrap emoji-picker{
+        left: 30px;
+    }
+</style>
 @endsection
 @section('breadcrumbs')
 @include('tenant.Layouts.breadcrumb',[
@@ -53,13 +63,17 @@
                     @endforeach
                 </select>
             </div>
-            <div class="form-group">
+            <div class="form-group textWrap">
                 <label>{{ trans('main.subject') }}:</label>
                 <input class="form-control" type="text" value="{{ old('subject') }}" name="subject" id="inputEmail3" placeholder="{{ trans('main.subject') }}" />
+                <i class="la la-smile icon-xl emoji-icon"></i>
+                <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
             </div>
-            <div class="form-group">
+            <div class="form-group textWrap">
                 <label>{{ trans('main.messageContent') }}:</label>
                 <textarea class="form-control" name="description" placeholder="{{ trans('main.messageContent') }}">{{ old('description') }}</textarea>
+                <i class="la la-smile icon-xl emoji-icon"></i>
+                <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
             </div>
             @if(\Helper::checkRules('uploadImage-ticket'))
             <div class="form-group">
@@ -86,4 +100,6 @@
 
 @section('scripts')
 <script src="{{asset('assets/tenant/js/pages/crud/forms/widgets/select2.js')}}"></script>
+<script type="module" src="{{asset('assets/tenant/js/emojiIndex.js')}}"></script>
+<script src="{{ asset('assets/tenant/components/initEmoji.js') }}"></script>
 @endsection

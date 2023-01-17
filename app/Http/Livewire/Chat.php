@@ -44,13 +44,15 @@ class Chat extends Component
 
     public function lastUpdates($msgId,$chatId,$status,$domain){
         $data = ChatDialog::getData(ChatDialog::getOne($chatId));
-        $msgObj = ChatMessage::getData(ChatMessage::getOne($msgId));
-        $chat = json_decode(json_encode($data), true);
-        if($this->chat['id'] == $chatId && $chat['lastMessage']['id'] == $msgId){
-            $domainUrl = str_replace('myDomain',$domain,config('app.MY_DOMAIN'));
-            $chat['image'] = str_replace('http://localhost',$domainUrl,$chat['image']);
-            $chat['lastMessage'] = json_decode(json_encode($msgObj), true);
-            $this->chat =  $chat;
+        if($data){
+            $msgObj = ChatMessage::getData(ChatMessage::getOne($msgId));
+            $chat = json_decode(json_encode($data), true);
+            if($this->chat['id'] == $chatId && $chat['lastMessage']['id'] == $msgId){
+                $domainUrl = str_replace('myDomain',$domain,config('app.MY_DOMAIN'));
+                $chat['image'] = str_replace('http://localhost',$domainUrl,$chat['image']);
+                $chat['lastMessage'] = json_decode(json_encode($msgObj), true);
+                $this->chat =  $chat;
+            }
         }
         $this->emit('refreshDesign');
     }

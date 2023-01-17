@@ -10,30 +10,26 @@ use App\Jobs\SyncOrdersJob;
 use App\Jobs\SyncProductsJob;
 use App\Jobs\SyncCollectionsJob;
 
-use App\Models\Addons;
-use App\Models\BankAccount;
 use App\Models\Category;
 use App\Models\CentralChannel;
 use App\Models\CentralUser;
-use App\Models\CentralVariable;
 use App\Models\ChatDialog;
 use App\Models\ChatMessage;
 use App\Models\Contact;
-use App\Models\ContactLabel;
+use App\Models\ContactGroup;
 use App\Models\ContactReport;
-use App\Models\ExtraQuota;
 use App\Models\Membership;
 use App\Models\Order;
-use App\Models\PaymentInfo;
 use App\Models\Product;
+use App\Models\WACollection;
+use App\Models\Reply;
+
 use App\Models\User;
 use App\Models\UserAddon;
-use App\Models\UserChannels;
-use App\Models\UserData;
 use App\Models\UserExtraQuota;
 use App\Models\UserStatus;
 use App\Models\Variable;
-use DataTables;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
@@ -94,10 +90,12 @@ class WAAccountController extends Controller
         }
 
         $list = [];
-        $blockedList = $mainWhatsLoopObj->blockList();
-        $blockResult = $blockedList->json();
-        if ($blockResult && isset($blockResult['data'])) {
-            $list = $blockResult['data'];
+        if($meVar){
+            $blockedList = $mainWhatsLoopObj->blockList();
+            $blockResult = $blockedList->json();
+            if ($blockResult && isset($blockResult['data'])) {
+                $list = $blockResult['data'];
+            }
         }
 
         $data['allDialogs'] = ChatDialog::count();
@@ -110,6 +108,12 @@ class WAAccountController extends Controller
         $data['contactsCount'] = Contact::NotDeleted()->whereHas('NotDeletedGroup')->count();
         $data['channel'] = $channelObj ? CentralChannel::getData(CentralChannel::getOne(Session::get('channel'))) : null;
         $data['contactsCount'] = Contact::NotDeleted()->count();
+        $data['channelSettings'] = [
+            'contactsNameType' => Variable::getVar('contactsNameType'),
+            'disableGroupsReply' => Variable::getVar('disableGroupsReply'),
+            'disableDialogsArchive' => Variable::getVar('disableDialogsArchive'),
+            'disableReceivingCalls' => Variable::getVar('disableReceivingCalls'),
+        ];
         return view('Tenancy.Profile.Views.subscription')->with('data', (object) $data);
     }
 
@@ -362,6 +366,32 @@ class WAAccountController extends Controller
         Session::flash('success', trans('main.inPrgo'));
         return redirect()->back();
     }
+    
+    public function resyncAll(){
+        Contact::where('id', '!=', null)->delete();
+        Category::where('id', '!=', null)->delete();
+        ChatMessage::where('id', '!=', null)->delete();
+        ChatDialog::where('id', '!=', null)->delete();
+        ContactGroup::where('id', '!=', null)->delete();
+        ContactReport::where('id', '!=', null)->delete();
+        UserStatus::where('id', '!=', null)->delete();
+        Product::where('id', '!=', null)->delete();
+        Order::where('id', '!=', null)->delete();
+        WACollection::where('id', '!=', null)->delete();
+        Reply::where('reply_id', '!=', null)->delete();
+
+        $this->syncAll();
+        $this->syncDialogs();
+        $this->syncContacts();
+        $this->syncLabels();
+        $this->syncReplies();
+        $this->syncOrders();
+        $this->syncProducts();
+        $this->syncCollections();
+
+        Session::flash('success', trans('main.inPrgo'));
+        return redirect()->back();
+    }
 
     public function restoreAccountSettings()
     {
@@ -375,11 +405,16 @@ class WAAccountController extends Controller
                 'messageNotifications' => str_replace('://', '://'.$domain.'.', config('app.BASE_URL')).'/services/webhooks/messages-webhook',
                 'ackNotifications' => str_replace('://', '://'.$domain.'.', config('app.BASE_URL')).'/services/webhooks/acks-webhook',
                 'chatNotifications' => str_replace('://', '://'.$domain.'.', config('app.BASE_URL')).'/services/webhooks/chats-webhook',
+                'businessNotifications' => str_replace('://', '://'.$domain.'.', config('app.BASE_URL')).'/services/webhooks/business-webhook',
             ],
             'ignoreOldMessages' => 1,
         ];
         $updateResult = $mainWhatsLoopObj->updateChannelSetting($myData);
         $result = $updateResult->json();
+
+        $updateResult1 = $mainWhatsLoopObj->disconnect();
+        $result1 = $updateResult1->json();
+
 
         $updateResult2 = $mainWhatsLoopObj->clearInstanceData();
         $result2 = $updateResult2->json();
@@ -395,13 +430,16 @@ class WAAccountController extends Controller
 
         Contact::where('id', '!=', null)->delete();
         Category::where('id', '!=', null)->delete();
+        Reply::where('reply_id', '!=', null)->delete();
         ChatMessage::where('id', '!=', null)->delete();
         ChatDialog::where('id', '!=', null)->delete();
-        ContactLabel::where('id', '!=', null)->delete();
+        ContactGroup::where('id', '!=', null)->delete();
         ContactReport::where('id', '!=', null)->delete();
         UserStatus::where('id', '!=', null)->delete();
-
-
+        Product::where('id', '!=', null)->delete();
+        Order::where('id', '!=', null)->delete();
+        WACollection::where('id', '!=', null)->delete();
+        Variable::where('var_key', 'ME')->delete();
         Session::flash('success', trans('main.logoutDone'));
         return redirect()->back();
     }
@@ -413,5 +451,42 @@ class WAAccountController extends Controller
         $queueResult = $msgQueue->json();
         Session::flash('success', trans('main.inPrgo'));
         return redirect()->back();
+    }
+
+    public function updateChannelSetting()
+    {
+        $input = \Request::all();
+        if(!isset($input['setting']) || empty($input['setting'])){
+            return \TraitsFunc::ErrorMessage(trans('main.settingNotFound'));
+        }
+        if(!isset($input['value']) || $input['value'] == null){
+            return \TraitsFunc::ErrorMessage(trans('main.valueNotFound'));
+        }
+
+        $varObj = Variable::where('var_key',$input['setting'])->first();
+        if($varObj){
+            $varObj->var_value = $input['value'];
+            $varObj->save();
+        }else{
+            Variable::create(['var_key'=> $input['setting'],'var_value'=>$input['value']]);
+        }
+
+        if($input['setting'] == 'contactsNameType'){
+            $data = ['page'=>1,'page_size'=>1000000];
+            $mainWhatsLoopObj = new \OfficialHelper();
+            $updateResult = $mainWhatsLoopObj->contacts($data);
+            $result = $updateResult->json();
+            $contacts = [];
+            if ($result != null && $result['data'] != null) {
+                $contacts = $result['data'];
+            }
+            try {
+                // dispatch(new SyncContactsJob($contacts))->onConnection('cjobs');
+                dispatch(new SyncContactsJob($contacts))->onConnection('database');
+            } catch (Exception $e) {
+
+            }
+        }
+        return \TraitsFunc::SuccessResponse(trans('main.editSuccess'));
     }
 }

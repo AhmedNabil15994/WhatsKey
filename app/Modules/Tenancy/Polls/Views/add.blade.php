@@ -4,7 +4,17 @@
 @section('pageName',$data->designElems['mainData']['title'])
 
 @section('styles')
-
+<style>
+    .form-group.textWrap emoji-picker{
+        top: 40px;
+    }
+    html[dir="ltr"] .form-group.textWrap emoji-picker{
+        right: 30px;
+    }
+    html[dir="rtl"] .form-group.textWrap emoji-picker{
+        left: 30px;
+    }
+</style>
 @endsection
 @section('breadcrumbs')
 @include('tenant.Layouts.breadcrumb',[
@@ -51,13 +61,17 @@
                     <option value="2" {{ old('message_type') == 2 ? 'selected' : '' }}>{{ trans('main.part') }}</option>
                 </select>
             </div> 
-            <div class="form-group">
+            <div class="form-group textWrap">
                 <label>{{ trans('main.clientMessage') }} :</label>
                 <input class="form-control" type="text" value="{{ old('message') }}" name="message" placeholder="{{ trans('main.clientMessage') }}">
+                <i class="la la-smile icon-xl emoji-icon"></i>
+                <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
             </div>
-            <div class="form-group">
+            <div class="form-group textWrap">
                 <label>{{ trans('main.body') }} :</label>
                 <textarea class="form-control" name="body" placeholder="{{ trans('main.body') }}">{{ old('body') }}</textarea>
+                <i class="la la-smile icon-xl emoji-icon"></i>
+                <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
             </div>
             <div class="form-group">
                 <label>{{ trans('main.selectableOptionsCount') }} :</label>
@@ -79,11 +93,15 @@
                 </select>
                 <div class="clearfix"></div>
                 <div class="polls mt-5">
-                    <div class='form-group mains'>
+                    <div class='form-group mains polls'>
                         <label class='titleLabel'>{{ trans('main.btnData',['button'=>1]) }} :</label>
                         <div class='row'>
                             <div class='col-md-4'>
-                                <input class="form-control" type='text' name='poll_text_1' value="" placeholder='{{ trans('main.text') }}'>
+                                <div class="form-group textWrap">
+                                    <input class="form-control" type='text' name='poll_text_1' value="" placeholder='{{ trans('main.text') }}'>
+                                    <i class="la la-smile icon-xl emoji-icon"></i>
+                                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
+                                </div>
                             </div>
                             <div class='col-md-4'>
                                 <select class="form-control reply_types" data-toggle='select2' name='poll_reply_type_1'>
@@ -92,7 +110,11 @@
                                 </select>
                             </div>
                             <div class='col-md-4 repy'>
-                                <textarea class="form-control" name='poll_reply_1' placeholder='{{ trans('main.messageContent') }}' maxlength="140"></textarea>
+                                <div class="textWrap form-group">
+                                    <textarea class="form-control" name='poll_reply_1' placeholder='{{ trans('main.messageContent') }}' maxlength="140"></textarea>
+                                    <i class="la la-smile icon-xl emoji-icon"></i>
+                                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
+                                </div>
                                 <select data-toggle="" class='form-control dets hidden' name='poll_msg_1'>
                                     <option value='' selected>{{ trans('main.choose') }}</optin>
                                     @foreach($data->bots as $bot)
@@ -119,4 +141,6 @@
 
 @section('scripts')
 <script src="{{ asset('assets/tenant/components/addPoll.js') }}"></script>
+<script type="module" src="{{asset('assets/tenant/js/emojiIndex.js')}}"></script>
+<script src="{{ asset('assets/tenant/components/initEmoji.js') }}"></script>
 @endsection

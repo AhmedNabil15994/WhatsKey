@@ -545,6 +545,14 @@ class CentralAuthControllers extends Controller {
             return redirect()->back()->withInput();
         }
 
+        $package_id = Session::get('package_id');
+        $package_duration = Session::get('package_duration');
+        $membershipObj = Membership::getData(Membership::getOne($package_id));
+        if(!$membershipObj){
+            Session::flash('error', trans('main.membershipValidate'));
+            return redirect()->back()->withInput();
+        }
+
         $tenant = Tenant::create([
             'phone' => $input['phone'],
             'title' => $input['name'],
@@ -609,57 +617,52 @@ class CentralAuthControllers extends Controller {
         // $token = tenancy()->impersonate($tenant,$user->id,'/');
 
         // Activate Account Here
-        $package_id = Session::get('package_id');
-        $package_duration = Session::get('package_duration');
-        $membershipObj = Membership::getData(Membership::getOne($package_id));
-        
-
         $start_date = date('Y-m-d');
-        $testData = [
+        $cartData = [
             [
-                $package_id,
-                'membership',
-                $membershipObj->{'title_' . LANGUAGE_PREF},
-                $package_duration,
-                $start_date,
-                $package_duration == 1 ? date('Y-m-d', strtotime('+1 month', strtotime($start_date))) : date('Y-m-d', strtotime('+1 year', strtotime($start_date))),
-                $package_duration == 1 ? $membershipObj->monthly_after_vat : $membershipObj->annual_after_vat,
-                1,
+                'id' => $package_id,
+                'type' => 'membership',
+                'title' => $membershipObj->{'title_' . LANGUAGE_PREF},
+                'duration_type' => $package_duration,
+                'start_date' => $start_date,
+                'end_date' => $package_duration == 1 ? date('Y-m-d', strtotime('+1 month', strtotime($start_date))) : date('Y-m-d', strtotime('+1 year', strtotime($start_date))),
+                'price' => $package_duration == 1 ? $membershipObj->monthly_after_vat : $membershipObj->annual_after_vat,
+                'quantity' => 1,
             ]
         ];
-        $total = $testData[0][6];
+        $total = $cartData[0]['price'];
 
-        $paymentObj = new \SubscriptionHelper();
-        $invoice = $paymentObj->setInvoice($testData, $user->id, $tenant->id, $centralUser->global_id, 'NewClient');
-        $inv_id = $invoice->id;
         if (true) {
             $data = [
-                'cartObj' => $testData,
-                'type' => 'NewClient',
-                'transaction_id' => '9898',
-                'paymentGateaway' => 'EPayment',
-                'invoiceObj' => $invoice,
-                'start_date' => null,
-                'transferObj' => null,
-                'arrType' => null,
-                'myEndDate' => null,
+                'user_id' => $user->id,
+                'tenant_id' => $tenant->id,
+                'global_id' => $centralUser->global_id,
+                'cartData' => $cartData,
+                'type' => 'New',
+                'transaction_id' => rand(1,100000),
+                'payment_gateaway' => 'EPayment',
             ];
 
             try {
                 dispatch(new NewClient($data))->onConnection('database');
-            } catch (Exception $e) {
+            } catch (Exception $e) {}
 
-            }
-
+            tenancy()->initialize($tenant->id);
             User::setSessions($user);
-            Session::put('hasJob', 1);            
+            Variable::where('var_key','hasJob')->firstOrCreate(['var_key'=>'hasJob','var_value'=>1]);
+            tenancy()->end();
+
             Session::put('check_user_id',$user->id);
+
             $token = tenancy()->impersonate($tenant,$user->id,'/dashboard');
             return redirect(tenant_route($tenant->domains()->first()->domain  . '.' . request()->getHttpHost(), 'impersonate',[
                 'token' => $token
             ]));   
         } else {
+            tenancy()->initialize($tenant->id);
             User::setSessions($user);
+            tenancy()->end();
+
             \Session::flash('error', $data['status']->message);
             return redirect()->to('/paymentError')->withInput();
         }

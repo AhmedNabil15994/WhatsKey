@@ -60,27 +60,15 @@ class ChatDialog extends Model{
 
     static function dataList($limit=null,$name=null,$contacts=null) {
         $input = \Request::all();
-        // if($name != null){
-        //     $limit = 0;
-        //     $source = self::whereHas('Messages',function($whereHasQuery) use ($name){
-        //         $whereHasQuery->where('senderName','LIKE','%'.$name.'%');
-        //     })->with(['Messages','SenderLastMessage'])->orWhere('name','LIKE','%'.$name.'%')->orWhere('id','LIKE','%'. str_replace('+','',$name).'%')->orderByDesc(ChatMessage::select('time')
-        //         ->whereColumn('messages.chatId', 'dialogs.id')
-        //         ->orderBy('time','DESC')
-        //         ->take(1)
-        //     );
-        // }else{
-        //     $source =  self::whereHas('Messages')->with(['LastMessage','SenderLastMessage'])->orderByDesc(ChatMessage::select('time')
-        //         ->whereColumn('messages.chatId', 'dialogs.id')
-        //         ->orderBy('time','DESC')
-        //         ->take(1)
-        //     );
-        // }
-        
         $source = self::whereHas('Messages')->with(['LastMessage','SenderLastMessage']);
 
         if((isset($input['mine']) && !empty($input['mine']))){
             $source->where('modsArr','LIKE','%'.USER_ID.'%');
+        }
+
+        $varObj = Variable::getVar('disableDialogsArchive');
+        if($varObj == '1'){
+            $source->where('archived',0)->orWhere('archived',null);
         }
 
         if($name != null){

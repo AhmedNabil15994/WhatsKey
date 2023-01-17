@@ -24,6 +24,17 @@
         padding-bottom: 0;
     }
 </style>
+<style>
+    .form-group.textWrap emoji-picker{
+        top: 40px;
+    }
+    html[dir="ltr"] .form-group.textWrap emoji-picker{
+        right: 30px;
+    }
+    html[dir="rtl"] .form-group.textWrap emoji-picker{
+        left: 30px;
+    }
+</style>
 @endsection
 @section('breadcrumbs')
 @include('tenant.Layouts.breadcrumb',[
@@ -89,13 +100,17 @@
                         <div class="new hidden mb-4">
                             <hr>
                             <p style="padding: 30px 0"> {{ trans('main.add').' '.trans('main.group') }}</p>
-                            <div class="form-group mb-3">
+                            <div class="form-group mb-3 textWrap">
                                 <label for="inputEmail3">{{ trans('main.titleAr') }} :</label>
                                 <input type="text" class="name_ar form-control" name="name_ar" placeholder="{{ trans('main.titleAr') }}">
+                                <i class="la la-smile icon-xl emoji-icon"></i>
+                                <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                             </div>
-                            <div class="form-group mb-3">
+                            <div class="form-group mb-3 textWrap">
                                 <label for="inputEmail4" class="titleLabel">{{ trans('main.titleEn') }} :</label>
                                 <input type="text" class="name_en form-control" name="name_en" placeholder="{{ trans('main.titleEn') }}">
+                                <i class="la la-smile icon-xl emoji-icon"></i>
+                                <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                             </div>
                             <button type="button" class="btn btn-success mb-2 addGR float-right">{{ trans('main.add').' '.trans('main.group') }}</button>
                             <div class="clearfix"></div>
@@ -103,9 +118,11 @@
 
                         <div class="row">
                             <div class="col-md-8">
-                                <div class="form-group">
+                                <div class="form-group textWrap">
                                     <label> {{ trans('main.name') }}</label>
                                     <input class="form-control" type="text" name="client_name" placeholder="{{ trans('main.name') }}">
+                                    <i class="la la-smile icon-xl emoji-icon"></i>
+                                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                                 </div>
                                 <div class="form-group">
                                     <label> {{ trans('main.email') }}</label>
@@ -136,9 +153,11 @@
                                 </div>
                             </div> <!-- end col -->
                             <div class="col-md-12">
-                                <div class="form-group">
+                                <div class="form-group textWrap">
                                     <label> {{ trans('main.extraInfo') }}</label>                   
                                     <textarea class="form-control" name="notes" placeholder="{{ trans('main.extraInfo') }}"></textarea>
+                                    <i class="la la-smile icon-xl emoji-icon"></i>
+                                    <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                                 </div>
                             </div>
                         </div> <!-- end row -->
@@ -190,4 +209,6 @@
 @section('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.7.7/xlsx.core.min.js"></script>
 <script src="{{ asset('assets/tenant/components/contacts.js') }}" type="text/javascript"></script>
+<script type="module" src="{{asset('assets/tenant/js/emojiIndex.js')}}"></script>
+<script src="{{ asset('assets/tenant/components/initEmoji.js') }}"></script>
 @endsection

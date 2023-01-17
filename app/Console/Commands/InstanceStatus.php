@@ -42,11 +42,15 @@ class InstanceStatus extends Command
     {
 
         $userObj = CentralUser::find(User::first()->id);
-        $mainWhatsLoopObj = new \OfficialHelper();
-        $result = $mainWhatsLoopObj->status();
-        $result = $result->json();
+        try {
+            $mainWhatsLoopObj = new \OfficialHelper();
+            $result = $mainWhatsLoopObj->status();
+            $result = $result->json();
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {}
+        
 
         $statusInt = 4;
+        $stopSend = 0;
 
         if (isset($result['data']) && !empty($result['data'])) {
             $status = $result['data']['status'];
@@ -67,9 +71,13 @@ class InstanceStatus extends Command
                 $userStatusObj->save();
             }
         }
-      
-        // // TODO: send whatsapp message when channel is down ( Need Test )
-        if (in_array($statusInt, [3, 4])) {
+        
+        $statuses = UserStatus::orderBy('id','DESC')->take(2)->get();
+        if(count($statuses) == 2 && in_array($statuses[0]->status,[3,4]) && in_array($statuses[1]->status,[3,4])){
+            $stopSend = 1;
+        }
+        
+        if (in_array($statusInt, [3, 4]) && !$stopSend) {
             $channelObj = \DB::connection('main')->table('channels')->where('deleted_by', null)->orderBy('id', 'ASC')->first();
             $whatsLoopObj = new \OfficialHelper($channelObj->id, $channelObj->token);
             $phone = User::first()->emergency_number ? User::first()->emergency_number : User::first()->phone;

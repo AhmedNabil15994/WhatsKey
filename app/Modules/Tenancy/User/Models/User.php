@@ -314,6 +314,7 @@ class User extends Authenticatable implements Syncable
             $membershipFeatures = \DB::connection('main')->table('memberships')->where('id',Session::get('membership'))->first()->features;
             $featuresId = unserialize($membershipFeatures);
             $features = \DB::connection('main')->table('membership_features')->whereIn('id',$featuresId)->pluck('title_en');
+            $addons = Addons::whereIn('title_en',reset($features))->pluck('module');
             $dailyMessageCount=0;
             $employessCount=0;
             $storageSize=0;
@@ -326,6 +327,7 @@ class User extends Authenticatable implements Syncable
             session(['dailyMessageCount' => $dailyMessageCount]);
             session(['employessCount' => $employessCount ]);
             session(['storageSize' => $storageSize]);
+            session(['membershipAddons' => array_unique(reset($addons))]);
         }
     }
 

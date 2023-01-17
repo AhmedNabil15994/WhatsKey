@@ -124,18 +124,21 @@ function dbPromise (db, storeName, readOnlyOrReadWrite, cb) {
   return new Promise((resolve, reject) => {
     // Use relaxed durability because neither the emoji data nor the favorites/preferred skin tone
     // are really irreplaceable data. IndexedDB is just a cache in this case.
-    const txn = db.transaction(storeName, readOnlyOrReadWrite, { durability: 'relaxed' });
-    const store = typeof storeName === 'string'
-      ? txn.objectStore(storeName)
-      : storeName.map(name => txn.objectStore(name));
-    let res;
-    cb(store, txn, (result) => {
-      res = result;
-    });
+    try{
+      const txn = db.transaction(storeName, readOnlyOrReadWrite, { durability: 'relaxed' });
+      const store = typeof storeName === 'string'
+        ? txn.objectStore(storeName)
+        : storeName.map(name => txn.objectStore(name));
+      let res;
+      cb(store, txn, (result) => {
+        res = result;
+      });
+      txn.oncomplete = () => resolve(res);
+      /* istanbul ignore next */
+      txn.onerror = () => reject(txn.error);
+    }catch{
 
-    txn.oncomplete = () => resolve(res);
-    /* istanbul ignore next */
-    txn.onerror = () => reject(txn.error);
+    }
   })
 }
 
@@ -959,13 +962,18 @@ class Database {
   }
 
   async close () {
-    await this._shutdown();
-    await closeDatabase(this._dbName);
+    try{
+      await this._shutdown();
+      await closeDatabase(this._dbName);
+    }catch{}
+    
   }
 
   async delete () {
-    await this._shutdown();
-    await deleteDatabase(this._dbName);
+    try{
+      await this._shutdown();
+      await deleteDatabase(this._dbName);
+    }catch{}
   }
 }
 

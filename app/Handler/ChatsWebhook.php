@@ -10,6 +10,9 @@ use \Spatie\WebhookServer\WebhookCall;
 
 use App\Events\MessageStatus;
 use App\Events\DialogUpdateStatus;
+use App\Events\DialogPresenceStatus;
+use App\Events\DialogUpdate;
+use App\Events\DialogDelete;
 
 use App\Models\User;
 use App\Models\CentralVariable;
@@ -35,7 +38,14 @@ class ChatsWebhook extends ProcessWebhookJob
         } else if (isset($allData['event']) && $allData['event'] == 'dialog-update') {
             $actions = $allData['data'];
             $this->handleChatsUpdates($tenantUser->domain, $actions);
+        } else if (isset($allData['event']) && $allData['event'] == 'dialog-presence') {
+            $actions = $allData['data'];
+            $this->handleChatsPresence($tenantUser->domain, $actions);
+        } else if (isset($allData['event']) && $allData['event'] == 'dialog-delete') {
+            $actions = $allData['data'];
+            $this->handleChatsUpdates($tenantUser->domain, $actions);
         } 
+        
         // Fire Webhook For Client
         $this->fireWebhook($actions);
         return 1;
@@ -127,6 +137,8 @@ class ChatsWebhook extends ProcessWebhookJob
                     $dialogObj->group_restrict = $actions['restrict'] == 'true' ? 1 : 0;
                     $dialogObj->save();
                 }
+                broadcast(new DialogUpdate(strtolower($domain), $actions['id']));
+
             }
         }
         // ChatDialog::newDialog($actions);
@@ -154,12 +166,33 @@ class ChatsWebhook extends ProcessWebhookJob
                     $chatObj->update(['muted' =>  1 , 'muted_until' => date('Y-m-d H:i:s',$actions['muted'] / 1000)]);
                 }
             }
+            if(isset($actions['last_time'])){
+                $chatObj->update(['last_time' => $actions['last_time']]);
+            }
             if(isset($actions['labelled'])){
                 $oldLabels = $chatObj->labels;
                 $newLabels = $actions['labelled'] == true ? $oldLabels.= $actions['label_id'].',' : str_replace($actions['label_id'].',','',$oldLabels);
                 $chatObj->update(['labels' =>  $newLabels]);
             }
-            broadcast(new DialogUpdateStatus(strtolower($domain), $actions));
+            if(isset($actions['deleted'])){
+                $chatObj->delete();
+                broadcast(new DialogDelete(strtolower($domain), $actions));
+            }else{
+                broadcast(new DialogUpdateStatus(strtolower($domain), $actions));
+            }
+        }
+        return 1;
+    }
+
+    public function handleChatsPresence($domain, $actions)
+    {
+        $actions = (array) $actions;
+        $chatObj = ChatDialog::where('id',$actions['chatId'])->first();
+
+        if($chatObj){
+            if(isset($actions['presenceData'])){
+                broadcast(new DialogPresenceStatus(strtolower($domain), $actions));
+            }
         }
         return 1;
     }

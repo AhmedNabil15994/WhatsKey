@@ -89,4 +89,21 @@ class Reply extends Model{
         return self::count() + 1;
     }
 
+    static function newReply($replyObj){
+        $replyObj = (object) $replyObj;
+        $contactObj = self::where('reply_id',$replyObj->id)->first();
+        if($contactObj == null){
+            $contactObj = new self;
+            $contactObj->name_ar = $replyObj->shortcut;
+            $contactObj->name_en = $replyObj->shortcut;
+            $contactObj->description_ar = $replyObj->message;
+            $contactObj->description_en = $replyObj->message;
+            $contactObj->reply_id = $replyObj->id;
+            $contactObj->sort = self::newSortIndex();
+            $contactObj->created_at = date('Y-m-d H:i:s');
+        }
+        $contactObj->status = 1;
+        return $contactObj->save();
+    }
+
 }
