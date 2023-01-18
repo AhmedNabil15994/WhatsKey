@@ -178,7 +178,7 @@
                                         <tr>
                                             <td colspan="6" class="border-0 text-muted text-right pt-0">{{trans('main.taxesIncluded')}}</td>
                                         </tr>
-                                     
+                                        @if(\Helper::checkRules('addCoupon'))
                                         <tr>
                                             <td colspan="4" class="border-0 pt-10 coupon">
                                                 <div class="form-group row mb-0">
@@ -198,6 +198,7 @@
                                             </td>
                                             <td colspan="2" class="border-0 text-right pt-10"></td>
                                         </tr>
+                                        @endif
                                     </tbody>
                                 </table>
                             </div>
@@ -236,6 +237,7 @@
                         </div>
                         <div id="step3" class="myStep" data-wizard-type="step-content">
                             <div class="row mb-15">
+                                @if(\Helper::checkRules('checkout'))
                                 <div class="col-md-6">
                                     <div class="paymentStyle" data-area="2">
                                         <h2 class="titleSelect">{{ trans('main.ePayment') }}</h2>
@@ -264,6 +266,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                @endif
                             </div>
                         </div>
                         <div class="d-flex justify-content-between border-top pt-10">
@@ -271,7 +274,9 @@
                                 <button type="button" class="btn btn-light-primary font-weight-bolder text-uppercase px-9 py-4 btnPrev dis" data-wizard-type="action-prev">{{trans('main.prev')}}</button>
                             </div>
                             <div>
+                                @if(\Helper::checkRules('view-invoice'))
                                 <a href="{{URL::to('/invoices/'.$data->invoice_id.'/downloadPDF')}}" class="invoice hidden btn btn-dark font-weight-bolder text-uppercase px-9 py-4"> <i class="la la-file icon-xl"></i> {{ trans('main.invoice') }}</a>
+                                @endif
                                 <button type="submit" class="btn btn-success font-weight-bolder text-uppercase px-9 py-4 finish" data-wizard-type="action-submit">{{trans('main.finish')}}</button>
                                 <button type="button" class="btn btn-primary font-weight-bolder text-uppercase px-9 py-4 btnNext" data-wizard-type="action-next">{{trans('main.next')}}</button>
                             </div>

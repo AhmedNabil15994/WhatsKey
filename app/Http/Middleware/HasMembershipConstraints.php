@@ -25,6 +25,7 @@ class HasMembershipConstraints
                 ($request->segment(1) == 'profile' && $request->segment(2) == 'postPaymentInfo') || 
                 ($request->segment(1) == 'invoices' && $request->segment(2) == 'view') || 
                 ($request->segment(1) == 'invoices' && $request->segment(3) == 'pushInvoice') ||
+                ($request->segment(1) == 'invoices' && $request->segment(3) == 'downloadPDF') ||
                 ($request->segment(1) == 'checkout') ){
                 return $next($request);
             }else{

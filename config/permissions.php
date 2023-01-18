@@ -174,6 +174,7 @@ return [
     'SubscriptionControllers@postExtraQuotas' => 'changeSubscription',
     'SubscriptionControllers@updateAddonStatus' => 'changeSubscription',
     'SubscriptionControllers@updateExtraQuotaStatus' => 'changeSubscription',
+    'SubscriptionControllers@transferPayment' => 'changeSubscription',
 
     /************************** In Review **************************/
     'SubscriptionControllers@paymentError' => 'general',

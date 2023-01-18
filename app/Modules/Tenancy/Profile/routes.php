@@ -30,6 +30,7 @@ Route::group(['prefix' => '/profile'] , function () {
 
         Route::get('/updateAddonStatus/{addon_id}/{status}', [$controller3,'updateAddonStatus']);
         Route::get('/updateExtraQuotaStatus/{extra_quota_id}/{status}', [$controller3,'updateExtraQuotaStatus']);
+        Route::get('/transferPayment', [$controller3,'transferPayment']);
 
         Route::get('/', [$controller2,'subscription']);
         Route::get('/unBlock/{chatId}', [$controller2,'unBlock']);

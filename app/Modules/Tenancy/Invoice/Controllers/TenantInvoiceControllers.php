@@ -283,14 +283,14 @@ class TenantInvoiceControllers extends Controller {
             'tenant_id' => TENANT_ID,
             'global_id' => GLOBAL_ID,
             'cartData' => $testData,
-            'type' => $type,
+            'type' => $type == 'PayInvoice' ? 'Change' : $type,
             'transaction_id' => null,
             'payment_gateaway' => null,
             'user_credits' => $userCredits,
             'coupon_code' => null,
         ];
 
-        Variable::where('var_key','inv_status')->firstOrCreate(['var_key'=>'inv_status','var_value'=>'Change']);
+        Variable::where('var_key','inv_status')->firstOrCreate(['var_key'=>'inv_status','var_value'=> $type == 'PayInvoice' ? 'Change' : $type]);
         $subscriptionHelperObj = new \SubscriptionHelper;
         $data['invoice_id'] = $subscriptionHelperObj->setInvoice($subscriptionHelperData);
         return view('Tenancy.Profile.Views.cart')->with('data', (object) $data);

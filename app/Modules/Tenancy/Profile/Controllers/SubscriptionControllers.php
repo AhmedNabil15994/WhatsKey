@@ -360,14 +360,14 @@ class SubscriptionControllers extends Controller
                 'tenant_id' => TENANT_ID,
                 'global_id' => GLOBAL_ID,
                 'cartData' => $items,
-                'type' => 'Change',
+                'type' => 'Renew',
                 'transaction_id' => null,
                 'payment_gateaway' => null,
                 'user_credits' => 0,
                 'coupon_code' => null,
             ];
 
-            Variable::where('var_key','inv_status')->firstOrCreate(['var_key'=>'inv_status','var_value'=>'Change']);
+            Variable::where('var_key','inv_status')->firstOrCreate(['var_key'=>'inv_status','var_value'=>'Renew']);
             $subscriptionHelperObj = new \SubscriptionHelper;
             $data['invoice_id'] = $subscriptionHelperObj->setInvoice($subscriptionHelperData);
             return view('Tenancy.Profile.Views.cart')->with('data', (object) $data);
@@ -424,14 +424,14 @@ class SubscriptionControllers extends Controller
                 'tenant_id' => TENANT_ID,
                 'global_id' => GLOBAL_ID,
                 'cartData' => $items,
-                'type' => 'Change',
+                'type' => 'Renew',
                 'transaction_id' => null,
                 'payment_gateaway' => null,
                 'user_credits' => 0,
                 'coupon_code' => null,
             ];
 
-            Variable::where('var_key','inv_status')->firstOrCreate(['var_key'=>'inv_status','var_value'=>'Change']);
+            Variable::where('var_key','inv_status')->firstOrCreate(['var_key'=>'inv_status','var_value'=>'Renew']);
             $subscriptionHelperObj = new \SubscriptionHelper;
             $data['invoice_id'] = $subscriptionHelperObj->setInvoice($subscriptionHelperData);
             return view('Tenancy.Profile.Views.cart')->with('data', (object) $data);
@@ -446,6 +446,10 @@ class SubscriptionControllers extends Controller
         User::setSessions(User::getOne(USER_ID));
         Session::flash('success', trans('main.editSuccess'));
         return redirect()->back();
+    }
+
+    public function transferPayment(){
+        dd('transferPaymentsToFirstOfMonth');
     }
 
     public function paymentError()

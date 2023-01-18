@@ -233,7 +233,10 @@
     <div class="card-header">
         <h3 class="card-title"><i class="la la-id-card icon-xl mx-1"></i> {{ trans('main.currentPackage') }}</h3>
         <div class="card-toolbar">
-            <a href="{{ URL::to('/profile/subscription/memberships') }}" class="btn btn-sm btn-dark font-weight-bold">{{ trans('main.resubscribe_b2') }}</a>
+            @if(\Helper::checkRules('changeSubscription'))
+            <a href="{{ URL::to('/profile/subscription/memberships') }}" class="btn btn-sm btn-dark font-weight-bold mx-1">{{ trans('main.resubscribe_b2') }}</a>
+            <a href="{{ URL::to('/profile/subscription/transferPayment') }}" class="btn btn-sm btn-dark font-weight-bold mx-1">{{ trans('main.transferPayment') }}</a> 
+            @endif
         </div>
     </div>
     <div class="card-body">
@@ -433,7 +436,9 @@
                     {{trans('main.addons')}}
                 </h3>
                 <div class="card-toolbar">
+                    @if(\Helper::checkRules('changeSubscription'))
                     <a href="{{ URL::to('/profile/subscription/addons') }}" class="btn btn-sm btn-outline-success font-weight-bold"><i class="la la-edit icon-md"></i> {{ trans('main.edit') }}</a>
+                    @endif
                 </div>
             </div>
             <div class="card-body pt-0">
@@ -453,7 +458,7 @@
                         <span class="text-muted font-weight-bold">{{$data->subscription->start_date . ' - ' . $data->subscription->end_date}}</span>
                     </div>
                     <div class="d-flex flex-column mr-2 text-right">
-                        <span class="label label-xs label-{{$data->subscription->channelStatus == 1 ? 'success' : 'danger'}} label-inline font-weight-bold py-4 mb-2 float-right ">{{ $data->subscription->channelStatus == 1 ? trans('main.active') : trans('main.notActive') }}</span>
+                        <span class="label label-xs label-{{$data->subscription->channelStatus == 1 ? 'success' : 'danger'}} label-inline font-weight-bold py-4 float-right">{{ $data->subscription->channelStatus == 1 ? trans('main.active') : trans('main.notActive') }}</span>
                     </div>
                 </div>
                 @endforeach
@@ -475,10 +480,10 @@
                     </div>
                     <div class="d-flex flex-column mr-2 text-right">
                         @php $statusColors = ['danger','success','warning']; @endphp
-                        <span class="label label-xs label-{{$statusColors[$addon->status]}} label-inline font-weight-bold py-4 mb-2 float-right ">{{$addon->statusText}}</span>
-                        <div class="dropdown dropdown-inline ml-2" data-placement="left">
+                        @if(\Helper::checkRules('changeSubscription'))
+                        <div class="dropdown dropdown-inline ml-2 mb-2" data-placement="left">
                             <a href="#" class="btn btn-clean btn-hover-primary btn-xs btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="ki ki-bold-more-hor"></i>
+                                <i class="ki ki-bold-more-hor text-dark-75"></i>
                             </a>
                             <div class="dropdown-menu p-0 m-0 dropdown-menu-xs dropdown-menu-right">
                                 <ul class="navi navi-hover">
@@ -511,6 +516,8 @@
                                 </ul>
                             </div>
                         </div>
+                        @endif
+                        <span class="label label-xs label-{{$statusColors[$addon->status]}} label-inline font-weight-bold py-4 float-right">{{$addon->statusText}}</span>
                     </div>
                 </div>
                 @endforeach
@@ -554,10 +561,10 @@
                         <span class="text-muted font-weight-bold">{{$extra_quota->start_date . ' - ' . $extra_quota->end_date}}</span>
                     </div>
                     <div class="d-flex flex-column mr-2 text-right">
-                        <span class="label label-xs label-{{$statusColors[$extra_quota->status]}} label-inline font-weight-bold py-4 mb-2 float-right ">{{$extra_quota->statusText}}</span>
-                        <div class="dropdown dropdown-inline ml-2" data-placement="left">
+                        @if(\Helper::checkRules('changeSubscription'))
+                        <div class="dropdown dropdown-inline ml-2 mb-2" data-placement="left">
                             <a href="#" class="btn btn-clean btn-hover-primary btn-xs btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="ki ki-bold-more-hor"></i>
+                                <i class="ki ki-bold-more-hor text-dark-75"></i>
                             </a>
                             <div class="dropdown-menu p-0 m-0 dropdown-menu-xs dropdown-menu-right">
                                 <ul class="navi navi-hover">
@@ -590,6 +597,8 @@
                                 </ul>
                             </div>
                         </div>
+                        @endif
+                        <span class="label label-xs label-{{$statusColors[$extra_quota->status]}} label-inline font-weight-bold py-4 float-right">{{$extra_quota->statusText}}</span>
                     </div>
                 </div>
                 @endforeach
