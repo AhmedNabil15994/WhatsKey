@@ -71,7 +71,7 @@
                             <div class="media">
                                 <img src="{{ $data->data->client_image }}" alt="Arya S"
                                     class="rounded-circle mr-2" height="24" />
-                                <div class="media-body">
+                                <div class="media-body mt-3 mx-2">
                                     <p><a href="{{ URL::to('/clients/view/'.$data->data->user_id) }}" target="_blank"> {{ $data->data->client }}</a> </p>
                                 </div>
                             </div>
@@ -146,7 +146,7 @@
                     <div class="card-box" style="margin-bottom: 0;border-bottom: 1px solid #eee;" id="tableRaw{{ $comment->id }}">
                         <div class="media">
                             <img class="mr-2 avatar-sm rounded-circle" src="{{ $comment->image }}" alt="Generic placeholder image">
-                            <div class="media-body">
+                            <div class="media-body mt-0 mx-2">
                                 <div class="dropdown float-right text-muted">
                                     <a href="#" class="dropdown-toggle text-muted font-18" data-toggle="dropdown" aria-expanded="false">
                                         <i class="mdi mdi-dots-horizontal"></i>
@@ -162,7 +162,7 @@
                                         @endif
                                     </div>
                                 </div>
-                                <h5 class="m-0"><a href="contacts-profile.html" class="text-reset">{!! $comment->creator . ($comment->creator != $comment->creator_name  ? '<br><small>'.$comment->creator_name.'</small>' : '') !!}</a></h5>
+                                <h5 class="mt-0"><a href="contacts-profile.html" class="text-reset">{{$comment->creator}}</a></h5>
                                 <p class="text-muted"><small>{{ $comment->created_at }}</small></p>
                                 <div class="font-16 font-italic text-dark">
                                     {!! $comment->comment !!}
@@ -177,7 +177,7 @@
                             @foreach($comment->replies as $reply)
                             <div class="media">
                                 <img class="mr-2 avatar-sm rounded-circle" src="{{ $reply->image }}" alt="Generic placeholder image">
-                                <div class="media-body">
+                                <div class="media-body mt-0 mx-2">
                                     <h5 class="mt-0">
                                         <a href="contacts-profile.html" class="text-reset">{{ $reply->creator }}</a> 
                                         <br>
@@ -229,7 +229,7 @@
                                     </div>
                                 </div>
                                 <div class="col pl-0">
-                                    <a href="{{URL::to('/public/uploads/tickets/'.$data->data->id.'/'.$oneFile->photo_name)}}" class="text-muted font-weight-bold" target="_blank">{{ $oneFile->photo_name }}</a>
+                                    <a href="{{asset('/uploads/tickets/'.$data->data->id.'/'.$oneFile->photo_name)}}" class="text-muted font-weight-bold" target="_blank">{{ $oneFile->photo_name }}</a>
                                     <p class="mb-0 font-12">{{ $oneFile->photo_size }}</p>
                                 </div>
                                 <div class="col-auto">

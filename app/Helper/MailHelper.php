@@ -45,7 +45,7 @@ class MailHelper
     //  ORDER_ID - INVOICE_DATE - DUE_DATE - INVOICE_URL - INVOICE_ID - INVOICE_TOTAL - TRANSACTION_ID - PAYMENT_METHOD - INVOICE_STATUS
     //  COMPANY - URL - CODE - EMPLOYEE_NAME - OWNER - PHONE - PASSWORD
     static function exchangeVars($data,$change,$extras=[]){
-        $data = str_replace('{CUSTOMER_NAME}', $change, $data);
+        $data = str_replace('{CUSTOMER_NAME}', ucwords($change), $data);
         if(!empty($extras)){
             if(isset($extras['invoiceObj'])){
                 $extras['invoiceObj'] = (object) $extras['invoiceObj'];
@@ -60,7 +60,7 @@ class MailHelper
                 $data = str_replace('{INVOICE_STATUS}', $extras['invoiceObj']->statusText, $data);
             }
             if(isset($extras['company'])){
-                $data = str_replace('{COMPANY}', $extras['company'], $data);
+                $data = str_replace('{COMPANY}', ucwords($extras['company']), $data);
             }
             if(isset($extras['url'])){
                 $data = str_replace('{URL}', $extras['url'], $data);
@@ -69,8 +69,8 @@ class MailHelper
                 $data = str_replace('{CODE}', $extras['code'], $data);
             }
             if(isset($extras['employee_name'])){
-                $data = str_replace('{EMPLOYEE_NAME}', $extras['employee_name'], $data);
-                $data = str_replace('{OWNER}', $extras['owner'], $data);
+                $data = str_replace('{EMPLOYEE_NAME}', ucwords($extras['employee_name']), $data);
+                $data = str_replace('{OWNER}', ucwords($extras['owner']), $data);
                 $data = str_replace('{PHONE}', $extras['phone'], $data);
                 $data = str_replace('{PASSWORD}', $extras['password'], $data);
             }

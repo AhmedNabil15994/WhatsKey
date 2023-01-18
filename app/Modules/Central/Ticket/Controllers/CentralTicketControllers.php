@@ -139,15 +139,8 @@ class CentralTicketControllers extends Controller {
                 'data-col' => 'created_at',
                 'anchor-class' => '',
             ],
-            'created_at' => [
-                'label' => trans('main.date'),
-                'type' => '',
-                'className' => '',
-                'data-col' => 'created_at',
-                'anchor-class' => '',
-            ],
             'last_comment' => [
-                'label' => trans('main.owner'),
+                'label' => trans('main.comment_owner'),
                 'type' => '',
                 'className' => '',
                 'data-col' => 'last_comment',
@@ -550,7 +543,7 @@ class CentralTicketControllers extends Controller {
 
         $commentObj = new CentralComment;
         $commentObj->comment = $input['comment'];
-        $commentObj->creator_name = FULL_NAME;
+        $commentObj->name = FULL_NAME;
         $commentObj->reply_on = $input['reply'];
         $commentObj->ticket_id = $id;
         $commentObj->status = 1;

@@ -24,7 +24,7 @@
                         $oneMessage['metadata'] = (array) $oneMessage['metadata']; 
                         $id = array_reverse(explode('_',$oneMessage['id']))[0];
                     @endphp
-                    <livewire:message :wire:key="time().$oneMessage['message_type'].$id" :msg="$oneMessage" :chatName="$chat['name']"/>               
+                    <livewire:message :wire:key="time().$oneMessage['message_type'].$id" :msg="$oneMessage" :chatName="$chat['name']"/>
                     @endforeach
                     @endif
                     </div>

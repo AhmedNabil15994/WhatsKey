@@ -185,15 +185,19 @@ class Helper
         return false;
     }
 
-    static function globalDelete($dataObj) {
+    static function globalDelete($dataObj,$deleteRow=false) {
         if ($dataObj == null) {
             return response()->json(\TraitsFunc::ErrorMessage(trans('main.notExist')));
         }
 
-        $dataObj->deleted_by = USER_ID;
-        $dataObj->deleted_at = date('Y-m-d H:i:s');
-        $dataObj->save();
-
+        if(!$deleteRow){
+            $dataObj->deleted_by = USER_ID;
+            $dataObj->deleted_at = date('Y-m-d H:i:s');
+            $dataObj->save();
+        }else{
+            $dataObj->delete();
+        }
+        
         $data['status'] = \TraitsFunc::SuccessResponse(trans('main.deleteSuccess'));
         return response()->json($data);
     }
@@ -269,7 +273,7 @@ class Helper
                 $externalPermissions = [
                     'LiveChatControllers@index' => 'list-livechat',
                     'LiveChatControllers@upload' => 'list-livechat',
-                    'LiveChatControllers@updateContact' => 'list-livechat',
+                    'LiveChatControllers@updateContact' => 'update-livechat-contact-details',
                 ];
             }else if($value == 'Polls'){
                 $externalPermissions = [

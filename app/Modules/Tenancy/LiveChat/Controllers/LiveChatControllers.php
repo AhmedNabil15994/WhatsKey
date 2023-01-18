@@ -73,6 +73,19 @@ class LiveChatControllers extends Controller
         }
         \Session::forget('selected_chat_id');
         \Session::put('BUSINESS',$business);
+
+        $is_admin = IS_ADMIN;
+        $user_id = USER_ID;
+        if(!$is_admin){
+            $lastObj = ChatEmpLog::where('user_id',$user_id)->where('type','!=',3)->orderBy('id','DESC')->first();
+            if($lastObj != null && $lastObj->ended == 0 && $lastObj->type == 1){
+                $lastObj->ended = 1;
+                $lastObj->ended_at = DATE_TIME;
+                $lastObj->save();
+                ChatEmpLog::newRecord($lastObj->chatId,2,$user_id,date('Y-m-d H:i:s'),1);
+            }
+        }
+
         $data['contacts'] = Contact::dataList(1)['data'];
         return view('Tenancy.LiveChat.Views.index')->with('data',(object)$data);
     }
@@ -86,8 +99,8 @@ class LiveChatControllers extends Controller
             return \TraitsFunc::ErrorMessage('Please Re-activate LiveChat Addon');
         }
 
-        if (!IS_ADMIN && !\Helper::checkRules('update-contact-details')) {
-            return \TraitsFunc::ErrorMessage("Please Add (update-contact-details) Privilege To User's Group");
+        if (!IS_ADMIN && !\Helper::checkRules('update-livechat-contact-details')) {
+            return \TraitsFunc::ErrorMessage("Please Add (update-livechat-contact-details) Privilege To User's Group");
         }
 
         if (!isset($input['chatId']) || empty($input['chatId'])) {

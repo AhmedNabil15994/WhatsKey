@@ -1,7 +1,7 @@
 <?php 
 
 /*----------------------------------------------------------
-Users
+Profile
 ----------------------------------------------------------*/
 Route::post('/checkout', [\App\Http\Controllers\SubscriptionControllers::class,'checkout']);
 Route::group(['prefix' => '/profile'] , function () {
@@ -24,9 +24,11 @@ Route::group(['prefix' => '/profile'] , function () {
 
         Route::get('/addons', [$controller3,'addons']);
         Route::post('/addons', [$controller3,'postAddons']);
+        Route::get('/addons/disableAutoInvoice', [$controller3,'disableAddonAutoInvoice']);
 
         Route::get('/extraQuotas', [$controller3,'extraQuotas']);
         Route::post('/extraQuotas', [$controller3,'postExtraQuotas']);
+        Route::get('/extraQuotas/disableAutoInvoice', [$controller3,'disableExtraQuotaAutoInvoice']);
 
         Route::get('/updateAddonStatus/{addon_id}/{status}', [$controller3,'updateAddonStatus']);
         Route::get('/updateExtraQuotaStatus/{extra_quota_id}/{status}', [$controller3,'updateExtraQuotaStatus']);

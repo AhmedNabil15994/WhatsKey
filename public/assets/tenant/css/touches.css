@@ -326,6 +326,7 @@ html[dir="rtl"] .wizard-arrow{
     position: absolute;
     bottom: 10px;
     left: 30px;
+    z-index: 99999999999;
 }
 #kt_scrollDown:hover{
 	opacity: 1;

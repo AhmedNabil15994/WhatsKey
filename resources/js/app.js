@@ -1,5 +1,5 @@
 require('./bootstrap');
-let domain = 'newdomain1';
+let domain = window.location.host.split('.')[1] ? window.location.host.split('.')[0] : false;
 
 window.Echo.channel(domain+'-NewIncomingMessage').listen('IncomingMessage', (data) => {
 	window.Livewire.emitTo('conversation','newIncomingMsg', data);

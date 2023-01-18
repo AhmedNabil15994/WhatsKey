@@ -13,7 +13,14 @@ class ChatDialog extends Model{
     public $incrementing = false;
 
     static function getOne($id){
-        return self::where('id', $id)->first();
+        $is_admin = \Session::get('is_admin');
+        $user_id = \Session::get('user_id');
+        if($is_admin){
+            $source = self::where('id', $id)->first();
+        }else{
+            $source = self::where('id', $id)->where('modsArr','LIKE','%'.$user_id.'%')->first();
+        }
+        return $source;
     }
 
     public function labelColors(){
@@ -62,7 +69,7 @@ class ChatDialog extends Model{
         $input = \Request::all();
         $source = self::whereHas('Messages')->with(['LastMessage','SenderLastMessage']);
 
-        if((isset($input['mine']) && !empty($input['mine']))){
+        if(!IS_ADMIN){
             $source->where('modsArr','LIKE','%'.USER_ID.'%');
         }
 

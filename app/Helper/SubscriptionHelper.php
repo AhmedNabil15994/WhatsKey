@@ -304,9 +304,11 @@ class SubscriptionHelper {
     }
 
     public function sendNotifications($userObj,$invoiceObj,$type){
-        $notificationTemplateObj = NotificationTemplate::getOne(2,'paymentSuccess');
         $myDomain = config('app.MY_DOMAIN');
         $loginUrl = str_replace('myDomain', $userObj->domain, $myDomain).'/login';
+        $notificationTemplateObj = NotificationTemplate::getOne(2,'paymentSuccess');
+        $invoiceObj = Invoice::getData($invoiceObj);
+
         $allData = [
             'name' => $userObj->name,
             'subject' => $notificationTemplateObj->title_ar,
@@ -315,7 +317,7 @@ class SubscriptionHelper {
             'template' => 'tenant.emailUsers.default',
             'url' => $loginUrl,
             'extras' => [
-                'invoiceObj' => Invoice::getData($invoiceObj),
+                'invoiceObj' => $invoiceObj,
                 'company' => $userObj->company,
                 'url' => $loginUrl,
             ],
@@ -326,32 +328,21 @@ class SubscriptionHelper {
         $salesData['email'] = 'sales@whatskey.net';
         \MailHelper::prepareEmail($salesData);
 
-        $notificationTemplateObj = NotificationTemplate::getOne(1,'paymentSuccess');
+        $whatsappTemplateObj = NotificationTemplate::getOne(1,'paymentSuccess');
         $phoneData = $allData;
         $phoneData['phone'] = $userObj->phone;
+        $phoneData['subject'] = $whatsappTemplateObj->title_ar;
+        $phoneData['content'] = $whatsappTemplateObj->content_ar;
         \MailHelper::prepareEmail($phoneData,1);
 
         if($type == 'New'){
             // Second Email
             $notificationTemplateObj = NotificationTemplate::getOne(2,'activateAccount');
-            $allData = [
-                'name' => $userObj->name,
-                'subject' => $notificationTemplateObj->title_ar,
-                'content' => $notificationTemplateObj->content_ar,
-                'email' => $userObj->email,
-                'template' => 'tenant.emailUsers.default',
-                'url' => $loginUrl,
-                'extras' => [
-                    'invoiceObj' => Invoice::getData($invoiceObj),
-                    'company' => $userObj->company,
-                    'url' => $loginUrl,
-                ],
-            ];
+            $allData['subject'] = $notificationTemplateObj->title_ar;
+            $allData['content'] = $notificationTemplateObj->content_ar;
             \MailHelper::prepareEmail($allData);
 
             $whatsappTemplateObj = NotificationTemplate::getOne(1,'activateAccount');
-            $phoneData = $allData;
-            $phoneData['phone'] = $userObj->phone;
             $phoneData['subject'] = $whatsappTemplateObj->title_ar;
             $phoneData['content'] = $whatsappTemplateObj->content_ar;
             \MailHelper::prepareEmail($phoneData,1);
@@ -359,24 +350,11 @@ class SubscriptionHelper {
 
         if($type == 'Change'){
             $notificationTemplateObj = NotificationTemplate::getOne(2,'upgradeSuccess');
-            $allData = [
-                'name' => $userObj->name,
-                'subject' => $notificationTemplateObj->title_ar,
-                'content' => $notificationTemplateObj->content_ar,
-                'email' => $userObj->email,
-                'template' => 'tenant.emailUsers.default',
-                'url' => $loginUrl,
-                'extras' => [
-                    'invoiceObj' => Invoice::getData($invoiceObj),
-                    'company' => $userObj->company,
-                    'url' => $loginUrl,
-                ],
-            ];
+            $allData['subject'] = $notificationTemplateObj->title_ar;
+            $allData['content'] = $notificationTemplateObj->content_ar;
             \MailHelper::prepareEmail($allData);
 
             $whatsappTemplateObj = NotificationTemplate::getOne(1,'upgradeSuccess');
-            $phoneData = $allData;
-            $phoneData['phone'] = $userObj->phone;
             $phoneData['subject'] = $whatsappTemplateObj->title_ar;
             $phoneData['content'] = $whatsappTemplateObj->content_ar;
             \MailHelper::prepareEmail($phoneData,1);
@@ -384,24 +362,11 @@ class SubscriptionHelper {
 
         if($type == 'Renew'){
             $notificationTemplateObj = NotificationTemplate::getOne(2,'renewAccount');
-            $allData = [
-                'name' => $userObj->name,
-                'subject' => $notificationTemplateObj->title_ar,
-                'content' => $notificationTemplateObj->content_ar,
-                'email' => $userObj->email,
-                'template' => 'tenant.emailUsers.default',
-                'url' => $loginUrl,
-                'extras' => [
-                    'invoiceObj' => Invoice::getData($invoiceObj),
-                    'company' => $userObj->company,
-                    'url' => $loginUrl,
-                ],
-            ];
+            $allData['subject'] = $notificationTemplateObj->title_ar;
+            $allData['content'] = $notificationTemplateObj->content_ar;
             \MailHelper::prepareEmail($allData);
 
             $whatsappTemplateObj = NotificationTemplate::getOne(1,'renewAccount');
-            $phoneData = $allData;
-            $phoneData['phone'] = $userObj->phone;
             $phoneData['subject'] = $whatsappTemplateObj->title_ar;
             $phoneData['content'] = $whatsappTemplateObj->content_ar;
             \MailHelper::prepareEmail($phoneData,1);
@@ -460,7 +425,7 @@ class SubscriptionHelper {
             $invoiceObj = new Invoice;
         }
         $invoiceObj->client_id = $data['user_id'];
-        $invoiceObj->due_date = $items[0]['start_date'];
+        $invoiceObj->due_date = isset($data['due_date']) ? $data['due_date'] : $items[0]['start_date'];
         $invoiceObj->main = $main;
         $invoiceObj->items = serialize($items);
 

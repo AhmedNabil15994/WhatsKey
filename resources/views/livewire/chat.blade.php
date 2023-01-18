@@ -105,6 +105,7 @@
                 @endforeach
             </div>
         </div>
+        @if(\Session::get('is_admin') == 1)
         <div class="card-toolbar">
             <div class="dropdown dropdown-inline">
                 <a href="#" class="btn btn-hover-light-primary btn-xs btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -205,6 +206,7 @@
                 </div>
             </div>
         </div>
+        @endif
     </div>
     @endif
 </div>

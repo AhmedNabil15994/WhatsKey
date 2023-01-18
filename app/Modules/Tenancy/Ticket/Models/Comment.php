@@ -83,7 +83,7 @@ class Comment extends Model{
         $data->file = $source->file_name != null ? self::getPhotoPath($source->id, $source->file_name) : "";
         $data->file_size = $data->file != '' ? \ImagesHelper::getPhotoSize($data->file) : '';
         $data->file_type = $data->file != '' ? \ImagesHelper::checkFileExtension($data->file_name) : '';
-        $data->created_at = \Carbon\Carbon::createFromTimeStamp(strtotime($source->created_at))->diffForHumans();
+        $data->created_at = $source->created_at;
         return $data;
     }
 

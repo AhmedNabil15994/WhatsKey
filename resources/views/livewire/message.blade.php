@@ -5,7 +5,7 @@
     @endphp
 
     @if($msg['message_type'] != 'call')
-    <div class="messageItem d-flex flex-column mb-5 align-items-{{$msg['fromMe'] == 1 ? 'end' : 'start'}}" id="{{$id}}">
+    <div class="messageItem d-flex flex-column align-items-{{$msg['fromMe'] == 1 ? 'end' : 'start'}}" id="{{$id}}">
         <div class="mt-2 rounded p-3 bg-{{$msg['fromMe'] == 1 ? 'white' : 'light-success'}} text-dark-50 font-weight-bold font-size-lg text-{{$msg['fromMe'] == 1 ? 'right' : 'left'}} max-w-400px" style="position:relative; {{ $msg['message_type'] == 'disappearing' ? 'position: relative;' : ''}}">
 
             @if($msg['deleted_at'] != null || $msg['sending_status'] == 6)
@@ -169,7 +169,7 @@
         </div>
     </div>
     @else
-    <div class="row m-0 p-0 text-center mb-5">
+    <div class="row m-0 p-0 text-center">
         <div class="call bg-white border-radius-5 text-center p-3 d-block w-auto m-auto">
             @if($msg['metadata']['isVideo'] == true)
             <span class="svg-icon text-danger">
@@ -185,4 +185,8 @@
         </div>
     </div>
     @endif
+    @if($msg['fromMe'])
+    <div class="text-dark text-right font-weight-bolder mb-5 mt-2 bg-gray-100 px-2 pt-1 w-fit float-right" style="z-index: 99999999;position: relative;width: fit-content;border-radius: 5px">{{$msg['status']}}</div>    
+    @endif
+    <div class="clearfix"></div>
 </div>

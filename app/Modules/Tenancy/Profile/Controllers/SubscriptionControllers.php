@@ -4,6 +4,7 @@ use App\Models\UserAddon;
 use App\Models\CentralUser;
 use App\Models\ExtraQuota;
 use App\Models\UserExtraQuota;
+use App\Models\CentralChannel;
 use App\Models\Membership;
 use App\Models\PaymentInfo;
 use App\Models\User;
@@ -449,7 +450,86 @@ class SubscriptionControllers extends Controller
     }
 
     public function transferPayment(){
-        dd('transferPaymentsToFirstOfMonth');
+        $channelObj = Session::get('channel') != null ? CentralChannel::getData(CentralChannel::getOne(Session::get('channel'))) : null;
+        $mainUser = User::first();
+        if(!$channelObj || !$mainUser){
+            return redirect('404');
+        }
+
+        $nextStartMonth = date('Y-m-d', strtotime('first day of +1 month', strtotime($channelObj->end_date)));
+        $endDate = strtotime($channelObj->end_date);
+        $datediff = strtotime($nextStartMonth) - $endDate;
+        $daysLeft = (int) round($datediff / (60 * 60 * 24));
+
+        $membershipObj = Membership::find($mainUser->membership_id);
+
+        if($mainUser->duration_type == 2){
+            $price = $membershipObj->annual_after_vat;
+            $usedCost = ($price / 365);
+        }else{
+            $price = $membershipObj->monthly_after_vat;
+            $usedCost = ($price / 30);
+        }
+
+        $membershipMustPaid = round($daysLeft * $usedCost, 2);
+
+        $data['userCredits'] = round( $price - $membershipMustPaid ,2);
+        $data['paymentInfo'] = $mainUser->paymentInfo;
+
+        $item = [
+            'id' => $membershipObj->id,
+            'type' => 'membership',
+            'duration_type' => $mainUser->duration_type,
+            'title' => Membership::getData($membershipObj)->title,
+            'start_date' => $channelObj->start_date,
+            'end_date' => $nextStartMonth,
+            'price' => $mainUser->duration_type == 1 ? $membershipObj->monthly_after_vat : $membershipObj->annual_after_vat,
+            'quantity' => 1,
+        ];
+
+        $newItem = $item;
+        $newItem['start_date'] = $channelObj->end_date;
+        $data['items'][] = $newItem;
+
+        $subscriptionHelperData = [
+            'user_id' => ROOT_ID,
+            'tenant_id' => TENANT_ID,
+            'global_id' => GLOBAL_ID,
+            'cartData' => [$item],
+            'type' => 'Change',
+            'transaction_id' => null,
+            'payment_gateaway' => null,
+            'user_credits' => $data['userCredits'],
+            'coupon_code' => null,
+            'due_date' => $channelObj->end_date,
+        ];
+
+        Variable::where('var_key','inv_status')->firstOrCreate(['var_key'=>'inv_status','var_value'=>'Change']);
+        $subscriptionHelperObj = new \SubscriptionHelper;
+        $data['invoice_id'] = $subscriptionHelperObj->setInvoice($subscriptionHelperData);
+        return view('Tenancy.Profile.Views.cart')->with('data', (object) $data);
+    }
+
+    public function disableAddonAutoInvoice(){
+        $varObj = Variable::where('var_key','disableAddonAutoInvoice')->first();
+        if(!$varObj){
+            Variable::create(['var_key'=>'disableAddonAutoInvoice','var_value'=>1]);
+        }else{
+            $varObj->delete();
+        }
+        Session::flash('success', trans('main.editSuccess'));
+        return redirect()->back();
+    }
+
+    public function disableExtraQuotaAutoInvoice(){
+        $varObj = Variable::where('var_key','disableExtraQuotaAutoInvoice')->first();
+        if(!$varObj){
+            Variable::create(['var_key'=>'disableExtraQuotaAutoInvoice','var_value'=>1]);
+        }else{
+            $varObj->delete();
+        }
+        Session::flash('success', trans('main.editSuccess'));
+        return redirect()->back();
     }
 
     public function paymentError()
@@ -475,48 +555,7 @@ class SubscriptionControllers extends Controller
         }
     }
 
-    public function calcData($total, $cartData, $userObj)
-    {
-        $total = json_decode($total);
-        $totals = $total[3];
-
-        $cartObj = Variable::where('var_key', 'cartObj')->first();
-        if (!$cartObj) {
-            $cartObj = new Variable();
-        }
-        $cartObj->var_key = 'cartObj';
-        $cartObj->var_value = json_encode($cartData);
-        $cartObj->save();
-
-        if (Session::has('userCredits')) {
-            $userCreditsObj = Variable::where('var_key', 'userCredits')->first();
-            if (!$userCreditsObj) {
-                $userCreditsObj = new Variable();
-            }
-            $userCreditsObj->var_value = Session::get('userCredits');
-            $userCreditsObj->var_key = 'userCredits';
-            $userCreditsObj->save();
-        }
-
-        $paymentInfoObj = PaymentInfo::NotDeleted()->where('user_id', $userObj->id)->first();
-        if (!$paymentInfoObj) {
-            $paymentInfoObj = new PaymentInfo;
-        }
-        if (isset($request->address) && !empty($request->address)) {
-            $paymentInfoObj->user_id = $userObj->id;
-            $paymentInfoObj->address = $request->address;
-            $paymentInfoObj->address2 = $request->address2;
-            $paymentInfoObj->city = $request->city;
-            $paymentInfoObj->country = $request->country;
-            $paymentInfoObj->region = $request->region;
-            $paymentInfoObj->postal_code = $request->postal_code;
-            $paymentInfoObj->tax_id = $request->tax_id;
-            $paymentInfoObj->created_at = DATE_TIME;
-            $paymentInfoObj->created_by = $userObj->id;
-            $paymentInfoObj->save();
-        }
-    }
-
+    
     public function completeOrder()
     {
         $input = \Request::all();
@@ -609,21 +648,15 @@ class SubscriptionControllers extends Controller
 
     public function getDiffs($end_date, $oldDuration, $monthly_after_vat, $annual_after_vat)
     {
-        $nextStartMonth = date('Y-m-d', strtotime('first day of +1 month', strtotime($end_date)));
+        
 
-        $endDate = strtotime($end_date);
-        $datediff = strtotime($nextStartMonth) - $endDate;
-        $daysLeft = (int) round($datediff / (60 * 60 * 24));
 
         $newPriceAfterVat = $monthly_after_vat;
 
         if ($oldDuration == 1) {
-            $usedCost = ($monthly_after_vat / 30);
         } else if ($oldDuration == 2) {
-            $usedCost = ($annual_after_vat / 365);
-            $newPriceAfterVat = $annual_after_vat;
+            
         }
-        $membershipMustPaid = round($daysLeft * $usedCost, 2);
         return [
             'mustPaid' => $membershipMustPaid,
             'daysLeft' => $daysLeft,

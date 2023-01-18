@@ -71,6 +71,8 @@ class WAAccountController extends Controller
             'membership_addons' => $channelObj ? Addons::dataList(1,Session::get('membershipAddonsID'))['data'] : [],
             'addons' =>  $channelObj ? UserAddon::dataList(Session::get('addonsID'),ROOT_ID)['data'] : [],
             'extra_quotas' => $channelObj ? UserExtraQuota::getForUser(GLOBAL_ID)[1] : [],
+            'disableAddonAutoInvoice' => Variable::getVar('disableAddonAutoInvoice'),
+            'disableExtraQuotaAutoInvoice' => Variable::getVar('disableExtraQuotaAutoInvoice'),
         ];
         $meVar = Variable::getVar('ME');
 

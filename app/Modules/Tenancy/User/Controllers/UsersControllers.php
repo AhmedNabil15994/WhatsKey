@@ -381,6 +381,8 @@ class UsersControllers extends Controller {
         $dataObj->is_approved = 1;
         $dataObj->notifications = 0;
         $dataObj->offers = 0;
+        $dataObj->duration_type = $mainUser->duration_type;
+        $dataObj->membership_id = $mainUser->membership_id;
         $dataObj->domain = $mainUser->domain;
         $dataObj->global_id = $mainUser->global_id;
         $dataObj->company = $mainUser->company;
@@ -448,7 +450,7 @@ class UsersControllers extends Controller {
             return \TraitsFunc::ErrorMessage(trans('main.notDeleted'));
         }
         \ImagesHelper::deleteDirectory(public_path('/').'uploads/'.TENANT_ID.'/'.$this->getData()['mainData']['name'].'/'.$id);
-        return \Helper::globalDelete($dataObj);
+        return \Helper::globalDelete($dataObj,true);
     }
 
     public function fastEdit() {

@@ -32,9 +32,14 @@ class Chats extends Component
     public function loadMore(){
         $start = $this->page * $this->page_size;
         $varObj = Variable::getVar('disableDialogsArchive');
-        $dialogs = ChatDialog::whereHas('Messages')->where(function($whereQuery) use ($varObj){
+        $is_admin = Session::get('is_admin');
+        $user_id = Session::get('user_id');
+        $dialogs = ChatDialog::whereHas('Messages')->where(function($whereQuery) use ($varObj,$is_admin,$user_id){
             if($varObj == '1'){
                 $whereQuery->where('archived',0)->orWhere('archived',null);
+            }
+            if(!$is_admin){
+                $whereQuery->where('modsArr','LIKE','%'.$user_id.'%');
             }
         })->orderBy('pinned','DESC')->orderByDesc(ChatMessage::select('time')
             ->whereColumn('messages.chatId', 'dialogs.id')
@@ -73,7 +78,7 @@ class Chats extends Component
     }
 
     public function changeDialogStatus($data){
-        if(!$this->hasSearch){
+        if(!$this->hasSearch && \Session::get('is_admin') == 1){
 
             $data = json_decode(json_encode($data), true);
             $pinned = [];
@@ -137,21 +142,24 @@ class Chats extends Component
 
     public function updateDialogPresence($data)
     {
-        $data = json_decode(json_encode($data), true);
-        $oldChats = $this->chats;
-        $oldChats = json_decode(json_encode($oldChats), true);
-        $newData = [];
-        $chatData = $data['data'];
-        if(isset($chatData['chatId'])){
-            $presence = '';
-            if(in_array($chatData['presenceData']['presence'],['recording','typing'])){
-                $presence = str_contains($chatData['chatId'],'@g.us') ?  $chatData['presenceData']['phone'] . ' is '. $chatData['presenceData']['presence'] . ' ......' : $chatData['presenceData']['presence'] . ' ......' ;
-                $this->emit('updatePresence',[
-                    'chatId' => $chatData['chatId'],
-                    'presence' => $presence,
-                ]);
+        if(\Session::get('is_admin') == 1){
+            $data = json_decode(json_encode($data), true);
+            $oldChats = $this->chats;
+            $oldChats = json_decode(json_encode($oldChats), true);
+            $newData = [];
+            $chatData = $data['data'];
+            if(isset($chatData['chatId'])){
+                $presence = '';
+                if(in_array($chatData['presenceData']['presence'],['recording','typing'])){
+                    $presence = str_contains($chatData['chatId'],'@g.us') ?  $chatData['presenceData']['phone'] . ' is '. $chatData['presenceData']['presence'] . ' ......' : $chatData['presenceData']['presence'] . ' ......' ;
+                    $this->emit('updatePresence',[
+                        'chatId' => $chatData['chatId'],
+                        'presence' => $presence,
+                    ]);
+                }
             }
         }
+        
     }
 
     public function readChat($chatId){

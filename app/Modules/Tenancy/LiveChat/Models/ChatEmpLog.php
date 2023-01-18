@@ -80,7 +80,7 @@ class ChatEmpLog extends Model{
 
 
     static function newLog($chatId,$type=null){
-        $userId = USER_ID;   
+        $userId = \Session::get('user_id');   
         $date = date('Y-m-d H:i:s');  
         if($type != null){
             $dataObj = self::where('user_id',$userId)->where('chatId',$chatId)->orderBy('id','DESC')->first();

@@ -37,17 +37,12 @@ class ProfileControllers extends Controller
 
         $oldDomainValue = $mainUserObj->domain;
 
-        if (isset($input['email']) && !empty($input['email'])) {
+        if (isset($input['email']) && !empty($input['email']) && $input['email'] != $dataObj->email) {
             $userObj = User::checkUserBy('email', $input['email'], USER_ID);
             $oldEmail = null;
             if ($userObj) {
-                if ($userObj->deleted_by != null) {
-                    $oldEmail = $userObj->email;
-                    User::where('email', $input['email'])->where('deleted_by', '!=', null)->delete();
-                } else {
-                    Session::flash('error', trans('main.emailError'));
-                    return redirect()->back()->withInput();
-                }
+                Session::flash('error', trans('main.emailError'));
+                return redirect()->back()->withInput();
             }
             $mainUserObj->email = $input['email'];
 
@@ -56,17 +51,12 @@ class ProfileControllers extends Controller
             }
         }
 
-        if (isset($input['phone']) && !empty($input['phone'])) {
+        if (isset($input['phone']) && !empty($input['phone']) && $input['phone'] != $dataObj->phone) {
             $userObj = User::checkUserBy('phone', $input['phone'], USER_ID);
             $oldPhone = null;
             if ($userObj) {
-                if ($userObj->deleted_by != null) {
-                    $oldPhone = $userObj->phone;
-                    User::where('phone', $input['phone'])->where('deleted_by', '!=', null)->delete();
-                } else {
-                    Session::flash('error', trans('main.phoneError'));
-                    return redirect()->back()->withInput();
-                }
+                Session::flash('error', trans('main.phoneError'));
+                return redirect()->back()->withInput();
             }
             $mainUserObj->phone = $input['phone'];
 

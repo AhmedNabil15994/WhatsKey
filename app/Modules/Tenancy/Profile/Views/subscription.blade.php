@@ -198,10 +198,6 @@
 <div class="card card-custom mb-5">
     <div class="card-header">
         <h3 class="card-title"><i class="la la-users icon-xl mx-1"></i> {{ trans('main.blockedUser') }} ({{count($data->blockList)}})</h3>
-        {{-- <div class="card-toolbar">
-            <a href="{{ URL::to('/profile/subscription/clearMessagesQueue') }}" class="btn btn-sm btn-danger font-weight-bold">
-            <i class="la la-trash-alt"></i>{{ trans('main.delete') }}</a>
-        </div> --}}
     </div>
     <div class="card-body">
         <table class="datatable datatable-bordered datatable-head-custom" id="kt_datatables">
@@ -235,7 +231,9 @@
         <div class="card-toolbar">
             @if(\Helper::checkRules('changeSubscription'))
             <a href="{{ URL::to('/profile/subscription/memberships') }}" class="btn btn-sm btn-dark font-weight-bold mx-1">{{ trans('main.resubscribe_b2') }}</a>
+            @if((int)date('d',strtotime($data->subscription->end_date)) != 1)
             <a href="{{ URL::to('/profile/subscription/transferPayment') }}" class="btn btn-sm btn-dark font-weight-bold mx-1">{{ trans('main.transferPayment') }}</a> 
+            @endif
             @endif
         </div>
     </div>
@@ -437,7 +435,14 @@
                 </h3>
                 <div class="card-toolbar">
                     @if(\Helper::checkRules('changeSubscription'))
-                    <a href="{{ URL::to('/profile/subscription/addons') }}" class="btn btn-sm btn-outline-success font-weight-bold"><i class="la la-edit icon-md"></i> {{ trans('main.edit') }}</a>
+                    <a href="{{ URL::to('/profile/subscription/addons') }}" class="mx-1 btn btn-sm btn-outline-success font-weight-bold"><i class="la la-edit icon-md"></i> {{ trans('main.edit') }}</a>
+                    <a href="{{ URL::to('/profile/subscription/addons/disableAutoInvoice') }}" class="mx-1 btn btn-sm btn-outline-info font-weight-bold">
+                        @if($data->subscription->disableAddonAutoInvoice == null || $data->subscription->disableAddonAutoInvoice == 0)
+                        <i class="la la-times icon-md"></i> {{ trans('main.disableAutoInvoice') }}
+                        @else
+                        <i class="la la-check icon-md"></i> {{ trans('main.enableAutoInvoice') }}
+                        @endif
+                    </a>
                     @endif
                 </div>
             </div>
@@ -493,11 +498,6 @@
                                             <span class="navi-text"><i class="la la-refresh icon-md"></i> {{trans('main.renew')}}</span>
                                         </a>
                                     </li>
-                                    <li class="navi-item">
-                                        <a href="{{ URL::to('/profile/subscription/updateAddonStatus/'.$addon->id.'/5') }}" class="navi-link px-2">
-                                            <span class="navi-text"><i class="la la-trash icon-md"></i> {{trans('main.delete')}}</span>
-                                        </a>
-                                    </li>
                                     @endif
                                     @if($addon->status == 0)
                                     <li class="navi-item">
@@ -513,6 +513,11 @@
                                         </a>
                                     </li>
                                     @endif
+                                    <li class="navi-item">
+                                        <a href="{{ URL::to('/profile/subscription/updateAddonStatus/'.$addon->id.'/5') }}" class="navi-link px-2">
+                                            <span class="navi-text"><i class="la la-trash icon-md"></i> {{trans('main.delete')}}</span>
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -543,7 +548,16 @@
                     {{trans('main.extraQuotas')}}
                 </h3>
                 <div class="card-toolbar">
+                    @if(\Helper::checkRules('changeSubscription'))
                     <a href="{{ URL::to('/profile/subscription/extraQuotas') }}" class="btn btn-sm btn-outline-success font-weight-bold"><i class="la la-edit icon-md"></i> {{ trans('main.edit') }}</a>
+                    <a href="{{ URL::to('/profile/subscription/extraQuotas/disableAutoInvoice') }}" class="mx-1 btn btn-sm btn-outline-info font-weight-bold">
+                        @if($data->subscription->disableExtraQuotaAutoInvoice == null || $data->subscription->disableExtraQuotaAutoInvoice == 0)
+                        <i class="la la-times icon-md"></i> {{ trans('main.disableAutoInvoice2') }}
+                        @else
+                        <i class="la la-check icon-md"></i> {{ trans('main.enableAutoInvoice2') }}
+                        @endif
+                    </a>
+                    @endif
                 </div>
             </div>
             <div class="card-body pt-0">
@@ -574,11 +588,6 @@
                                             <span class="navi-text"><i class="la la-refresh icon-md"></i> {{trans('main.renew')}}</span>
                                         </a>
                                     </li>
-                                    <li class="navi-item">
-                                        <a href="{{ URL::to('/profile/subscription/updateExtraQuotaStatus/'.$extra_quota->id.'/5') }}" class="navi-link px-2">
-                                            <span class="navi-text"><i class="la la-trash icon-md"></i> {{trans('main.delete')}}</span>
-                                        </a>
-                                    </li>
                                     @endif
                                     @if($extra_quota->status == 0)
                                     <li class="navi-item">
@@ -594,6 +603,11 @@
                                         </a>
                                     </li>
                                     @endif
+                                    <li class="navi-item">
+                                        <a href="{{ URL::to('/profile/subscription/updateExtraQuotaStatus/'.$extra_quota->id.'/5') }}" class="navi-link px-2">
+                                            <span class="navi-text"><i class="la la-trash icon-md"></i> {{trans('main.delete')}}</span>
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
                         </div>

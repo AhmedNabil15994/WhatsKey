@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use App\Models\CentralWebActions;
+use App\Models\BankTransfer;
 use DataTables;
 use Salla\ZATCA\GenerateQrCode;
 use Salla\ZATCA\Tags\InvoiceDate;
@@ -273,6 +274,7 @@ class InvoiceControllers extends Controller {
     public function delete($id) {
         $id = (int) $id;
         $dataObj = Invoice::getOne($id);
+        BankTransfer::where('invoice_id',$id)->update(['deleted_at'=>DATE_TIME,'deleted_by'=>USER_ID]);
         CentralWebActions::newType(3,$this->getData()['mainData']['modelName']);
         return \Helper::globalDelete($dataObj);
     }

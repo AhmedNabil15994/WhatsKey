@@ -190,9 +190,9 @@
                         <div class="clearfix"></div>
                         <li class="font-weight-bold text-dark-50">{{ trans('main.status') }} <span class="float-right">{{ $data->data->statusText }}</span></li>
                         <div class="clearfix"></div>
-                        <li class="font-weight-bold text-dark-50">{{ trans('main.date') }} <span class="float-right">{{ date('d M y H:i A',strtotime($data->data->created_at)) }}</span></li>
+                        <li class="font-weight-bold text-dark-50" dir="ltr">{{ trans('main.date') }} <span class="float-right">{{ date('d M y H:i A',strtotime($data->data->created_at)) }}</span></li>
                         <div class="clearfix"></div>
-                        <li class="font-weight-bold text-dark-50">{{ trans('main.lastReply') }} <span class="float-right">{{ !empty($data->comments) ? $data->comments[0]->created_at : date('d M y H:i A',strtotime($data->data->created_at)) }}</span></li>
+                        <li class="font-weight-bold text-dark-50" dir="ltr">{{ trans('main.lastReply') }} <span class="float-right">{{ !empty($data->comments) ? date('d M y H:i A',strtotime($data->comments[0]->created_at)) : date('d M y H:i A',strtotime($data->data->created_at)) }}</span></li>
                         <div class="clearfix"></div>
                     </ul>
                 </div>

@@ -2138,7 +2138,7 @@ module.exports = {
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
-var domain = 'newdomain1';
+var domain = window.location.host.split('.')[1] ? window.location.host.split('.')[0] : false;
 window.Echo.channel(domain + '-NewIncomingMessage').listen('IncomingMessage', function (data) {
   window.Livewire.emitTo('conversation', 'newIncomingMsg', data);
 });

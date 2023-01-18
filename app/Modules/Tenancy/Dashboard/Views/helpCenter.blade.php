@@ -87,7 +87,7 @@
                 <select class="form-control" data-toggle="select2" name="user_id">
                     <option value="">{{ trans('main.choose') }}</option>
                     @foreach($data->clients as $client)
-                    <option value="{{ $client->id }}" {{ $client->id == old('user_id') || $client->id == USER_ID ? 'selected' : '' }}>{{ '#'.$client->id .' - '. $client->name }}</option>
+                    <option value="{{ $client->id }}" {{ $client->id == old('user_id') || $client->id == ROOT_ID ? 'selected' : '' }}>{{ '#'.$client->id .' - '. $client->name }}</option>
                     @endforeach
                 </select>
             </div>

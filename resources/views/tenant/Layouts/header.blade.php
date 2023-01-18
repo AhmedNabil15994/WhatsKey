@@ -8,7 +8,7 @@
     }else if($currentTime >= 18 || $currentTime <= 5){
         $text = trans('main.evening');
     }
-    $image = \App\Models\CentralUser::getData(\App\Models\CentralUser::getOne(USER_ID))->photo;
+    $image = IS_ADMIN ? \App\Models\CentralUser::getData(\App\Models\CentralUser::getOne(USER_ID))->photo : \App\Models\User::getData(\App\Models\User::getOne(USER_ID))->photo;
 @endphp
 <!--begin::Header-->
 <div id="kt_header" class="header header-fixed">

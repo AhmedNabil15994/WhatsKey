@@ -175,6 +175,8 @@ return [
     'SubscriptionControllers@updateAddonStatus' => 'changeSubscription',
     'SubscriptionControllers@updateExtraQuotaStatus' => 'changeSubscription',
     'SubscriptionControllers@transferPayment' => 'changeSubscription',
+    'SubscriptionControllers@disableAddonAutoInvoice' => 'changeSubscription',
+    'SubscriptionControllers@disableExtraQuotaAutoInvoice' => 'changeSubscription',
 
     /************************** In Review **************************/
     'SubscriptionControllers@paymentError' => 'general',

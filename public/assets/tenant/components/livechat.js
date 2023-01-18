@@ -408,17 +408,20 @@ $(function(){
 	$(document).on('click','.updateDetails',function(e){
 		e.preventDefault();
 		var formdata = new FormData();
-		let background = $('input[name="profile_avatar"]')[0].files[0]
-		let disable_read = $('input[name="disable_read"]').is(":checked") ? 1 : 0;
-
-        formdata.append('background', background);
+		if($('input[name="profile_avatar"]').length){
+			let background = $('input[name="profile_avatar"]')[0].files[0]
+			let disable_read = $('input[name="disable_read"]').is(":checked") ? 1 : 0;
+			formdata.append('mods', JSON.stringify($('.contactInfo select[name="mods[]"]').val()));
+	        formdata.append('disable_read',disable_read)
+	        formdata.append('background', background);
+		}
+		
         formdata.append('name', $('.contactInfo input[name="name"]').val());
         formdata.append('email', $('.contactInfo input[name="email"]').val());
         formdata.append('city', $('.contactInfo input[name="city"]').val());
         formdata.append('country', $('.contactInfo input[name="country"]').val());
         formdata.append('notes', $('.contactInfo textarea[name="notes"]').val());
-        formdata.append('mods', JSON.stringify($('.contactInfo select[name="mods[]"]').val()));
-        formdata.append('disable_read',disable_read)
+        
         
         $.ajaxSetup({
             headers: {

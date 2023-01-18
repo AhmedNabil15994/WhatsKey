@@ -38,6 +38,12 @@
     .datatable.datatable-default>.datatable-table>.datatable-head .datatable-row>.datatable-cell.datatable-cell-sort{
         text-align: center;
     }
+    html[dir="rtl"] .timeline.timeline-6:before{
+        right: 100px;
+    }
+    html[dir="ltr"] .timeline.timeline-6:before{
+        left: 100px;
+    }
 </style>
 @endsection
 
@@ -275,26 +281,24 @@
     </div>
   
     @if(!empty($data->logs))
-    <div class="row">
-        <div class="card card-custom card-stretch gutter-b">
-            <div class="card-header align-items-center border-0 mt-4">
-                <h3 class="card-title align-items-start flex-column">
-                    <span class="font-weight-bolder text-dark">{{ trans('main.activityLog') }}</span>
-                    <span class="text-muted mt-3 font-weight-bold font-size-sm">{{count($data->logs)}}</span>
-                </h3>
-            </div>
-            <div class="card-body pt-4">
-                <div class="timeline timeline-6 mt-3">
-                    @foreach($data->logs as $log)
-                    <div class="timeline-item align-items-start">
-                        <div class="timeline-label font-weight-bolder text-dark-75 font-size-lg">{{ $log->created_at2 }}</div>
-                        <div class="timeline-badge">
-                            <i class="fa fa-genderless text-{{$log->type == 1 ? 'success' : ($log->type == 2 ? 'danger' : 'primary')}} icon-xl"></i>
-                        </div>
-                        <div class="font-weight-mormal font-size-lg timeline-content text-muted pl-3">{{ $log->user }} <span>{{ $log->typeText }}</span></div>
+    <div class="card card-custom mt-7">
+        <div class="card-header flex-wrap border-0 pt-6 pb-0">
+            <h3 class="card-title row w-100">
+                <span class="font-weight-bolder text-dark col-6">{{ trans('main.activityLog') }}</span>
+                <span class="text-muted mt-3 font-weight-bolder font-size-h4 col-6 text-right">{{count($data->logs)}}</span>
+            </h3>
+        </div>
+        <div class="card-body pt-4">
+            <div class="timeline timeline-6 mt-3">
+                @foreach($data->logs as $log)
+                <div class="timeline-item align-items-start">
+                    <div class="timeline-label font-weight-bolder text-dark-75 font-size-lg w-100px">{{ $log->created_at2 }}</div>
+                    <div class="timeline-badge">
+                        <i class="fa fa-genderless text-{{$log->type == 1 ? 'success' : ($log->type == 2 ? 'danger' : 'primary')}} icon-xl"></i>
                     </div>
-                    @endforeach
+                    <div class="font-weight-mormal font-size-lg timeline-content text-muted pl-3">{{ $log->user }} <span>{{ $log->typeText }}</span> <span>{{str_replace('@c.us','',str_replace('@g.us','',$log->chatId))}}</span></div>
                 </div>
+                @endforeach
             </div>
         </div>
     </div>

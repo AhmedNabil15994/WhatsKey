@@ -295,13 +295,15 @@ class User extends Authenticatable implements Syncable
         $channelObj = isset($channels[0]) ? CentralChannel::where('id',$channels[0])->first() : [];
         session(['channel' => !empty($channels) ? isset($channels[0]) ? $channels[0] : null : null]);
         session(['channelCode' => !empty($channels) ? $channelObj != null ? $channelObj->instanceId : '' : null ]);
-        session(['membership' => $userObj->membership_id]);
         if($isAdmin){
             $rootId = $userObj->id;
+            $membership_id = $userObj->membership_id;
         }else{
             $mainUser = User::first();
             $rootId = $mainUser->id;
+            $membership_id = $mainUser->membership_id;
         }
+        session(['membership' => $membership_id]);
         $tenantObj = \DB::connection('main')->table('tenant_users')->where('global_user_id',$userObj->global_id)->first();
 
         $invoiceObj = Invoice::getDisabled($rootId);

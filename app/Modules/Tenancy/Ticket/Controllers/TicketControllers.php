@@ -201,7 +201,11 @@ class TicketControllers extends Controller {
 
         Session::forget('photos');
         Session::flash('success', trans('main.addSuccess'));
-        return redirect()->to($this->getData()['mainData']['url'].'/');
+        if(!IS_ADMIN && !\Helper::checkRules('list-tickes')){
+            return redirect()->back();
+        }else{
+            return redirect()->to($this->getData()['mainData']['url'].'/');
+        }
     }
 
     public function delete($id) {

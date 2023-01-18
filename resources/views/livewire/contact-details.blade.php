@@ -58,6 +58,7 @@
                             <i class="la la-smile icon-xl emoji-icon"></i>
                             <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                         </div>
+                        @if(\Session::get('is_admin') == 1)
                         <div class="form-group mb-5">
                             <label>{{trans('main.mods')}}</label>
                             <select name="mods[]" data-toggle="select2" class="form-control" multiple>
@@ -92,6 +93,7 @@
                                 <span class="btn btn-xs btn-icon btn-circle btn-white btn-hover-text-primary btn-shadow" data-action="remove" data-toggle="tooltip" title="Remove Background"><i class="ki ki-bold-close icon-xs text-muted"></i></span>
                             </div>
                         </div>
+                        @endif
                         <div class="w-100 text-right">
                             <button type="button" class="btn btn-primary mr-2 updateDetails">{{trans('main.refresh')}}</button>
                         </div>  

@@ -115,7 +115,7 @@ class CentralTicket extends Model{
         $data->status = $source->status;
         $data->sort = $source->sort;
         $data->created_at = \Helper::formatDate($source->created_at);
-        $data->last_comment = $source->LastComment != null && $source->LastComment->creator_name != null ? $source->LastComment->creator_name : '';
+        $data->last_comment = $source->LastComment != null && $source->LastComment->name != null ? $source->LastComment->name : '';
         $data->last_comment_date = $source->LastComment != null ? $source->LastComment->created_at : '';    
         return $data;
     }

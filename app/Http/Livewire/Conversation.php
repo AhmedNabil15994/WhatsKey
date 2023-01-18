@@ -9,6 +9,7 @@ use App\Models\Template;
 use App\Models\Contact;
 use App\Models\ChatMessage;
 use App\Models\ChatDialog;
+use App\Models\ChatEmpLog;
 use App\Models\Category;
 use App\Models\Variable;
 
@@ -46,6 +47,12 @@ class Conversation extends Component
         $this->selected = $data['chat']['id'];
         $this->emit('conversationOpened');
         $this->emit('refreshDesign');
+
+        $is_admin = \Session::get('is_admin');
+        $user_id = \Session::get('user_id');
+        if(!$is_admin){
+            ChatEmpLog::newLog($data['chat']['id']);
+        }
     }
 
     public function loadMoreMsgs(){
@@ -66,6 +73,7 @@ class Conversation extends Component
         $chat = $data['message'];
         $chat['lastMessage'] = (array) $chat['lastMessage'];
         $msg = $chat['lastMessage'];
+        $is_admin = \Session::get('is_admin');
         if($msg['chatId'] == $this->selected){
             $msgs = array_reverse($this->messages);
             if(isset($this->messages[0]) && $this->messages[0]['id'] != $chat['lastMessage']['id']){
@@ -89,7 +97,7 @@ class Conversation extends Component
             $msgs = array_reverse($msgs);
             $this->messages = $msgs;
         }else{
-            if($chat['lastMessage']['fromMe'] == 0 && !$chat['muted']){
+            if($chat['lastMessage']['fromMe'] == 0 && !$chat['muted'] && $is_admin){
                 $this->emit('playAudio');
             }
         }

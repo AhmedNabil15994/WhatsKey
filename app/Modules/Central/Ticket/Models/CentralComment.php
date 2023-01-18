@@ -76,7 +76,7 @@ class CentralComment extends Model{
         $data->reply_on = $source->reply_on;
         $data->replies = $source->reply_on == 0 ? self::dataList($source->ticket_id,$source->id) : [];
         $data->image = $creator->photo;
-        $data->creator = $creator->name;
+        $data->creator = $source->name;
         $data->created_at = \Carbon\Carbon::createFromTimeStamp(strtotime($source->created_at))->diffForHumans();
         return $data;
     }
