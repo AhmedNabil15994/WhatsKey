@@ -247,224 +247,52 @@ class TenantInvoiceControllers extends Controller {
             return Redirect('404');
         } 
         
-        $myData   = unserialize($invoiceObj->items);
+        $userObj = User::authenticatedUser();
+        $myData  = unserialize($invoiceObj->items);
        
-        $invoiceObj = Invoice::getData($invoiceObj);
-        $discount = $invoiceObj->discount;
         $testData = [];
-        $total = 0;
         $main = 0;
-        $start_date = $invoiceObj->due_date < date('Y-m-d') && $invoiceObj->status == 2 ? date('Y-m-d') : $invoiceObj->due_date;
+
+        $type = 'PayInvoice';
+        if(Session::has('invoice_id')){
+            $type = 'Renew';
+        }
+
         foreach($myData as $key => $one){
             if($one['type'] == 'membership'){
-                $dataObj = Membership::getOne($one['data']['id']);
-                $title = $dataObj->{'title_'.LANGUAGE_PREF};
                 $main = 1;
-            }else if($one['type'] == 'addon'){
-                $dataObj = Addons::getOne($one['data']['id']);
-                $title = $dataObj->{'title_'.LANGUAGE_PREF};
-            }else if($one['type'] == 'extra_quota'){
-                $dataObj = ExtraQuota::getData(ExtraQuota::getOne($one['data']['id']));
-                $title = $dataObj->extra_count . ' '.$dataObj->extraTypeText . ' ' . ($dataObj->extra_type == 1 ? trans('main.msgPerDay') : '');
             }
-            $testData[$key] = [
-                $dataObj->id,
-                $one['type'],
-                $title,
-                $one['data']['duration_type'],
-                $start_date,
-                $one['data']['duration_type'] == 1 ? date('Y-m-d',strtotime('+1 month',strtotime($start_date))) : date('Y-m-d',strtotime('+1 year',strtotime($start_date))),
-                $one['data']['duration_type'] == 1 ? $dataObj->monthly_after_vat : $dataObj->annual_after_vat,
-                (int)$one['data']['quantity'],
-            ];
-            $total+= $testData[$key][6] * (int)$one['data']['quantity'];
-        }
-
-        $userObj = User::getOne(USER_ID);
-        $type = 'PayInvoice';
-        if(Session::has('invoice_id') && Session::get('invoice_id') > 0){
-            $type = 'Suspended';
-        }
-        $cartObj = Variable::where('var_key','inv_status')->first();
-        if(!$cartObj){
-            $cartObj = new Variable();
-        }
-        $cartObj->var_key = 'inv_status';
-        $cartObj->var_value = $type;
-        $cartObj->save();
-
-        // $paymentObj = new \SubscriptionHelper(); 
-        // $invoice = $paymentObj->setInvoice($testData,USER_ID,TENANT_ID,GLOBAL_ID,$type);   
-
-        $data['user'] = $userObj;
-        $data['invoice'] = $invoiceObj;
-        $data['companyAddress'] = (object) [
-            'servers' => CentralVariable::getVar('servers'),
-            'address' => CentralVariable::getVar('address'),
-            'region' => CentralVariable::getVar('region'),
-            'city' => CentralVariable::getVar('city'),
-            'postal_code' => CentralVariable::getVar('postal_code'),
-            'country' => CentralVariable::getVar('country'),
-            'tax_id' => $invoiceObj->due_date >= date('Y-m-d',strtotime('2022-05-01')) ? CentralVariable::getVar('tax_id2') : CentralVariable::getVar('tax_id'),
-        ];
-
-        $data['data'] = $testData;
-        $tax = $invoiceObj->tax;
-        $data['totals'] = [
-            $invoiceObj->grandTotal,
-            $invoiceObj->discount,
-            $invoiceObj->tax,
-            $invoiceObj->roTtotal,
-        ];
-
-        $data['qrImage'] = GenerateQrCode::fromArray([
-            new Seller($data['companyAddress']->servers), // seller name        
-            new TaxNumber($data['companyAddress']->tax_id), // seller tax number
-            new InvoiceDate(date('Y-m-d\TH:i:s\Z',strtotime($data['invoice']->due_date))), // invoice date as Zulu ISO8601 @see https://en.wikipedia.org/wiki/ISO_8601
-            new InvoiceTotalAmount($total - $discount), // invoice total amount
-            new InvoiceTaxAmount($tax) // invoice tax amount
-            // TODO :: Support others tags
-        ])->render();
-
-        
-        // dd($data['totals']);
-        $data['countries'] = \DB::connection('main')->table('country')->get();
-        $data['regions'] = [];
-        $data['payment'] = PaymentInfo::where('user_id',USER_ID)->first();
-        $data['bankAccounts'] = BankAccount::dataList(1)['data'];
-        $data['disDelete'] = true;
-        return view('Tenancy.Dashboard.Views.V5.checkout')->with('data',(object) $data);
-    }
-
-    public function postCheckout($id){
-        $id = (int) $id;
-        $input = \Request::all();
-        if(!IS_ADMIN){
-            return redirect()->to('/dashboard');
-        }
-
-        $invoiceObj = Invoice::NotDeleted()->find($id);
-        $userObj = User::first();
-        if($invoiceObj == null || $invoiceObj->client_id != $userObj->id) {
-            return Redirect('404');
-        } 
-
-        $total = json_decode($input['totals']);
-        $totals = $total[3];
-        $cartData = $input['data'];
-
-        if(Session::has('userCredits')){
-            $userCreditsObj = Variable::where('var_key','userCredits')->first();
-            if(!$userCreditsObj){
-                $userCreditsObj = new Variable();
-            }
-            $userCreditsObj->var_value = Session::get('userCredits');
-            $userCreditsObj->var_key = 'userCredits';
-            $userCreditsObj->save();
+            $start_date = $type == 'Renew' ? date('Y-m-d') : $one['start_date'];
+            $one['start_date'] = $start_date;
+            $one['end_date'] = $one['duration_type'] == 1 ? date('Y-m-d',strtotime('+1 month',strtotime($start_date))) : date('Y-m-d',strtotime('+1 year',strtotime($start_date)));
+            $testData[] = $one;
         }
         
-        $userObj = User::first();
+        $invoiceObj->items = serialize($testData);
+        $invoiceObj->save();
 
-        $paymentInfoObj = PaymentInfo::NotDeleted()->where('user_id',$userObj->id)->first();
-        if(!$paymentInfoObj){
-            $paymentInfoObj = new PaymentInfo;
-        }
-        if(isset($input['address']) && !empty($input['address'])){
-            $paymentInfoObj->user_id = $userObj->id;
-            $paymentInfoObj->address = $input['address'];
-            $paymentInfoObj->address2 = $input['address2'];
-            $paymentInfoObj->city = $input['city'];
-            $paymentInfoObj->country = $input['country'];
-            $paymentInfoObj->region = $input['region'];
-            $paymentInfoObj->postal_code = $input['postal_code'];
-            $paymentInfoObj->tax_id = $input['tax_id'];
-            $paymentInfoObj->created_at = DATE_TIME;
-            $paymentInfoObj->created_by = $userObj->id;
-            $paymentInfoObj->save();
-        }
+        $userCredits = 0;
+        \Session::put('userCredits',$userCredits);
 
-        $names = explode(' ', $userObj->name ,2);
-        if($input['payType'] == 2){// Noon Integration
-            // paytabs - noon
-            $urlSecondSegment = '/paytabs';
-            $noonData = [
-                'returnURL' => \URL::to('/invoices/'.$id.'/pushInvoice'),
-                // 'returnURL' => \URL::to('/pushInvoice'),  // For Local 
-                'cart_id' => 'invoice-'.$invoiceObj->id,
-                'cart_amount' => $totals,
-                'cart_description' => 'New Invoice Payment',
-                'paypage_lang' => LANGUAGE_PREF,
-                'description' => 'Paying Invoice '.$invoiceObj->id,
-            ];
-
-            $paymentObj = new \PaymentHelper(); 
-            $resultData = $paymentObj->initNoon($noonData);            
-                   
-            $result = $paymentObj->hostedPayment($resultData['dataArr'],$urlSecondSegment,$resultData['extraHeaders']);
-            $result = json_decode($result);
-
-             // paytabs
-             if (($result->data) && $result->data->redirect_url) {
-                return redirect()->away($result->data->redirect_url);
-            }
-            // noon
-            // if(($result->data) && $result->data->result->redirect_url){
-            //     return redirect()->away($result->data->result->redirect_url);
-            // }
-        }
-    }
-
-    public function pushInvoice($id){
-        $input = \Request::all();
-        $id = (int) $id;
-        $data['data'] = json_decode($input['data']);
-        $data['status'] = json_decode($input['status']);
-
-        if($data['status']->status == 1){
-            return $this->activate($id,$data['data']->transaction_id,$data['data']->paymentGateaway);
-        }else{
-            $userObj = User::first();
-            User::setSessions($userObj);
-            \Session::flash('error',$data['status']->message);
-            return redirect()->to('/paymentError')->withInput();
-        }
-    }
-
-    public function activate($id,$transaction_id = null , $paymentGateaway = null){
-        $id = (int) $id;
-
-        $invoiceObj = Invoice::NotDeleted()->find($id);
-        if($invoiceObj == null) {
-            return Redirect('404');
-        }
-
-        $cartObj = unserialize($invoiceObj->items);
-        $type = Variable::getVar('inv_status');
-        $data = [
-            'cartObj' => $cartObj, 
+        $data['userCredits'] = $userCredits;
+        $data['paymentInfo'] = $userObj->paymentInfo;
+        $data['items'] = $testData;
+  
+        $subscriptionHelperData = [
+            'user_id' => ROOT_ID,
+            'tenant_id' => TENANT_ID,
+            'global_id' => GLOBAL_ID,
+            'cartData' => $testData,
             'type' => $type,
-            'transaction_id' => $transaction_id,
-            'paymentGateaway' => $paymentGateaway,
-            'start_date' => $type == 'Suspended' ? date('Y-m-d') : $invoiceObj->due_date,
-            'invoiceObj' => $invoiceObj,
-            'transferObj' => null,
-            'arrType' => 'old',
-            'myEndDate' => null,
+            'transaction_id' => null,
+            'payment_gateaway' => null,
+            'user_credits' => $userCredits,
+            'coupon_code' => null,
         ];
 
-        try {
-            dispatch(new NewClient($data))->onConnection('cjobs');
-        } catch (Exception $e) {
-            
-        }
-        // $paymentObj = new \SubscriptionHelper(); 
-        // $resultData = $paymentObj->newSubscription($cartObj,'payInvoice',$transaction_id,$paymentGateaway,$invoiceObj->due_date,$invoiceObj,null,'old');   
-        // if($resultData[0] == 0){
-        //     Session::flash('error',$resultData[1]);
-        //     return back()->withInput();
-        // }     
-        $userObj = User::first();
-        User::setSessions($userObj);
-        return redirect()->to('/invoices/view/'.$id);
+        Variable::where('var_key','inv_status')->firstOrCreate(['var_key'=>'inv_status','var_value'=>'Change']);
+        $subscriptionHelperObj = new \SubscriptionHelper;
+        $data['invoice_id'] = $subscriptionHelperObj->setInvoice($subscriptionHelperData);
+        return view('Tenancy.Profile.Views.cart')->with('data', (object) $data);
     }
 }

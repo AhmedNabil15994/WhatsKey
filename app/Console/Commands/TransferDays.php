@@ -46,47 +46,24 @@ class TransferDays extends Command
     {   
 
         $channelObj = CentralChannel::NotDeleted()->orderBy('id','ASC')->first();
-        $mainWhatsLoopObj = new \MainWhatsLoop($channelObj->id,$channelObj->token);
-        $result  = $mainWhatsLoopObj->channels();
-        $allChannels = [];
-        if(isset($result['data']) && isset($result['data']['channels'])){
-            $allChannels = $result['data']['channels'];
-        }
-
-        $mainChannel = $allChannels[0];
-        $later = new \DateTime(date('Y-m-d',$mainChannel['paidTill'] / 1000));
-        $earlier = new \DateTime(date('Y-m-d'));
-        $balanceDays = abs($later->diff($earlier)->format("%a"));
-        $channels = CentralChannel::dataList()['data'];
+        $mainWhatsLoopObj = new \OfficialHelper($channelObj->id,$channelObj->token);
         
+        $channels = CentralChannel::dataList()['data'];
         $activeChannels = [];
         foreach ($channels as $key => $value) {
             $centralUserObj = CentralUser::where('global_id',$value->global_user_id)->first();
             if($key > 0 && $value->leftDays > 0){
-                $activeChannels[] = $value->id; 
-            }
-        }
-        
-        // Normal Script
-        if($balanceDays < ( (2 * count($activeChannels) )  + 2 ) ){
-            $mainWhatsLoopObj = new \MainWhatsLoop($channelObj->id,$channelObj->token);
-            $data['body'] = "You Have To recharge at least ". (  ( (2 * count($activeChannels) )  + 2 ) - $balanceDays )  ." day To Complete Transfering Days for ".count($activeChannels)." active channels";
-            $users = CentralUser::where('group_id',1)->get();
-            foreach ($users as $key => $user) {
-                if(in_array($user->phone, ['+201009383326','+966557722074'])){
-                    $data['phone'] = str_replace('+','',$user->phone);
-                    $mainWhatsLoopObj->sendMessage($data);
-                }
+                $activeChannels[] = $value->instanceId; 
             }
         }
 
         foreach($channels as $key => $channel){
-            if($key !=0 ){
-                if(in_array($channel->id,$activeChannels) && $channel->leftDays >= 1){
+            if($channel->id != $channelObj->id){
+                if(in_array($channel->instanceId,$activeChannels) && $channel->leftDays >= 1){
                     $transferDaysData = [
-                        'receiver' => $channel->id,
+                        'receiver' => $channel->instanceId,
                         'days' => 1,
-                        'source' => $channelObj->id,
+                        'sender' => $channelObj->instanceId,
                     ];
                     $updateResult = $mainWhatsLoopObj->transferDays($transferDaysData);
                     $result = $updateResult->json();

@@ -77,6 +77,7 @@ class ExtraQuota extends Model{
         $data->extra_count = $source->extra_count;
         $data->extra_type = $source->extra_type;
         $data->extraTypeText = self::getTypeText($source->extra_type);
+        $data->title =  $source->extra_count . ' '.$data->extraTypeText . ' ' . ($source->extra_type == 1 ? trans('main.msgPerDay') : '') ;
         $data->monthly_price = $source->monthly_price != 0 ? $source->monthly_price : '';
         $data->monthly_after_vat = $source->monthly_after_vat != null ? $source->monthly_after_vat : '';
         $data->annual_price = $source->monthly_price != 0 ? $source->monthly_price * 10 : '';

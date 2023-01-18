@@ -23,6 +23,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\WACollection;
 use App\Models\Reply;
+use App\Models\Addons;
 
 use App\Models\User;
 use App\Models\UserAddon;
@@ -67,10 +68,10 @@ class WAAccountController extends Controller
             'start_date' => $channelObj ? $channelObj->start_date : '',
             'end_date' => $channelObj ? $channelObj->end_date : '',
             'leftDays' => $channelObj ? $channelObj->leftDays : '',
-            'addons' => $channelObj ? UserAddon::dataList(null, USER_ID, null, [1, 2, 3])['data'] : [],
+            'membership_addons' => $channelObj ? Addons::dataList(1,Session::get('membershipAddonsID'))['data'] : [],
+            'addons' =>  $channelObj ? UserAddon::dataList(Session::get('addonsID'),ROOT_ID)['data'] : [],
             'extra_quotas' => $channelObj ? UserExtraQuota::getForUser(GLOBAL_ID)[1] : [],
         ];
-
         $meVar = Variable::getVar('ME');
 
         $data['data'] = $userObj;

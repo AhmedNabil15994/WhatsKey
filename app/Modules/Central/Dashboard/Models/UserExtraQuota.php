@@ -28,7 +28,6 @@ class UserExtraQuota extends Model{
         return $this->belongsTo('App\Models\ExtraQuota','extra_quota_id');
     }
 
-
     static function getOne($id) {
         return self::find($id);
     }
@@ -78,10 +77,9 @@ class UserExtraQuota extends Model{
     }
 
     static function getOneForUserByType($user_id,$type){
-        $source = self::NotDeleted()->where('global_user_id',$user_id)->where('status',1)->withSum(['ExtraQuota'=> function($withQuery) use ($type){
-            $withQuery->where('extra_type',$type);
-        }],'extra_count')->orderBy('id','desc')->get();
-
+        $source = self::NotDeleted()->whereHas('ExtraQuota',function($whereQuery) use ($type){
+            $whereQuery->where('extra_type',$type);
+        })->where('global_user_id',$user_id)->where('status',1)->withSum('ExtraQuota','extra_count')->orderBy('id','desc')->get();
         if(!$source || !isset($source[0])){
             return 0;
         }
@@ -89,7 +87,7 @@ class UserExtraQuota extends Model{
     }
 
     static function getForUser($user_id){
-        $dataObj = self::where('global_user_id',$user_id)->get();
+        $dataObj = self::NotDeleted()->where('global_user_id',$user_id)->get();
 
         if(!$dataObj){
             return [];
@@ -143,8 +141,6 @@ class UserExtraQuota extends Model{
         }elseif($status == 1){
             $text = trans('main.active');
         }elseif($status == 2){
-            $text = trans('main.suspended');
-        }elseif($status == 3){
             $text = trans('main.deactivated');
         }
         return $text;

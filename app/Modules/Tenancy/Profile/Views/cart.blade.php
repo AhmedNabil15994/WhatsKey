@@ -271,6 +271,7 @@
                                 <button type="button" class="btn btn-light-primary font-weight-bolder text-uppercase px-9 py-4 btnPrev dis" data-wizard-type="action-prev">{{trans('main.prev')}}</button>
                             </div>
                             <div>
+                                <a href="{{URL::to('/invoices/'.$data->invoice_id.'/downloadPDF')}}" class="invoice hidden btn btn-dark font-weight-bolder text-uppercase px-9 py-4"> <i class="la la-file icon-xl"></i> {{ trans('main.invoice') }}</a>
                                 <button type="submit" class="btn btn-success font-weight-bolder text-uppercase px-9 py-4 finish" data-wizard-type="action-submit">{{trans('main.finish')}}</button>
                                 <button type="button" class="btn btn-primary font-weight-bolder text-uppercase px-9 py-4 btnNext" data-wizard-type="action-next">{{trans('main.next')}}</button>
                             </div>

@@ -117,7 +117,7 @@ class Invoice extends Model{
     static function getDisabled($user_id){
         $to = date('Y-m-t');
         $from = date('Y-m-01');
-        $lastInvoice = self::NotDeleted()->where('main',1)->whereBetween('due_date',[$from,$to])->where('client_id',$user_id)->where('status',2)->first();
+        $lastInvoice = self::NotDeleted()->where('main',1)->where('due_date','<',date('Y-m-d'))->where('client_id',$user_id)->where('status',2)->first();
         if(!$lastInvoice){
             $lastInvoice = self::NotDeleted()->where('main',1)->where('client_id',$user_id)->where('status',2)->orderBy('id','desc')->first();
         }

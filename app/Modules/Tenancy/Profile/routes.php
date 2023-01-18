@@ -3,7 +3,7 @@
 /*----------------------------------------------------------
 Users
 ----------------------------------------------------------*/
-Route::post('/checkout', [\App\Http\Controllers\ProfileControllers::class,'checkout']);
+Route::post('/checkout', [\App\Http\Controllers\SubscriptionControllers::class,'checkout']);
 Route::group(['prefix' => '/profile'] , function () {
     $controller = \App\Http\Controllers\ProfileControllers::class;    
     Route::get('/personalInfo', [$controller,'personalInfo']);
@@ -13,19 +13,23 @@ Route::group(['prefix' => '/profile'] , function () {
     Route::post('/personalInfo/editImage', [$controller,'uploadImage']);
     Route::post('/personalInfo/deleteImage', [$controller,'deleteImage']);
 
-    Route::get('/extraQuotas', [$controller,'extraQuotas']);
-    Route::get('/extraQuotas/{id}', [$controller,'postExtraQuotas']);
-    Route::get('/addons', [$controller,'addons']);
-    Route::post('/addons/{id}', [$controller,'postAddons']);
-
     Route::group(['prefix' => '/subscription'] , function () use ($controller) {
         $controller2 = \App\Http\Controllers\WAAccountController::class;
+        $controller3 = \App\Http\Controllers\SubscriptionControllers::class;
 
-        Route::get('/memberships', [$controller,'memberships']);
-        Route::get('/memberships/updateMembership', [$controller,'updateMembership']);
-        Route::post('/memberships/updateMembership/coupon', [$controller,'addCoupon']);
-        Route::get('/activate', [$controller,'activate']);
+        Route::get('/memberships', [$controller3,'memberships']);
+        Route::get('/memberships/updateMembership', [$controller3,'updateMembership']);
+        Route::post('/coupon', [$controller3,'addCoupon']);
+        Route::get('/activate', [$controller3,'activate']);
 
+        Route::get('/addons', [$controller3,'addons']);
+        Route::post('/addons', [$controller3,'postAddons']);
+
+        Route::get('/extraQuotas', [$controller3,'extraQuotas']);
+        Route::post('/extraQuotas', [$controller3,'postExtraQuotas']);
+
+        Route::get('/updateAddonStatus/{addon_id}/{status}', [$controller3,'updateAddonStatus']);
+        Route::get('/updateExtraQuotaStatus/{extra_quota_id}/{status}', [$controller3,'updateExtraQuotaStatus']);
 
         Route::get('/', [$controller2,'subscription']);
         Route::get('/unBlock/{chatId}', [$controller2,'unBlock']);

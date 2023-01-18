@@ -17,10 +17,9 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         //
         \App\Console\Commands\InstanceStatus::class,
-        \App\Console\Commands\SetInvoices::class,
         \App\Console\Commands\PushChannelSetting::class,
-        \App\Console\Commands\PushAddonSetting::class,
         \App\Console\Commands\TransferDays::class,
+        \App\Console\Commands\SetInvoices::class,
     ];
 
     protected function schedule(Schedule $schedule)

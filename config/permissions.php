@@ -79,12 +79,6 @@ return [
     'ProfileControllers@deleteImage' => 'profile',
     'ProfileControllers@postChangePassword' => 'profile',
     'ProfileControllers@postPaymentInfo' => 'paymentInfo',
-    'ProfileControllers@memberships' => 'changeSubscription',
-    'ProfileControllers@updateMembership' => 'changeSubscription',
-    'ProfileControllers@addCoupon' => 'addCoupon',
-    'ProfileControllers@checkout' => 'checkout',
-    'ProfileControllers@activate' => 'checkout',
-
 
     'WAAccountController@subscription' => 'subscription',
     'WAAccountController@screenshot' => 'subscription',
@@ -169,16 +163,19 @@ return [
     'OrderControllers@index' => 'list-orders',
     'OrderControllers@view' => 'view-order',
 
+    'SubscriptionControllers@memberships' => 'changeSubscription',
+    'SubscriptionControllers@updateMembership' => 'changeSubscription',
+    'SubscriptionControllers@addCoupon' => 'addCoupon',
+    'SubscriptionControllers@checkout' => 'checkout',
+    'SubscriptionControllers@activate' => 'checkout',
+    'SubscriptionControllers@addons' => 'changeSubscription',
+    'SubscriptionControllers@postAddons' => 'changeSubscription',
+    'SubscriptionControllers@extraQuotas' => 'changeSubscription',
+    'SubscriptionControllers@postExtraQuotas' => 'changeSubscription',
+    'SubscriptionControllers@updateAddonStatus' => 'changeSubscription',
+    'SubscriptionControllers@updateExtraQuotaStatus' => 'changeSubscription',
 
     /************************** In Review **************************/
-    'SubscriptionControllers@updateAddonStatus' => 'general',
-    'SubscriptionControllers@updateAddonStatus' => 'general',
     'SubscriptionControllers@paymentError' => 'general',
-    'SubscriptionControllers@completeOrder' => 'general',
-    'SubscriptionControllers@pushInvoice' => 'general',
-    'ProfileControllers@extraQuotas' => 'extraQuotas',
-    'ProfileControllers@postExtraQuotas' => 'extraQuotas',
-    'ProfileControllers@addons' => 'addons',
-    'ProfileControllers@postAddons' => 'addons',
-    
+    'SubscriptionControllers@pushInvoice' => 'general',    
 ];

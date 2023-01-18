@@ -185,7 +185,7 @@ class DashboardControllers extends Controller {
         Session::forget('package_id');
         Variable::where('var_key','hasJob')->delete();
 
-        $userObj = User::first();
+        $userObj = User::find(USER_ID);
         Session::flush();
         User::setSessions($userObj);
         

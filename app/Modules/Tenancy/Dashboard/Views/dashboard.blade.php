@@ -74,25 +74,26 @@
         @endsection
     </div>
     @elseif(Session::has('invoice_id') && Session::get('invoice_id') != 0)
+    @php
+    $transferObj = \App\Models\BankTransfer::where('user_id',ROOT_ID)->where('status',1)->orderBy('invoice_id','DESC')->first();
+    @endphp
     <div class="row">
-        <div class="col-xl-12">
-            <div class="card card-custom gutter-b bg-white">
-                <div class="card-body">
-                    <div class="d-flex align-items-center justify-content-between p-4 flex-lg-wrap flex-xl-nowrap">
-                        <div class="d-flex flex-column mr-5">
-                            <a href="{{ URL::to('/invoices/view/'.Session::get('invoice_id')) }}" class="h4 text-dark text-hover-primary mb-5">
-                                {{ trans('main.resubscribe_b1') }}
-                            </a>
-                            <p class="text-dark-50">
-                                {{ trans('main.resubscribe_p') }}
-                            </p>
-                        </div>
-                        <div class="ml-6 ml-lg-0 ml-xxl-6 flex-shrink-0">
-                            <a href="{{ URL::to('/updateSubscription?type=new') }}" target="_blank" class="btn font-weight-bolder text-uppercase btn-primary py-4 px-6">{{ trans('main.resubscribe_b2') }}</a>
-                        </div>
-                    </div>
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <div class="timer timer2 text-center card p-5">
+                <img class="mb-5" src="{{ asset('assets/tenant/images/checkImg.png') }}" alt="">
+                <div class="desc font-size-h3 mb-5">
+                    {{ trans('main.resubscribe_p') }}
                 </div>
-            </div>
+                <div class="totalConfirm mb-5">
+                    <center>
+                        <div class="nextPrev clearfix">
+                            <a href="{{ URL::to('/invoices/view/'.Session::get('invoice_id')) }}" class="mx-2 btn btn-outline-primary font-weight-bolder text-uppercase btn-primary py-4 px-6">{{ trans('main.resubscribe_b1') }}</a>
+                            <a href="{{ URL::to('/profile/subscription/memberships') }}" class="mx-2 btn btn-outline-success font-weight-bolder text-uppercase btn-primary py-4 px-6">{{ trans('main.resubscribe_b2') }}</a>
+                        </div>
+                    </center>
+                </div>
+            </div> 
         </div>
     </div>
     @else
@@ -202,7 +203,6 @@
             </div>
         </div>
     </div>
-
     <div class="card card-custom">
         <div class="card-header flex-wrap border-0 pt-6 pb-0">
             <div class="card-title">

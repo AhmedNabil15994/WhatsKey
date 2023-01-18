@@ -48,36 +48,18 @@ class PushChannelSetting extends Command
             $domain = CentralUser::getDomain($user);
             $channelObj = CentralChannel::where('global_user_id',$user->global_id)->first();
             if($channelObj){
-                $isBA = $user->isBA;
-                if(!$isBA){
-                    $mainWhatsLoopObj = new \MainWhatsLoop($channelObj->id,$channelObj->token);
-                        $myData = [
-                        'sendDelay' => '0',
-                        'webhookUrl' => str_replace('://', '://'.$domain.'.', config('app.BASE_URL')).'/webhooks/messages-webhook',
-                        'instanceStatuses' => 1,
-                        'webhookStatuses' => 1,
-                        'statusNotificationsOn' => 1,
-                        'ackNotificationsOn' => 1,
-                        'chatUpdateOn' => 1,
-                        'ignoreOldMessages' => 1,
-                        'videoUploadOn' => 1,
-                        'guaranteedHooks' => 1,
-                        'parallelHooks' => 1,
-                    ];
-                    
-                    $updateResult = $mainWhatsLoopObj->postSettings($myData);
-                }else{
-                    $mainWhatsLoopObj = new \OfficialHelper($channelObj->id,$channelObj->token);
-                    $myData = [
-                        'sendDelay' => '0',
-                        'webhooks' => [
-                            'messageNotifications' => str_replace('://', '://'.$domain.'.', config('app.BASE_URL')).'/webhooks/messages-webhook',
-                            'ackNotifications' => str_replace('://', '://'.$domain.'.', config('app.BASE_URL')).'/webhooks/messages-webhook',
-                        ],
-                        'ignoreOldMessages' => 1,
-                    ];
-                    $updateResult = $mainWhatsLoopObj->updateChannelSetting($myData);
-                }
+                $mainWhatsLoopObj = new \OfficialHelper($channelObj->id,$channelObj->token);
+                $myData = [
+                    'sendDelay' => '0',
+                    'webhooks' => [
+                        'messageNotifications' => str_replace('://', '://'.$domain.'.', config('app.BASE_URL')).'/services/webhooks/messages-webhook',
+                        'ackNotifications' => str_replace('://', '://'.$domain.'.', config('app.BASE_URL')).'/services/webhooks/acks-webhook',
+                        'chatNotifications' => str_replace('://', '://'.$domain.'.', config('app.BASE_URL')).'/services/webhooks/chats-webhook',
+                        'businessNotifications' => str_replace('://', '://'.$domain.'.', config('app.BASE_URL')).'/services/webhooks/business-webhook',
+                    ],
+                    'ignoreOldMessages' => 1,
+                ];
+                $updateResult = $mainWhatsLoopObj->updateChannelSetting($myData);
                 
                 $result = $updateResult->json();
 
@@ -85,18 +67,17 @@ class PushChannelSetting extends Command
                     $user->setting_pushed = 1;
                     $user->save();
                     
-                    $domainObj = Domain::where('domain',$domain)->first();
-                    $tenant = Tenant::find($domainObj->tenant_id);
-                    
-                    tenancy()->initialize($tenant);
+                    $domainObj = Domain::where('domain',$domain)->first();                    
+                    tenancy()->initialize($domainObj->tenant_id);
 
                     $tenantUserObj = User::first();
                     $tenantUserObj->setting_pushed = 1;
                     $tenantUserObj->save();
                     
-                    tenancy()->end($tenant);
+                    tenancy()->end($domainObj->tenant_id);
                 }
             }
         }
+        return 1;
     }
 }

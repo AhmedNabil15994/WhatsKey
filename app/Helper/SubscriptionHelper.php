@@ -139,7 +139,7 @@ class SubscriptionHelper {
         }
 
         foreach($extraQuotaData as $oneItemData){
-            $userExtraQuotaObj = UserExtraQuota::where('user_id',$oneItemData['user_id'])->where('extra_quota_id',$oneItemData['extra_quota_id'])->where('status','!=',1)->first();
+            $userExtraQuotaObj = UserExtraQuota::where('user_id',$oneItemData['user_id'])->where('extra_quota_id',$oneItemData['extra_quota_id'])->first();
             if($userExtraQuotaObj){
                 $userExtraQuotaObj->update($oneItemData);
             }else{
@@ -156,6 +156,11 @@ class SubscriptionHelper {
         $invoiceObj->payment_gateaway = $data['payment_gateaway'];  
         $invoiceObj->payment_method = $data['payment_gateaway'] == 'Noon' ? 1 : 2;
         $invoiceObj->save();
+
+        // Check If there is unpaid invoice then delete it 
+        if($main){
+            Invoice::where('client_id',$data['user_id'])->where('main',1)->where('status','!=',1)->delete();
+        }
 
         if($mainUserChannel){
             $centralChannelObj = CentralChannel::where('instanceId',$mainUserChannel->id)->first();

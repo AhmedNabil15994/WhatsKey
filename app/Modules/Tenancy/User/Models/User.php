@@ -314,7 +314,10 @@ class User extends Authenticatable implements Syncable
             $membershipFeatures = \DB::connection('main')->table('memberships')->where('id',Session::get('membership'))->first()->features;
             $featuresId = unserialize($membershipFeatures);
             $features = \DB::connection('main')->table('membership_features')->whereIn('id',$featuresId)->pluck('title_en');
-            $addons = Addons::whereIn('title_en',reset($features))->pluck('module');
+            $membershipAddons = Addons::whereIn('title_en',reset($features))->pluck('module');
+            $membershipAddonsID = Addons::whereIn('title_en',reset($features))->pluck('id');
+            $addonsID = UserAddon::NotDeleted()->where('user_id',$rootId)->pluck('addon_id');
+            $addons = Addons::whereIn('id',reset($addonsID))->pluck('module');
             $dailyMessageCount=0;
             $employessCount=0;
             $storageSize=0;
@@ -327,7 +330,10 @@ class User extends Authenticatable implements Syncable
             session(['dailyMessageCount' => $dailyMessageCount]);
             session(['employessCount' => $employessCount ]);
             session(['storageSize' => $storageSize]);
-            session(['membershipAddons' => array_unique(reset($addons))]);
+            session(['membershipAddons' => array_unique(reset($membershipAddons))]);
+            session(['membershipAddonsID' => array_unique(reset($membershipAddonsID))]);
+            session(['addons' => array_unique(reset($addons))]);
+            session(['addonsID' => array_unique(reset($addonsID))]);
         }
     }
 

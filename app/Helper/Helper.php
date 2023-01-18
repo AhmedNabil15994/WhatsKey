@@ -215,7 +215,8 @@ class Helper
     
     static function getAllPerms(){
         $controllers = config('permissions');
-        $addons = Session::has('membershipAddons') ? Session::get('membershipAddons') : [];
+        $membershipAddons = Session::has('membershipAddons') ? Session::get('membershipAddons') : [];
+        $addons = array_merge($membershipAddons,(Session::has('addons') ? Session::get('addons') : []));
         $externalPermissions = [];
         foreach ($addons as $key => $value) {
             if($value == 'api'){

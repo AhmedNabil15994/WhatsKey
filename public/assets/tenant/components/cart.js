@@ -53,7 +53,7 @@ $(function(){
 	    $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
 	    $.ajax({
 	        type: 'POST',
-	        url: window.location.pathname+'/coupon',
+	        url: '/profile/subscription/coupon',
 	        data:{
 	            '_token': $('meta[name="csrf-token"]').attr('content'),
 	            'coupon': couponVal,
@@ -144,6 +144,7 @@ $(function(){
         if(selectedIndex == 2){
             $('.finish').attr('data-wizard-type','current')
             $('.btnNext',).hide()
+            $('.invoice').removeClass('hidden')
         }else{
             $('.finish').attr('data-wizard-type','action-submit')
             $('.btnNext').show()
@@ -159,6 +160,7 @@ $(function(){
         var selectedIndex = parseInt(currentStepDiv.attr('id').replace('step',''));
         currentStepDiv.removeClass('active');   
         currentStepDiv.removeAttr('data-wizard-state');   
+        $('.invoice').addClass('hidden')
         if(selectedIndex == 3){
             $('.btnPrev').attr('data-wizard-type','current')
         }else{

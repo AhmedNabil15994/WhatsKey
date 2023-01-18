@@ -52,6 +52,12 @@ class OfficialHelper
     /*----------------------------------------------------------
     Channels
     ----------------------------------------------------------*/
+    public function channels()
+    {
+        $mainURL = $this->baseUrl . 'channels';
+        return Http::withToken($this->authToken)->get($mainURL);
+    }
+
     public function createChannel($data)
     {
         $mainURL = $this->baseUrl . 'channels/createChannel';
@@ -63,6 +69,8 @@ class OfficialHelper
         $mainURL = $this->baseUrl . 'channels/transferDays';
         return Http::withToken($this->authToken)->post($mainURL, $data);
     }
+
+
 
     /*----------------------------------------------------------
     Instances

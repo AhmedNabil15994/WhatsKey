@@ -22,9 +22,10 @@ class HasMembershipConstraints
         if(Session::has('invoice_id') && Session::get('invoice_id') != 0 && Session::get('group_id') == 1){            
             if( (in_array($request->segment(1),['updateSubscription','dashboard','logout','completeOrder','pushInvoice','pushInvoice2','coupon'])) ||
                 ($request->segment(1) == 'profile' && $request->segment(2) == 'subscription') || 
+                ($request->segment(1) == 'profile' && $request->segment(2) == 'postPaymentInfo') || 
                 ($request->segment(1) == 'invoices' && $request->segment(2) == 'view') || 
                 ($request->segment(1) == 'invoices' && $request->segment(3) == 'pushInvoice') ||
-                ($request->segment(1) == 'checkout' && $request->segment(2) == 'bankTransfer') ){
+                ($request->segment(1) == 'checkout') ){
                 return $next($request);
             }else{
                 return Redirect('/dashboard');
