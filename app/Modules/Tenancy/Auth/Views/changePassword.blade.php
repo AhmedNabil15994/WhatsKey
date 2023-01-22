@@ -38,5 +38,5 @@
 </div>		
 @endsection
 @section('scripts')
-<script src="{{asset('assets/components/login.js')}}"></script>
+<script src="{{asset('assets/tenant/components/login.js')}}"></script>
 @endsection

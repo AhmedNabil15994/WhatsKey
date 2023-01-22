@@ -1,7 +1,13 @@
 {{-- Extends layout --}}
 @extends('central.Layouts.Dashboard.master')
 @section('title',$data->designElems['mainData']['title'])
-
+@section('styles')
+<style>
+    .attachs{
+        margin-top: -45px;
+    }
+</style>
+@endsection
 @section('content')
 <!-- Start Content-->
 <div class="container-fluid">
@@ -104,12 +110,11 @@
                 <div class="card-body">
                     @if(\Helper::checkRules('uploadImage-'.$data->designElems['mainData']['nameOne']))
                     <div class="form-group row mb-2">
-                        <label class="label label-danger label-pill label-inline mr-2" style="margin-bottom: 20px;">{{ trans('main.files') }}:</label>
-                        <div class="col-lg-12">
-                            <div class="dropzone dropzone-multi" id="kt_dropzone_5">
-                            <div class="dropzone-panel mb-lg-0 mb-2">
+                        <label class="label label-pill label-inline mr-2" style="margin-bottom: 20px;">{{ trans('main.files') }}:</label>
+                        <div class="col-lg-12 attachs">
+                            <div class="dropzone dropzone-multi p-0 border-0" id="kt_dropzone_5">
+                            <div class="dropzone-panel mb-lg-0 mb-2 text-right">
                                 <a class="dropzone-select btn btn-primary font-weight-bold btn-sm">{{ trans('main.attachFiles') }}</a>
-                                {{-- <a class="dropzone-upload btn btn-success font-weight-bold btn-sm">{{ trans('main.uploadAll') }}</a> --}}
                             </div>
                             <div class="dropzone-items">
                                 @foreach($data->data->files as $oneFile)

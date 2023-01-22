@@ -208,7 +208,11 @@ $(function(){
 						editButton = '<a href="/'+designElems.mainData.url+'/edit/'+full.oauth_id+'" class="action-icon btn btn-block btn-outline-success"> <i class="si si-note"></i> '+editText+'</a>';
 						deleteButton = '';
 					}
-
+					
+					if(designElems.mainData.url == 'invoices'){
+						editButton = '';
+					}
+					
 					return '<div class="btn-group mt-4 ml-3">'+ 
                         '<a class="btn-link option-dots" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" href="#">'+
                             '<i class="fe fe-more-horizontal"></i>'+

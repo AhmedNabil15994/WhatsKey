@@ -47,23 +47,8 @@
                         <div class="avatar rounded-circle user-langs lang-item en" data-next-area="en">En</div>
                         @endif
                     </a>
-                    {{-- <div class="dropdown-menu">
-                        <!-- item-->
-                        @if(DIRECTION == 'ltr')
-                        <a href="javascript:void(0);" class="dropdown-item lang-item">
-                            <span class="align-middle">{{ trans('main.arabic') }}</span>
-                        </a>
-                        @endif
-                        <!-- item-->
-                        @if(DIRECTION == 'rtl')
-                        <a href="javascript:void(0);" class="dropdown-item lang-item">
-                            <span class="align-middle">{{ trans('main.english') }}</span>
-                        </a>
-                        @endif
-                    </div> --}}
                 </div>
                 <div class="darkModeContainer">
-                    {{-- <div id="background"></div> --}}
                     <div id="day"></div>
                     <div id="night"></div>
                     <svg version="1.1" id="darkmode" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="369px" height="171.667px" viewBox="0 0 369 171.667" enable-background="new 0 0 369 171.667" xml:space="preserve">
@@ -209,96 +194,6 @@
                         </g>
                     </svg>          
                 </div>
-               {{--  <div class="dropdown nav-item main-header-notification">
-                    <a class="new nav-link" href="#"><i class="fe fe-bell"></i><span class=" pulse"></span></a>
-                    <div class="dropdown-menu shadow">
-                        <div class="menu-header-content bg-primary text-left d-flex">
-                            <div class="">
-                                <h6 class="menu-header-title text-white mb-0">7 new Notifications</h6>
-                            </div>
-                            <div class="my-auto ml-auto">
-                                <span class="badge badge-pill badge-warning float-right">Mark All Read</span>
-                            </div>
-                        </div>
-                        <div class="main-notification-list Notification-scroll ps">
-                            <a class="d-flex p-3 border-bottom" href="#">
-                                <div class="notifyimg bg-success-transparent">
-                                    <i class="la la-shopping-basket text-success"></i>
-                                </div>
-                                <div class="ml-3">
-                                    <h5 class="notification-label mb-1">New Order Received</h5>
-                                    <div class="notification-subtext">1 hour ago</div>
-                                </div>
-                                <div class="ml-auto">
-                                    <i class="las la-angle-right text-right text-muted"></i>
-                                </div>
-                            </a>
-                            <a class="d-flex p-3 border-bottom" href="#">
-                                <div class="notifyimg bg-danger-transparent">
-                                    <i class="la la-user-check text-danger"></i>
-                                </div>
-                                <div class="ml-3">
-                                    <h5 class="notification-label mb-1">22 verified registrations</h5>
-                                    <div class="notification-subtext">2 hour ago</div>
-                                </div>
-                                <div class="ml-auto">
-                                    <i class="las la-angle-right text-right text-muted"></i>
-                                </div>
-                            </a>
-                            <a class="d-flex p-3 border-bottom" href="#">
-                                <div class="notifyimg bg-primary-transparent">
-                                    <i class="la la-check-circle text-primary"></i>
-                                </div>
-                                <div class="ml-3">
-                                    <h5 class="notification-label mb-1">Project has been approved</h5>
-                                    <div class="notification-subtext">4 hour ago</div>
-                                </div>
-                                <div class="ml-auto">
-                                    <i class="las la-angle-right text-right text-muted"></i>
-                                </div>
-                            </a>
-                            <a class="d-flex p-3 border-bottom" href="#">
-                                <div class="notifyimg bg-pink-transparent">
-                                    <i class="la la-file-alt text-pink"></i>
-                                </div>
-                                <div class="ml-3">
-                                    <h5 class="notification-label mb-1">New files available</h5>
-                                    <div class="notification-subtext">10 hour ago</div>
-                                </div>
-                                <div class="ml-auto">
-                                    <i class="las la-angle-right text-right text-muted"></i>
-                                </div>
-                            </a>
-                            <a class="d-flex p-3 border-bottom" href="#">
-                                <div class="notifyimg bg-warning-transparent">
-                                    <i class="la la-envelope-open text-warning"></i>
-                                </div>
-                                <div class="ml-3">
-                                    <h5 class="notification-label mb-1">New review received</h5>
-                                    <div class="notification-subtext">1 day ago</div>
-                                </div>
-                                <div class="ml-auto">
-                                    <i class="las la-angle-right text-right text-muted"></i>
-                                </div>
-                            </a>
-                            <a class="d-flex p-3" href="#">
-                                <div class="notifyimg bg-purple-transparent">
-                                    <i class="la la-gem text-purple"></i>
-                                </div>
-                                <div class="ml-3">
-                                    <h5 class="notification-label mb-1">Updates Available</h5>
-                                    <div class="notification-subtext">2 days ago</div>
-                                </div>
-                                <div class="ml-auto">
-                                    <i class="las la-angle-right text-right text-muted"></i>
-                                </div>
-                            </a>
-                            <div class="dropdown-footer">
-                                <a href="">VIEW ALL</a>
-                            </div>
-                        </div>
-                    </div>
-                </div> --}}
                 <div class="dropdown main-profile-menu nav nav-item nav-link">
                     @php
                     $image = \App\Models\CentralUser::getData(\App\Models\CentralUser::getOne(USER_ID))->photo;
@@ -314,15 +209,11 @@
                             <div class="main-img-user"><img alt="" src="{{ $image }}"></div>
                             <h6>{{ FULL_NAME }}</h6><span>{{ GROUP_NAME }}</span>
                         </div>
-                        {{-- <a class="dropdown-item" href="{{ URL::to('/profile/personalInfo') }}"><i class="far fa-user"></i> {{ trans('main.profile') }}</a> --}}
-                        {{-- <a class="dropdown-item" href=""><i class="far fa-clock"></i> Activity Logs</a> // Sessions logs --}}
                         <a class="dropdown-item" href="{{ URL::to('/invoices') }}"><i class="fas fa-file-alt"></i> {{ trans('main.subs_invoices') }}</a>
-                        {{-- <a class="dropdown-item" href="{{ URL::to('/profile') }}"><i class="fas fa-sliders-h"></i> {{ trans('main.account_setting') }}</a> --}}
-{{--                         <a class="dropdown-item" href="{{ URL::to('/helpCenter') }}"><i class="ti ti-help-alt"></i> {{ trans('main.helpCenter') }}</a>
- --}}                        <a class="dropdown-item" href="{{ URL::to('/logout') }}"><i class="fas fa-sign-out-alt"></i> {{ trans('main.logout') }}</a>
+                        <a class="dropdown-item" href="{{ URL::to('/logout') }}"><i class="fas fa-sign-out-alt"></i> {{ trans('main.logout') }}</a>
                     </div>
                 </div>
-                <div class="dropdown main-header-message right-toggle">
+                <div class="dropdown main-header-message right-toggle" style="visibility: hidden;">
                     <a class="nav-link pr-0" data-toggle="sidebar-{{ DIRECTION == 'ltr' ? 'right' : 'left' }}" data-target=".sidebar-{{ DIRECTION == 'ltr' ? 'right' : 'left' }}">
                         <i class="ion ion-md-menu tx-20 bg-transparent"></i>
                     </a>

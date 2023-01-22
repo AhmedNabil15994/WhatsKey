@@ -117,7 +117,7 @@
                                             $total = $item['quantity'] * $item['price'];
                                             $tax=  \Helper::calcTax($total);
                                             @endphp
-                                            {{ $total - $tax }} 
+                                            {{ $total }} 
                                             {{ trans('main.sar') }}
                                         </td>
                                     </tr>

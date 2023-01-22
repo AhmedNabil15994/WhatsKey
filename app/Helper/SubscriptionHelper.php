@@ -212,11 +212,11 @@ class SubscriptionHelper {
         $duration_type = 1;
         
         foreach($invoiceData as $key => $one){
-            $end_date =  $one['duration_type'] == 1 ? date('Y-m-d',strtotime('+1 month',strtotime($start_date))) : date('Y-m-d',strtotime('+1 year',strtotime($start_date)));
+            $end_date =  $one['duration_type'] == 1 ? date('Y-m-d',strtotime('+1 month',strtotime($start_date))) : ($one['duration_type'] == 2 ? date('Y-m-d',strtotime('+1 year',strtotime($start_date))) : date('Y-m-d',strtotime('+3 days',strtotime($start_date))));
             if($one['type'] == 'membership'){
                 $dataObj = Membership::getOne($one['id']);
                 $membership_id = $dataObj->id;
-                $duration_type = $one['duration_type'];
+                $duration_type = $one['duration_type'] == 2 ? 2 : 1;
                 $price = $dataObj->monthly_price;
                 $price_after_vat = $dataObj->monthly_after_vat;
                 if($duration_type == 2){

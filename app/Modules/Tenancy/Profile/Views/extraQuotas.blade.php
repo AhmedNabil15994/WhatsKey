@@ -38,7 +38,7 @@
             'url' => \URL::to('/profile/subscription')
         ],
         [
-            'title' => trans('main.addons'),
+            'title' => trans('main.extraQuotas'),
             'url' => \URL::current()
         ],
     ]

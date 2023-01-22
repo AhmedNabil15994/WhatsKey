@@ -4,7 +4,6 @@
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
-use App\Models\CentralWebActions;
 use App\Models\CentralGroup;
 use App\Models\CentralUser;
 
@@ -15,21 +14,7 @@ class CentralDashboardControllers extends Controller {
     public function Dashboard()
     {   
         $input = \Request::all();
-        // $mainWhatsLoopObj = new \MainWhatsLoop();
-        // $result = $mainWhatsLoopObj->status();
-        // $result = $result->json();
-        // if(isset($result['data'])){
-        //     if($result['data']['accountStatus'] == 'got qr code'){
-        //         if(isset($result['data']['qrCode'])){
-        //             $image = '/uploads/instanceImage' . time() . '.png';
-        //             $destinationPath = public_path() . $image;
-        //             $qrCode =  base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $result['data']['qrCode']));
-        //             $succ = file_put_contents($destinationPath, $qrCode);   
-        //             // $data['qrImage'] = \URL::to('/public'.$image);
-        //             $data['qrImage'] = \URL::to('/').$image;
-        //         }
-        //     }
-        // }
+    
         Session::forget('check_user_id');
         $now = date('Y-m-d');
         $start = $now;
@@ -54,47 +39,6 @@ class CentralDashboardControllers extends Controller {
         $data['fastEditCount'] = 0;
         return view('Central.Dashboard.Views.dashboard')->with('data',(object) $data);
     }
-
-    // public function getChartData($moduleName,$start=null,$end=null){
-    //     $input = \Request::all();
-        
-    //     if(isset($input['from']) && !empty($input['from']) && isset($input['to']) && !empty($input['to'])){
-    //         $start = $input['from'];
-    //         $end = $input['to'];
-    //     }
-
-    //     $datediff = strtotime($end) - strtotime($start);
-    //     $daysCount = round($datediff / (60 * 60 * 24));
-    //     $datesArray = [];
-    //     $datesArray[0] = $start;
-
-    //     if($daysCount > 2){
-    //         for($i=0;$i<$daysCount;$i++){
-    //             $datesArray[$i] = date('Y-m-d',strtotime($start.'+'.$i."day") );
-    //         }
-    //         $datesArray[$daysCount] = $end;  
-    //     }else{
-    //         for($i=1;$i<24;$i++){
-    //             $datesArray[$i] = date('Y-m-d H:i:s',strtotime($start.'+'.$i." hour") );
-    //         }
-    //     }
-
-    //     $chartData = [];
-    //     $dataCount = count($datesArray);
-    //     $module = "\App\Models".$moduleName;
-    //     for($i=0;$i<$dataCount;$i++){
-    //         if($dataCount == 1){
-    //             $count = $module::where('created_at','>=',$datesArray[0].' 00:00:00')->where('created_at','<=',$datesArray[0].' 23:59:59')->count();
-    //         }else{
-    //             if($i < count($datesArray)){
-    //                 $count = $module::where('created_at','>=',$datesArray[$i].' 00:00:00')->where('created_at','<=',$datesArray[$i].' 23:59:59')->count();
-    //             }
-    //         }
-    //         $chartData[0][$i] = $datesArray[$i];
-    //         $chartData[1][$i] = $count;
-    //     }
-    //     return $chartData;
-    // }
 
     public function changeChannel(Request $request){
         if($request->ajax()){

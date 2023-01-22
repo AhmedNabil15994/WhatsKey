@@ -168,8 +168,8 @@ class Contact extends Model{
         $hasWhatsapp = 0;
         $hasNoWhatsapp = 0;
         foreach ($source as $key => $contact) {
-            $hasWhatsapp = $contact->found; 
-            $hasNoWhatsapp = $contact->total - $contact->found; 
+            $hasWhatsapp = (int) $contact->found; 
+            $hasNoWhatsapp = (int) $contact->total - $contact->found; 
             $totals = Variable::getVar('check_'.$contact->group_id.'_'.$contact->created_at);
             
             $list[$key] = new \stdClass();
@@ -178,7 +178,7 @@ class Contact extends Model{
             $list[$key]->group_name = $contact->Group->{'name_'.LANGUAGE_PREF};
             $status = trans('main.done');
             if($totals != null){
-                if((int)$hasWhatsapp + (int)$hasNoWhatsapp == $totals){
+                if($hasWhatsapp + $hasNoWhatsapp >= $totals){
                     $status = trans('main.done');
                 }else{
                     $status = trans('main.inPrgo');
@@ -189,7 +189,7 @@ class Contact extends Model{
             $list[$key]->hasWhatsapp = $hasWhatsapp == null ? 0 : $hasWhatsapp;
             $list[$key]->hasNoWhatsapp = $hasNoWhatsapp == null ? 0 : $hasNoWhatsapp;
             $list[$key]->contacts = $contact->total;
-            $list[$key]->created_at = $contact->created_at;
+            $list[$key]->created_at = $contact->created_at != null ? $contact->created_at : '';
             $i++;
         }
         return $list;

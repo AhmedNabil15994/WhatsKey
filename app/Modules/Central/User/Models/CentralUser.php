@@ -196,17 +196,16 @@ class CentralUser extends Model implements SyncMaster
         $data->addons = $source->addons;
         $data->is_old = $source->is_old;
         $data->is_synced = $source->is_synced;
-        $data->domain = self::getDomain($source); //$tenants->first()->domains()->first()->domain : '';
+        $data->domain = self::getDomain($source);
         $data->sort = $source->sort;
-        // $data->paymentInfo = $source->PaymentInfo != null ? $source->PaymentInfo : '';
         $data->extra_rules = $source->extra_rules != null ? unserialize($source->extra_rules) : [];
-        $data->channels = $source->channels != null ? UserChannels::NotDeleted()->whereIn('id',unserialize($source->channels))->get() : [];
-        $data->channelCodes = !empty($data->channels) ?  implode(',', unserialize($source->channels)) : '';
-        $data->channelIDS = !empty($data->channels) ? unserialize($source->channels) : [];
+        $data->channelCodes = implode(',', unserialize($source->channels));
+        $data->channelIDS = unserialize($source->channels);
         $data->created_at = \Helper::formatDateForDisplay($source->created_at,true);
         
         if($source->group_id == 0){
-            $data->leftDays = isset($data->channels[0]) ? CentralChannel::getData($data->channels[0])->leftDays : 0;
+            $centralChannel = CentralChannel::getOneByID($data->channelCodes);
+            $data->leftDays = isset($data->channelCodes) ? ($centralChannel != null ?  $centralChannel->leftDays : 0) : 0;
             $data->balance = $source->balance != null ? $source->balance : 0;
         }
         return $data;

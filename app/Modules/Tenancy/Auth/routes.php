@@ -10,6 +10,7 @@ Route::group(['prefix' => '/'] , function () {
     Route::get('/loginByCode', [$authController,'loginByCode'])->name('loginByCode');
     Route::post('/login', [$authController,'doLogin'])->name('doLogin');
     Route::post('/checkByCode', [$authController,'checkByCode']);
+    Route::post('/checkLoginCode', [$authController,'checkLoginCode']);
     Route::get('/logout', [$authController,'logout']);
 
     Route::get('/resetPassword', [$authController,'getResetPassword'])->name('getResetPassword');

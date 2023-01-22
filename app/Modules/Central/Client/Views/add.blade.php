@@ -31,12 +31,12 @@
                         </li>
                         <li class="nav-item">
                             <a href="#prods" data-toggle="tab" aria-expanded="false" class="nav-link">
-                                {{ trans('main.products') }}
+                                {{ trans('main.subscription') }}
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="#aboutme" data-toggle="tab" aria-expanded="false" class="nav-link">
-                                {{ trans('main.tax_setting') }}
+                                {{ trans('main.payment_setting') }}
                             </a>
                         </li>
                         <li class="nav-item">
@@ -101,13 +101,13 @@
                         <!-- end settings content-->
 
                         <div class="tab-pane" id="prods">
-                            <h5 class="mb-4 text-uppercase"><i class="fab fa-product-hunt mr-1"></i>{{ trans('main.products') }}</h5>
+                            <h5 class="mb-4 text-uppercase"><i class="fab fa-product-hunt mr-1"></i>{{ trans('main.subscription') }}</h5>
                             
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>{{ trans('main.packages') }} :</label>
-                                        <select name="membership_id" class="form-control">
+                                        <select name="membership_id" class="form-control" data-toggle="select2">
                                             <option value="">{{ trans('main.choose') }}</option>
                                             @foreach($data->memberships as $membership)
                                             @if($membership->monthly_price != 0)
@@ -120,7 +120,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>{{ trans('main.subscriptionPeriod') }} :</label>
-                                        <select name="duration_type" class="form-control">
+                                        <select name="duration_type" class="form-control" data-toggle="select2">
                                             <option value="">{{ trans('main.choose') }}</option>
                                             <option value="1">{{ trans('main.monthly') }}</option>
                                             <option value="2">{{ trans('main.yearly') }}</option>
@@ -130,37 +130,6 @@
                                 </div>
                             </div>
 
-                            <h5 class="mb-4 text-uppercase"><i class=" fas fa-star mr-1"></i>{{ trans('main.addons') }}</h5>
-                            @foreach($data->addons as $key => $addon)
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group row">
-                                        <label class="col-3 col-form-label">{{ $addon->title }} :</label>
-                                        <div class="col-9 row mainCol">
-                                            <div class="col-6">
-                                                <label class="col-5 col-form-label">{{ trans('monthly') }} :</label>
-                                                <div class="col-7" style="margin-top: 5px;">
-                                                    <div class="checkbox checkbox-success">
-                                                        <input id="monthly{{ $addon->id }}" class="monthly old" type="checkbox" name="addons[{{ $addon->id }}][1]">
-                                                        <label for="monthly{{ $addon->id }}"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <label class="col-5 col-form-label">{{ trans('yearly') }} :</label>
-                                                <div class="col-7" style="margin-top: 5px;">
-                                                    <div class="checkbox checkbox-success">
-                                                        <input id="yearly{{ $addon->id }}" class="yearly old" type="checkbox" name="addons[{{ $addon->id }}][2]">
-                                                        <label for="yearly{{ $addon->id }}"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div> 
-                                    <hr class="mt-3">
-                                </div>
-                            </div>
-                            @endforeach
                             <div class="text-right">
                                 <button class="btn btn-success AddBTN SaveBTNs">{{ trans('main.save') }}</button>
                                 <a href="{{ URL::to('/clients') }}" type="reset" class="btn btn-danger Reset">{{ trans('main.back') }}</a>
@@ -169,7 +138,7 @@
 
                         <div class="tab-pane" id="aboutme">
 
-                            <h5 class="mb-4 text-uppercase"><i class="mdi mdi-briefcase mr-1"></i>{{ trans('main.tax_setting') }}</h5>
+                            <h5 class="mb-4 text-uppercase"><i class="mdi mdi-briefcase mr-1"></i>{{ trans('main.payment_setting') }}</h5>
 
                             <div class="row">
                                 <div class="col-md-6">
@@ -217,7 +186,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>{{ trans('main.paymentMethod') }} :</label>
-                                        <select name="payment_method" class="form-control">
+                                        <select name="payment_method" class="form-control" data-toggle="select2">
                                             <option value="">{{ trans('main.choose') }}</option>
                                             <option value="1">{{ trans('main.mada') }}</option>
                                             <option value="2">{{ trans('main.visaMaster') }}</option>
@@ -228,7 +197,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>{{ trans('main.currency') }} :</label>
-                                        <select name="currency" class="form-control">
+                                        <select name="currency" class="form-control" data-toggle="select2">
                                             <option value="">{{ trans('main.choose') }}</option>
                                             <option value="1">{{ trans('main.sar') }}</option>
                                             <option value="2">{{ trans('main.usd') }}</option>
@@ -273,7 +242,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>{{ trans('main.status') }} :</label>
-                                        <select name="status" class="form-control">
+                                        <select name="status" class="form-control" data-toggle="select2">
                                             <option value="">{{ trans('main.choose') }}</option>
                                             <option value="0">{{ trans('main.notActive') }}</option>
                                             <option value="1">{{ trans('main.active') }}</option>
@@ -283,7 +252,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>{{ trans('main.twoAuthFactor') }} :</label>
-                                        <select name="two_auth" class="form-control">
+                                        <select name="two_auth" class="form-control" data-toggle="select2">
                                             <option value="">{{ trans('main.choose') }}</option>
                                             <option value="0">{{ trans('main.no') }}</option>
                                             <option value="1">{{ trans('main.yes') }}</option>
@@ -291,28 +260,30 @@
                                     </div> 
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row mt-2">
                                 <div class="col-md-6">
                                     <div class="form-group row">
-                                        <label class="col-3 col-form-label">{{ trans('main.offers') }} :</label>
-                                        <div class="col-9" style="margin-top: 5px;">
-                                            <div class="checkbox checkbox-success">
-                                                <input id="checkbox3" type="checkbox" name="offers">
-                                                <label for="checkbox3"></label>
+                                        <div class="col-xs-12 col-md-6 border-0">
+                                            <div class="checkbox checkbox-blue checkbox-single float-left mx-1">
+                                                <input type="checkbox" name="offers">
+                                                <label></label>
                                             </div>
+                                            <p>{{ trans('main.offers') }}</p>
+                                            <div class="clearfix"></div>
                                         </div>
                                     </div> 
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group row">
-                                        <label class="col-3 col-form-label">{{ trans('main.notifications') }} :</label>
-                                        <div class="col-9" style="margin-top: 5px;">
-                                            <div class="checkbox checkbox-success">
-                                                <input id="checkbox4" type="checkbox" name="notifications">
-                                                <label for="checkbox4"></label>
+                                        <div class="col-xs-12 col-md-6 border-0">
+                                            <div class="checkbox checkbox-blue checkbox-single float-left mx-1">
+                                                <input type="checkbox" name="notifications">
+                                                <label></label>
                                             </div>
+                                            <p>{{ trans('main.notifications') }}</p>
+                                            <div class="clearfix"></div>
                                         </div>
-                                    </div>  
+                                    </div> 
                                 </div>
                             </div>
                             <div class="text-right">

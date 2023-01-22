@@ -88,6 +88,22 @@ class Coupon extends Model{
         })->orderBy('id','desc')->pluck('code');
     }
 
+    static function availableCoupons2($cop=null){
+        return self::NotDeleted()->where([
+            ['status','=',1],
+            ['valid_type','=',1],
+            ['valid_value','>',0],
+        ])->orWhere([
+            ['status','=',1],
+            ['valid_type','=',2],
+            ['valid_value','>=',now()->format('Y-m-d')],
+        ])->where(function($whereQuery) use ($cop){
+            if($cop != null){
+                $whereQuery->where('code','!=',$cop);
+            }
+        })->orderBy('id','desc')->get(['id','code']);
+    }
+
     static function getData($source) {
         $data = new  \stdClass();
         $data->id = $source->id;

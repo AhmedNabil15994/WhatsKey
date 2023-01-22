@@ -12,7 +12,6 @@ use Illuminate\Support\Str;
 use App\Models\CentralUser;
 use App\Models\CentralChannel;
 use App\Models\CentralVariable;
-use App\Models\CentralWebActions;
 use App\Models\Domain;
 use App\Models\Variable;
 use App\Models\Tenant;

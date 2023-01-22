@@ -92,7 +92,7 @@
                                 </a>
                                 @endif
 
-                                @if(\Helper::checkRules('edit-'.$data->designElems['mainData']['nameOne']) && $data->designElems['mainData']['url'] != 'groupMsgs')
+                                @if(\Helper::checkRules('edit-'.$data->designElems['mainData']['nameOne']) && !in_array($data->designElems['mainData']['url'], ['groupMsgs','invoices']))
                                     <a href="#" class="btn btn-success btn-icon quickEdit" data-toggle="tooltip" data-original-title="{{ trans('main.fastEdit') }}">
                                         <i class="typcn typcn-edit"></i>
                                     </a>

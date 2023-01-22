@@ -10,6 +10,7 @@ class PaymentInfo extends Model{
     protected $table = 'payment_info';
     protected $primaryKey = 'id';
     public $timestamps = false;
+    protected $fillable = ['user_id','address2','address','city','country','region','postal_code','tax_id','payment_method','currency'];    
 
 
     static function getOne($id){

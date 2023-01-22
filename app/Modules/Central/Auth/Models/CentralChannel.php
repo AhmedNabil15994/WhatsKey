@@ -24,6 +24,10 @@ class CentralChannel extends Model{
         'global_user_id',
     ];
 
+    static function getOneByID($id){
+        $channelObj = self::NotDeleted()->where('instanceId',$id)->first();
+        return $channelObj ? self::getData($channelObj) : null;
+    }
 
     static function getOne($id) {
         $channelObj = self::find($id);

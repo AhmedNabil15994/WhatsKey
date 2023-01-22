@@ -310,6 +310,51 @@ class Helper
                     'TemplateMsgControllers@delete' => 'delete-template-message',
 
                 ];
+            }else if($value == 'BusinessProfile'){
+                $externalPermissions = [
+                    'CategoryControllers@index' => 'list-categories',
+                    'CategoryControllers@edit' => 'edit-category',
+                    'CategoryControllers@update' => 'edit-category',
+                    'CategoryControllers@fastEdit' => 'edit-category',
+                    'CategoryControllers@add' => 'add-category',
+                    'CategoryControllers@create' => 'add-category',
+                    'CategoryControllers@delete' => 'delete-category',
+                    'CategoryControllers@syncLabels' => 'sync-categories',
+
+                    'QuickRepliesControllers@index' => 'list-quickReplies',
+                    'QuickRepliesControllers@edit' => 'edit-quickReply',
+                    'QuickRepliesControllers@update' => 'edit-quickReply',
+                    'QuickRepliesControllers@delete' => 'delete-quickReply',
+
+                    'WACollectionControllers@index' => 'list-collections',
+                    'WACollectionControllers@sendCatalog' => 'send-collection',
+
+                    'BusinessProfileControllers@index' => 'list-businessProfile',
+                    'BusinessProfileControllers@update' => 'edit-businessProfile',
+                    'BusinessProfileControllers@uploadImage' => 'edit-businessProfile',
+                    'BusinessProfileControllers@deleteImage' => 'edit-businessProfile',
+
+                    'ProductControllers@index' => 'list-products',
+                    'ProductControllers@edit' => 'edit-product',
+                    'ProductControllers@update' => 'edit-product',
+                    'ProductControllers@view' => 'view-product',
+                    'ProductControllers@add' => 'add-product',
+                    'ProductControllers@create' => 'add-product',
+                    'ProductControllers@delete' => 'delete-product',
+                    'ProductControllers@uploadImage' => 'uploadImage-product',
+                    'ProductControllers@deleteImage' => 'deleteImage-product',
+                    'ProductControllers@sendProduct' => 'send-product',
+
+                    'OrderControllers@index' => 'list-orders',
+                    'OrderControllers@view' => 'view-order',
+                    
+                    'WAAccountController@syncLabels' => 'subscription',
+                    'WAAccountController@syncProducts' => 'subscription',
+                    'WAAccountController@syncCollections' => 'subscription',
+                    'WAAccountController@syncReplies' => 'subscription',
+                    'WAAccountController@syncOrders' => 'subscription',
+
+                ];
             }
             $controllers = array_merge($controllers,$externalPermissions);
         }

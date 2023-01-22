@@ -18,7 +18,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
-use App\Models\CentralWebActions;
 use App\Jobs\NewClient;
 use DataTables;
 
@@ -172,7 +171,6 @@ class TransferRequestControllers extends Controller {
         $transferObj->updated_by = USER_ID;
         $transferObj->save();
 
-        CentralWebActions::newType(2,$this->getData()['mainData']['modelName']);
         Session::flash('success', trans('main.editSuccess'));
         return \Redirect::back()->withInput();
     }
@@ -180,7 +178,6 @@ class TransferRequestControllers extends Controller {
     public function delete($id) {
         $id = (int) $id;
         $dataObj = BankTransfer::getOne($id);
-        CentralWebActions::newType(3,$this->getData()['mainData']['modelName']);
         return \Helper::globalDelete($dataObj);
     }
 }

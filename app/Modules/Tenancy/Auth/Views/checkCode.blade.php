@@ -7,7 +7,7 @@
 			<img class="logo" src="{{asset('assets/images/whiteLogo.png')}}" alt="">
 			<div class="form-card">
 				<h4>أدخل رمز التحقق</h4>
-				<form class="form-details" action="{{ Session::has('t_reset') && Session::get('t_reset') == 1 ? URL::to('/checkResetPassword') : URL::to('/checkAvailabilityCode') }}" method="post">
+				<form class="form-details" action="{{ Session::has('t_reset') && Session::get('t_reset') == 1 ? URL::to('/checkResetPassword') : ( Session::has('check_user_phone') ? URL::to('/checkByCode') : URL::to('/checkAvailabilityCode')) }}" method="post">
 					@csrf
 					<div class="form-group">
 						<label for="">رمز التحقق</label>

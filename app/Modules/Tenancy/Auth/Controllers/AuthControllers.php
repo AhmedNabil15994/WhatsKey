@@ -32,7 +32,16 @@ class AuthControllers extends Controller {
 
     public function loginByCode() {
         Session::put('check_user_id',\Request::get('user_id'));
-        return view('Tenancy.Auth.Views.checkCode');
+        if(\Request::has('user_id')){
+            $userObj = User::find(\Request::get('user_id'));
+            if($userObj){
+                $data['phone'] = $userObj->phone;
+                Session::put('check_user_phone',$userObj->phone);
+                return view('Tenancy.Auth.Views.checkCode')->with('data',(object) $data);
+            }
+        }else{
+            return view('Tenancy.Auth.Views.checkCode');
+        }
     }
 
     public function doLogin() {
@@ -82,7 +91,6 @@ class AuthControllers extends Controller {
             return \TraitsFunc::SuccessResponse(trans('auth.codeSuccess'));
         }else{
             User::setSessions($userObj);
-
             Session::flash('success', trans('auth.welcome') . ucwords($userObj->name));
             $statusObj['data'] = \URL::to('/dashboard');
             $statusObj['status'] = \TraitsFunc::LoginResponse(trans('auth.welcome') . ucwords($userObj->name));
@@ -93,16 +101,31 @@ class AuthControllers extends Controller {
     public function checkByCode(){
         $input = \Request::all();
         $code = $input['code'];
+        $user_id = Session::get('check_user_phone');
+        $userObj = User::NotDeleted()->where('phone',$user_id)->first();
+        if($code != $userObj->code && $code != $userObj->pin_code){
+            Session::flash('error',trans('auth.codeError'));
+            return redirect()->back()->withInput(); 
+        }
+        User::setSessions($userObj);
+        $this->genNewPinCode($userObj->id);
+        Session::flash('success', trans('auth.welcome') . ucwords($userObj->name));
+        return redirect()->to('/dashboard');
+    }
+
+    public function checkLoginCode(){
+        $input = \Request::all();
+        $code = $input['code'];
         $user_id = Session::get('check_user_id');
         $userObj = User::getOne($user_id);
-        // dd($userObj);
         if($code != $userObj->code && $code != $userObj->pin_code){
             return \TraitsFunc::ErrorMessage(trans('auth.codeError'));
         }
         User::setSessions($userObj);
-        $this->genNewPinCode($userObj->id);
-        Session::flash('success', trans('auth.welcome') . $userObj->name_ar);
-        return \TraitsFunc::SuccessResponse(trans('auth.welcome') . $userObj->name_ar);
+        Session::flash('success', trans('auth.welcome') . ucwords($userObj->name));
+        $statusObj['data'] = \URL::to('/dashboard');
+        $statusObj['status'] = \TraitsFunc::LoginResponse(trans('auth.welcome') . ucwords($userObj->name));
+        return \Response::json((object) $statusObj);
     }
 
     public function genNewPinCode($user_id){

@@ -356,7 +356,7 @@ class SetInvoices extends Command
             ],
         ];
 
-        if($notificationTemplateObj){
+        if(isset($notificationTemplateObj)){
             $allData['subject'] = $notificationTemplateObj->title_ar;
             $allData['content'] = $notificationTemplateObj->content_ar;
             \MailHelper::prepareEmail($allData);
@@ -364,7 +364,7 @@ class SetInvoices extends Command
         
         $phoneData = $allData;
         $phoneData['phone'] = $userObj->phone;
-        if($whatsappTemplateObj){
+        if(isset($whatsappTemplateObj)){
             $phoneData['subject'] = $whatsappTemplateObj->title_ar;
             $phoneData['content'] = $whatsappTemplateObj->content_ar;
             \MailHelper::prepareEmail($phoneData,1);

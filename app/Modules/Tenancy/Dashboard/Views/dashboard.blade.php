@@ -72,11 +72,6 @@
         @livewire('activate-account')
         @section('scripts')
         <script src="{{ asset('assets/tenant/components/countDown.js') }}"></script>
-        <script>
-        Livewire.on('activateAccount', postId => {
-            window.location.href = "{{ URL::to('/QR') }}";
-        })
-        </script>
         @endsection
     </div>
     @elseif(Session::has('invoice_id') && Session::get('invoice_id') != 0)

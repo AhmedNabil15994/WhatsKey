@@ -23,7 +23,8 @@ $(function(){
     }
 
     function SubmitFunction(){
-        $('form.completeJob').submit();
+        // $('form.completeJob').submit();
+        window.location.href = "/completeJob";
     }
 
     CountDown($('span.mCounter').data('minutes') * 60, $('span.mCounter'));

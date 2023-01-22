@@ -7,9 +7,6 @@ Route::group(['prefix' => '/users'] , function () {
     $controller = \App\Http\Controllers\CentralUsersControllers::class;
     Route::get('/', [$controller,'index']);
     Route::get('/add', [$controller,'add']);
-    Route::get('/arrange', [$controller,'arrange']);
-    Route::post('/arrange/sort', [$controller,'sort']);
-    Route::get('/charts', [$controller,'charts']);
     Route::get('/edit/{id}', [$controller,'edit']);
     Route::post('/update/{id}', [$controller,'update']);
     Route::post('/fastEdit', [$controller,'fastEdit']);

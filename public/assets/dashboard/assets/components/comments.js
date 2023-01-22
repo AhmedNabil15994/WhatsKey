@@ -4,7 +4,7 @@
 
 
 function deleteComment($id) {
-    Swal.fire({
+    swal({
         title: title,
         text: deleteText,
         type: "warning",
@@ -15,21 +15,20 @@ function deleteComment($id) {
         cancelButtonClass: 'btn btn-danger ml-2 mt-2',
         closeOnConfirm: false,
         buttonsStyling:!1
-    }).then(function(result){
-        if (result.value) {
-            Swal.fire(success1, success2, "success");
+    },
+    function(isConfirm) {
+        if (isConfirm) {
             $.get(myURL+'/removeComment/' + $id,function(data) {
-                if (data.status.original.status.status == 1) {
+                if (data.status.original && data.status.original.status.status == 1) {
                     successNotification(data.status.original.status.message);
-                    $('#tableRaw' + $id).remove();
-                    var count = parseInt($('span.total_comments').html());
-                    $('span.total_comments').html(count-1);
+                    swal(success1, success2, "success");
+                    window.location.reload()
                 } else {
                     errorNotification(data.status.original.status.message);
                 }
             });
-        } else if (result.dismiss === "cancel") {
-            Swal.fire(
+        } else {
+            swal(
                 cancel1,
                 cancel2,
                 "error"

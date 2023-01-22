@@ -31,5 +31,5 @@
 </div>		
 @endsection
 @section('scripts')
-<script src="{{asset('assets/components/checkAvailability.js')}}"></script>
+<script src="{{asset('assets/tenant/components/checkAvailability.js')}}"></script>
 @endsection

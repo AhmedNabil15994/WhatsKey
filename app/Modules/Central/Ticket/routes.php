@@ -7,9 +7,6 @@ Route::group(['prefix' => '/tickets'] , function () {
     $controller = \App\Http\Controllers\CentralTicketControllers::class;
     Route::get('/', [$controller,'index']);
     Route::get('/add', [$controller,'add']);
-    Route::get('/arrange', [$controller,'arrange']);
-    Route::post('/arrange/sort', [$controller,'sort']);
-    Route::get('/charts', [$controller,'charts']);
     Route::get('/edit/{id}', [$controller,'edit']);
     Route::get('/view/{id}', [$controller,'view']);
     Route::post('/update/{id}', [$controller,'update']);
