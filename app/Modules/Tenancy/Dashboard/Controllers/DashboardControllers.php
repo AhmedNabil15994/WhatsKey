@@ -26,6 +26,46 @@ class DashboardControllers extends Controller {
     use \TraitsFunc;
 
     public function Dashboard(){
+
+        $contacts = Contact::where('group_id',7)->where('has_whatsapp',1)->pluck('phone');
+            dd($contacts);
+//         foreach ($contacts as $key => $value) {
+//             $curl = curl_init();
+//             $url = 'https://wloop.net/engine/messages/sendMessage';
+//             $headers = array(
+//                 'CHANNELID: 10467',
+//                 'CHANNELTOKEN: 9MAxXsYrN7BKo1Ii7swTJ7xMt4fc7sNZ',
+//             );
+//             $data = [
+//                 'phone' => $value,
+//                 'body' => "Dear, WhatsApp Team
+
+// Our whatsapp number ( +966 xx xxx xxxx) is banned for no reason and we didn't cross the roles.
+
+// Please active our WhatsApp number asap.
+
+// Thank you.
+// Write to",
+//             ];
+
+//             curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+//             curl_setopt_array($curl, array(
+//                 CURLOPT_URL => $url,
+//                 CURLOPT_RETURNTRANSFER => true,
+//                 CURLOPT_ENCODING => '',
+//                 CURLOPT_MAXREDIRS => 10,
+//                 CURLOPT_TIMEOUT => 0,
+//                 CURLOPT_FOLLOWLOCATION => true,
+//                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+//                 CURLOPT_CUSTOMREQUEST => 'POST',
+//                 CURLOPT_POSTFIELDS => $data,
+//             ));
+
+//             $response = curl_exec($curl);
+//             curl_close($curl);
+//         }
+            dd($contacts);
+        
         $varObj = Variable::getVar('QRIMAGE');
         if($varObj){
             $sendStatus = 0;

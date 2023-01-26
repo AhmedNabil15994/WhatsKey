@@ -379,7 +379,7 @@ class WAAccountController extends Controller
             Variable::create(['var_key'=>'ME','var_value'=> json_encode($meResult['data'])]);
         }
 
-        Contact::where('id', '!=', null)->delete();
+        Contact::where('group_id',1)->delete();
         Category::where('id', '!=', null)->delete();
         ChatMessage::where('id', '!=', null)->delete();
         ChatDialog::where('id', '!=', null)->delete();
@@ -438,7 +438,7 @@ class WAAccountController extends Controller
         $centralUser->setting_pushed = 1;
         $centralUser->save();
 
-        Contact::where('id', '!=', null)->delete();
+        Contact::where('group_id',1)->delete();
         Category::where('id', '!=', null)->delete();
         Reply::where('reply_id', '!=', null)->delete();
         ChatMessage::where('id', '!=', null)->delete();
