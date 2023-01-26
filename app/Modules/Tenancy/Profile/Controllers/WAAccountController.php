@@ -268,7 +268,7 @@ class WAAccountController extends Controller
     public function syncLabels()
     {
         $varObj = Variable::getVar('ME');
-        if($varObj && json_decode($varObj)->isBussines){
+        if($varObj && isset(json_decode($varObj)->isBussines) && json_decode($varObj)->isBussines){
             $mainWhatsLoopObj = new \OfficialHelper();
             $updateResult = $mainWhatsLoopObj->labels();
             $updateResult = $updateResult->json();
@@ -289,7 +289,7 @@ class WAAccountController extends Controller
     public function syncReplies()
     {
         $varObj = Variable::getVar('ME');
-        if($varObj && json_decode($varObj)->isBussines){
+        if($varObj && isset(json_decode($varObj)->isBussines) && json_decode($varObj)->isBussines){
             $mainWhatsLoopObj = new \OfficialHelper();
             $updateResult = $mainWhatsLoopObj->replies();
             $updateResult = $updateResult->json();
@@ -310,7 +310,7 @@ class WAAccountController extends Controller
     public function syncOrders()
     {
         $varObj = Variable::getVar('ME');
-        if($varObj && json_decode($varObj)->isBussines){
+        if($varObj && isset(json_decode($varObj)->isBussines) && json_decode($varObj)->isBussines){
             $mainWhatsLoopObj = new \OfficialHelper();
             $updateResult = $mainWhatsLoopObj->orders();
             $updateResult = $updateResult->json();
@@ -331,7 +331,7 @@ class WAAccountController extends Controller
     public function syncProducts()
     {
         $varObj = Variable::getVar('ME');
-        if($varObj && json_decode($varObj)->isBussines){
+        if($varObj && isset(json_decode($varObj)->isBussines) && json_decode($varObj)->isBussines){
             $mainWhatsLoopObj = new \OfficialHelper();
             $updateResult = $mainWhatsLoopObj->products();
             $updateResult = $updateResult->json();
@@ -352,7 +352,7 @@ class WAAccountController extends Controller
     public function syncCollections()
     {
         $varObj = Variable::getVar('ME');
-        if($varObj && json_decode($varObj)->isBussines){
+        if($varObj && isset(json_decode($varObj)->isBussines) && json_decode($varObj)->isBussines){
             $mainWhatsLoopObj = new \OfficialHelper();
             $updateResult = $mainWhatsLoopObj->collections();
             $updateResult = $updateResult->json();
@@ -371,13 +371,20 @@ class WAAccountController extends Controller
     }
     
     public function resyncAll(){
+        $mainWhatsLoopObj = new \OfficialHelper();
+        $me = $mainWhatsLoopObj->me();
+        $meResult = $me->json();
+        if($meResult != null && isset($meResult['data']) && !empty($meResult['data'])){
+            Variable::where('var_key','ME')->delete();
+            Variable::create(['var_key'=>'ME','var_value'=> json_encode($meResult['data'])]);
+        }
+
         Contact::where('id', '!=', null)->delete();
         Category::where('id', '!=', null)->delete();
         ChatMessage::where('id', '!=', null)->delete();
         ChatDialog::where('id', '!=', null)->delete();
         ContactGroup::where('id', '!=', null)->delete();
         ContactReport::where('id', '!=', null)->delete();
-        UserStatus::where('id', '!=', null)->delete();
         Product::where('id', '!=', null)->delete();
         Order::where('id', '!=', null)->delete();
         WACollection::where('id', '!=', null)->delete();

@@ -8,6 +8,7 @@ use App\Models\ChatMessage;
 use App\Models\Variable;
 use Request;
 use Response;
+use Session;
 
 class Chats extends Component
 {

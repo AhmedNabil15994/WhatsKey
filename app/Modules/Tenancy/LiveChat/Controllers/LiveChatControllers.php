@@ -68,7 +68,7 @@ class LiveChatControllers extends Controller
     {   
         $varObj = Variable::getVar('ME');
         $business = 0;
-        if($varObj && json_decode($varObj)->isBussines){
+        if($varObj && isset(json_decode($varObj)->isBussines) && json_decode($varObj)->isBussines){
             $business = 1;
         }
         \Session::forget('selected_chat_id');

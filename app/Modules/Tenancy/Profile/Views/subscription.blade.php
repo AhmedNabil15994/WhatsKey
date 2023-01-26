@@ -93,7 +93,7 @@
                 <a href="{{ URL::to('/profile/subscription/syncDialogs') }}" class="btn btn-light-info btn-md mr-3 mb-3 btn-pill"><i class="la la-comments"></i>{{ trans('main.syncDialogs') }}</a>
                 <a href="{{ URL::to('/profile/subscription/syncContacts') }}" class="btn btn-light-primary btn-md mr-3 mb-3 btn-pill"><i class="la la-user-circle"></i>{{ trans('main.syncContacts') }}</a>
                 <a href="{{ URL::to('/profile/subscription/resyncAll') }}" class="btn btn-light-dark btn-md mr-3 mb-3 btn-pill"><i class="la la-user-circle"></i>{{ trans('main.resyncAll') }}</a>
-                @if(isset($data->me) && $data->me->isBussines)
+                @if(isset($data->me) && isset($data->me->isBussines) && $data->me->isBussines)
                 <a href="{{ URL::to('/profile/subscription/syncLabels') }}" class="btn btn-light-info btn-md mr-3 mb-3 btn-pill"><i class="la la-tags"></i>{{ trans('main.syncLabels') }}</a>
                 <a href="{{ URL::to('/profile/subscription/syncReplies') }}" class="btn btn-light-warning btn-md mr-3 mb-3 btn-pill"><i class="la la-share"></i>{{ trans('main.syncReplies') }}</a>
                 <a href="{{ URL::to('/profile/subscription/syncCollections') }}" class="btn btn-light-success btn-md mr-3 mb-3 btn-pill"><i class="la la-tags"></i>{{ trans('main.syncCatalog') }}</a>
@@ -357,7 +357,7 @@
         </div>
         <div class="separator separator-solid"></div>
         <div class="d-flex align-items-center flex-wrap mt-8">
-            @if(isset($data->me) && $data->me->businessProfile->business_hours)
+            @if(isset($data->me) && isset($data->me->businessProfile) && $data->me->businessProfile->business_hours)
             <div class="d-flex align-items-center flex-lg-fill mr-5 mb-2">
                 <span class="mr-4">
                     <i class="flaticon-piggy-bank display-4 text-muted font-weight-bold"></i>
@@ -379,7 +379,7 @@
                     <span class="text-dark-50 font-weight-bold"></span>{{@$data->me->status->status}}</span>
                 </div>
             </div>
-            @if(isset($data->me) && $data->me->businessProfile->category)
+            @if(isset($data->me) && isset($data->me->businessProfile) &&  $data->me->businessProfile->category)
             <div class="d-flex align-items-center flex-lg-fill mr-5 mb-2">
                 <span class="mr-4">
                     <i class="flaticon-pie-chart display-4 text-muted font-weight-bold"></i>
@@ -391,7 +391,7 @@
                 </div>
             </div>
             @endif
-            @if(isset($data->me) && $data->me->businessProfile->description)
+            @if(isset($data->me) && isset($data->me->businessProfile) &&  $data->me->businessProfile->description)
             <div class="d-flex align-items-center flex-lg-fill mr-5 mb-2">
                 <span class="mr-4">
                     <i class="flaticon-file-2 display-4 text-muted font-weight-bold"></i>
@@ -402,7 +402,7 @@
                 </div>
             </div>
             @endif
-            @if(isset($data->me) && $data->me->businessProfile->website)
+            @if(isset($data->me) && isset($data->me->businessProfile) &&  $data->me->businessProfile->website)
             <div class="d-flex align-items-center flex-lg-fill mr-5 mb-2">
                 <span class="mr-4">
                     <i class="flaticon2-website display-4 text-muted font-weight-bold"></i>

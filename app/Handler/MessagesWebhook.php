@@ -273,6 +273,7 @@ class MessagesWebhook extends ProcessWebhookJob
 		$dialog = ChatDialog::updateOrCreate(['id' => $message['chatId']], ['last_time' => $message['time']]);
 
         $dialogObj = ChatDialog::getData($dialog);
+        $dialogObj->lastMessage = ChatMessage::getData($messageObj);
         if(!$messageObj->notified){
 	        broadcast(new IncomingMessage(strtolower($domain), $dialogObj));
         }
@@ -305,7 +306,7 @@ class MessagesWebhook extends ProcessWebhookJob
         $botObj = Bot::getData($botObj, $tenantId);
         $botObj->file = str_replace('localhost', $domain . '.whatskey.net', $botObj->file);
         // For Local
-        $botObj->file = str_replace('newdomain1.whatskey.net/', 'e3f1-156-219-78-52.ngrok.io', $botObj->file);
+        $botObj->file = str_replace('newdomain1.whatskey.net/', 'c3e7-197-40-200-155.ngrok.io', $botObj->file);
         $myMessage = $botObj->reply;
         $message_type = '';
         if(str_contains($sender, '@g.us')){
@@ -443,7 +444,7 @@ class MessagesWebhook extends ProcessWebhookJob
             }
             if($botObj->image != ''){
         		$botObj->image = str_replace('localhost', $domain . '.whatskey.net', $botObj->image);
-        		$botObj->image = str_replace('newdomain1.whatskey.net/', 'e3f1-156-219-78-52.ngrok.io', $botObj->image);
+        		$botObj->image = str_replace('newdomain1.whatskey.net/', 'c3e7-197-40-200-155.ngrok.io', $botObj->image);
 	            $sendData['image'] = $botObj->image;
             }
             $sendData['footer'] = $botObj->footer;

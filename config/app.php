@@ -17,7 +17,7 @@ return [
     'BASE_URL' => 'http://whatskey.localhost',
     'ENGINE_URL' => 'http://whatskey.localhost/engine',
     'MY_DOMAIN' => 'http://myDomain.whatskey.localhost',
-    'OFFICIAL_DOMAIN' => env('OFFICIAL_DOMAIN', 'http://official.whatsapp.loc/engine'),
+    'OFFICIAL_DOMAIN' => env('OFFICIAL_DOMAIN', 'https://official.devapps.website/engine'),
     'debug_blacklist' => [
         '_ENV' => [
             'APP_KEY',

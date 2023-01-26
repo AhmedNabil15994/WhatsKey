@@ -25,7 +25,7 @@ class DashboardControllers extends Controller {
 
     use \TraitsFunc;
 
-    public function Dashboard(){   
+    public function Dashboard(){
         $varObj = Variable::getVar('QRIMAGE');
         if($varObj){
             $sendStatus = 0;
