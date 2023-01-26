@@ -24,7 +24,7 @@
 		    	<span class="sr-only"></span>
 		  	</a>
 		</div>
-	</div>
+</div>
 </div>
 
 <div class="rates">
@@ -504,7 +504,7 @@
 	</div>
 </div>
 
-<div class="partners">
+{{-- <div class="partners">
 	<h2>شركاؤنا</h2>
 	<div class="container">
 		<div class="row">
@@ -540,7 +540,7 @@
 			</div>
 		</div>
 	</div>
-</div>
+</div> --}}
 @endsection
 @section('scripts')
 @endsection
