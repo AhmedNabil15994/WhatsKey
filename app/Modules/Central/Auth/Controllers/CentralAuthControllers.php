@@ -414,6 +414,9 @@ class CentralAuthControllers extends Controller {
             Session::put('package_id',(int)$input['membership']);
             Session::put('package_duration',(int)$input['duration']);
             return redirect()->to('/checkAvailability');
+        }else{
+            Session::put('package_id',7);
+            Session::put('package_duration',3);
         }
         $data['code'] = \Helper::getCountryCode() ? \Helper::getCountryCode()->countryCode : 'sa';
         return view('Central.Auth.Views.checkAvailability')->with('data',(object) $data);
@@ -624,7 +627,7 @@ class CentralAuthControllers extends Controller {
                 'title' => $membershipObj->{'title_' . LANGUAGE_PREF},
                 'duration_type' => $package_duration,
                 'start_date' => $start_date,
-                'end_date' => $package_duration == 1 ? date('Y-m-d', strtotime('+1 month', strtotime($start_date))) : date('Y-m-d', strtotime('+1 year', strtotime($start_date))),
+                'end_date' => $package_duration == 1 ? date('Y-m-d', strtotime('+1 month', strtotime($start_date))) : ($package_duration == 2 ?  date('Y-m-d', strtotime('+1 year', strtotime($start_date))) :  date('Y-m-d', strtotime('+3 days', strtotime($start_date)))),
                 'price' => $package_duration == 1 ? $membershipObj->monthly_after_vat : $membershipObj->annual_after_vat,
                 'quantity' => 1,
             ]
