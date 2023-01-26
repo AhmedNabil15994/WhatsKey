@@ -186,7 +186,7 @@ class CentralAuthControllers extends Controller {
             session(['group_name' => $userObj->Group->name_ar]);
             $channels = CentralUser::getData($userObj)->channels;
             if(!empty($channels)){
-                session(['channel' => $channels[0]->id]);
+                session(['channel' => $channels[0]]);
             }
             if($isAdmin){
                 session(['central' => 1]);
