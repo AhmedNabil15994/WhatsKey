@@ -201,6 +201,7 @@ class CentralUser extends Model implements SyncMaster
         $data->extra_rules = $source->extra_rules != null ? unserialize($source->extra_rules) : [];
         $data->channelCodes = implode(',', unserialize($source->channels));
         $data->channelIDS = unserialize($source->channels);
+        $data->channels = $data->channelIDS;
         $data->created_at = \Helper::formatDateForDisplay($source->created_at,true);
         
         if($source->group_id == 0){
