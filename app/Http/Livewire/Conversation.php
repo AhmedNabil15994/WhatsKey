@@ -96,13 +96,10 @@ class Conversation extends Component
             }
             $msgs = array_reverse($msgs);
             $this->messages = $msgs;
-        }
-
-        if(
-            $this->selected == null && $chat['lastMessage']['fromMe'] == 0 && !$chat['muted'] && $is_admin ||
-            $msg['chatId'] == $this->selected && $chat['lastMessage']['fromMe'] == 0 && !$chat['muted'] && $is_admin
-        ){
-            $this->emit('playAudio');
+        }else{
+            if($chat['lastMessage']['fromMe'] == 0 && !$chat['muted'] && $is_admin){
+                $this->emit('playAudio');
+            }
         }
 
         $this->emit('updatePresence',[
