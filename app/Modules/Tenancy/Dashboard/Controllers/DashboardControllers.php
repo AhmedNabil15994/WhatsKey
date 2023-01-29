@@ -27,8 +27,8 @@ class DashboardControllers extends Controller {
 
     public function Dashboard(){
 
-        $contacts = Contact::where('group_id',7)->where('has_whatsapp',1)->pluck('phone');
-            dd($contacts);
+        // $contacts = Contact::where('group_id',7)->where('has_whatsapp',1)->pluck('phone');
+        //     dd($contacts);
 //         foreach ($contacts as $key => $value) {
 //             $curl = curl_init();
 //             $url = 'https://wloop.net/engine/messages/sendMessage';
@@ -64,7 +64,7 @@ class DashboardControllers extends Controller {
 //             $response = curl_exec($curl);
 //             curl_close($curl);
 //         }
-            dd($contacts);
+            // dd($contacts);
         
         $varObj = Variable::getVar('QRIMAGE');
         if($varObj){
