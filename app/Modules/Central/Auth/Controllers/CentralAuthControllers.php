@@ -548,7 +548,7 @@ class CentralAuthControllers extends Controller {
         }
 
         $package_id = Session::get('package_id');
-        $package_duration = Session::get('package_duration');
+        $package_duration = 3;//Session::get('package_duration');
         $membershipObj = Membership::getData(Membership::getOne($package_id));
         if(!$membershipObj){
             Session::flash('error', trans('main.membershipValidate'));
