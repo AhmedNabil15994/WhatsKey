@@ -7,7 +7,7 @@
 					<li><a href="{{URL::to('/whoUs')}}">من نحن</a></li>
 					<li><a href="{{URL::to('/')}}#advantages">مميزاتنا</a></li>
 					<li><a href="{{URL::to('/')}}#packages">الباقات</a></li>
-					<li><a href="{{URL::to('/contactUs')}}">اتصل بنا</a></li>
+					<li><a href="{{URL::to('/contact')}}">اتصل بنا</a></li>
 					<li><a href="{{URL::to('/faq')}}">الأسئلة الشائعة</a></li>
 					<li><a href="{{URL::to('/privacy')}}">الشروط والأحكام</a></li>
 					<li><a href="{{URL::to('/explaination')}}">الشرح</a></li>
