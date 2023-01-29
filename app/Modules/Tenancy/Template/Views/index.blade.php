@@ -54,7 +54,7 @@
 $varObj = \App\Models\Variable::getVar('ME');
 @endphp
 
-@if($data->designElems['mainData']['url'] == 'categories' && $varObj && isset(json_decode($varObj)->isBussines) && !json_decode($varObj)->isBussines)
+@if(in_array($data->designElems['mainData']['url'], ['categories','quickReplies','collections','products','orders',]) && $varObj && isset(json_decode($varObj)->isBussines) && !json_decode($varObj)->isBussines)
     <div class="alert alert-custom alert-primary" role="alert">
         <div class="alert-icon"><i class="flaticon-warning"></i></div>
         <div class="alert-text">{{trans('main.labelsConfigure')}}</div>
