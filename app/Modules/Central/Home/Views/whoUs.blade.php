@@ -66,7 +66,7 @@
 	</div>
 </div>
 
-<div class="opinions">
+{{-- <div class="opinions">
 	<h2>أراء عملاؤنا</h2>
 	<div class="container">
 		<div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="false">
@@ -118,7 +118,7 @@
 		  	</a>
 		</div>
 	</div>
-</div>
+</div> --}}
 @endsection
 @section('scripts')
 @endsection
