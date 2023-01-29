@@ -264,7 +264,6 @@ class GroupNumbersControllers extends Controller {
 
     public function checkFile(Request $request){
         if ($request->hasFile('file')) {
-            ini_set('memory_limit', '-1');
             $rows = Excel::toArray(new ContactImport, $request->file('file'));
             $headers = $rows[0][0];
             $data = array_slice($rows[0], 1, 10); 
