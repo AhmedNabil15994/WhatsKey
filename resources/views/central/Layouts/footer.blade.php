@@ -4,7 +4,7 @@
 			<div class="col-md-6">
 				<ul>
 					<li><a href="{{URL::to('/')}}">الرئيسية</a></li>
-					<li><a href="whoUs.html">من نحن</a></li>
+					<li><a href="{{URL::to('/whoUs')}}">من نحن</a></li>
 					<li><a href="{{URL::to('/')}}#advantages">مميزاتنا</a></li>
 					<li><a href="{{URL::to('/')}}#packages">الباقات</a></li>
 					<li><a href="{{URL::to('/contactUs')}}">اتصل بنا</a></li>
