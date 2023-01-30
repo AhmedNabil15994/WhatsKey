@@ -16,7 +16,7 @@
 			</div>
 			<div class="col-md-6">
 				<img src="{{asset('assets/images/noBackLogo.png')}}" alt="">
-				<p>جميع الحقوق محفوظة &copy; Whatskey 2022</p>
+				<p>جميع الحقوق محفوظة &copy; Whatskey {{date('Y')}}</p>
 			</div>
 		</div>
 	</div>
