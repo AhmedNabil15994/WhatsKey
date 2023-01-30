@@ -225,9 +225,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-xl-4 mt-5 mt-lg-0">
-                        <a href="#" class="btn btn-light-primary px-6 font-weight-bold">{{trans('main.search')}}</a>
-                    </div>
                 </div>
             </div>
             <table class="datatable datatable-bordered datatable-head-custom" id="kt_datatable">
