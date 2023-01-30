@@ -707,6 +707,6 @@ html[dir="ltr"] .newGroup emoji-picker{
 	max-width: 200px !important;
 }
 .replyHeader span,
-.messageItem span:not(.fa-icon){
+.messageItem span:not(.fa-icon,.notPre){
 	white-space: pre-line;
 }
