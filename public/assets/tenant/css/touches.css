@@ -388,6 +388,10 @@ html[dir="rtl"] .wizard-arrow{
 }
 .replyMsg{
 	cursor: pointer;
+	min-width: 200px;
+    max-height: 100px;
+    overflow-y: clip;
+    display: block !important;
 }
 .chatDetails{
 	position: absolute;
@@ -701,4 +705,8 @@ html[dir="ltr"] .newGroup emoji-picker{
 }
 .max-w-200{
 	max-width: 200px !important;
+}
+.replyHeader span,
+.messageItem span:not(.fa-icon){
+	white-space: pre-line;
 }
