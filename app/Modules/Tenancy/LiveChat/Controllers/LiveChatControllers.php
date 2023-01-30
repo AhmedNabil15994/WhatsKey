@@ -86,7 +86,7 @@ class LiveChatControllers extends Controller
             }
         }
 
-        $data['contacts'] = Contact::dataList(1)['data'];
+        $data['contacts'] = Contact::NotDeleted()->where('group_id',1)->get(['id','name','phone']);
         return view('Tenancy.LiveChat.Views.index')->with('data',(object)$data);
     }
 

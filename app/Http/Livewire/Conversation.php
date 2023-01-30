@@ -33,11 +33,11 @@ class Conversation extends Component
 
     protected $listeners = ['loadMessages','loadMoreMsgs','newIncomingMsg','sendMsg','changeMessageStatus','updateMsg','updateChat','rejectCall'];
 
-    public function mount(){
+    public function mount($contacts){
         $this->myImage = User::getData(User::find(USER_ID))->photo;
         $this->replies = Reply::dataList(null,3)['data'];
         $this->templates = Template::dataList(1)['data'];
-        $this->contacts = Contact::dataList(1)['data'];
+        $this->contacts = json_decode(json_encode($contacts), true);
         $this->labels = Category::dataList(null,null,true)['data'];
     }
 
@@ -45,14 +45,13 @@ class Conversation extends Component
         $this->messages = $data['messages']['data'];
         $this->chat = $data['chat'];
         $this->selected = $data['chat']['id'];
-        $this->emit('conversationOpened');
-        $this->emit('refreshDesign');
 
         $is_admin = \Session::get('is_admin');
         $user_id = \Session::get('user_id');
         if(!$is_admin){
             ChatEmpLog::newLog($data['chat']['id']);
         }
+        $this->emit('conversationOpened');
     }
 
     public function loadMoreMsgs(){

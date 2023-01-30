@@ -40,6 +40,7 @@ class Chat extends Component
         }
         // dd(ChatMessage::dataList($this->chat['id'], 30)['data']);
         Session::put('selected_chat_id',$chatId);
+        $this->emit('refreshDesign');
     }
 
     public function lastUpdates($msgId,$chatId,$status,$domain){

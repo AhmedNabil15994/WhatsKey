@@ -16,10 +16,10 @@ class ContactDetails extends Component
     public $groupInviteLink;
     protected $listeners = ['setSelected','addGroupParticipants','removeGroupParticipants','promoteGroupParticipants','demoteGroupParticipants','getInviteCode','updateGroupSettings'];
 
-    public function mount()
+    public function mount($contacts)
     {
         $this->mods = User::getModerators()['data'];
-        $this->contacts = Contact::dataList(1)['data'];
+        $this->contacts = json_decode(json_encode($contacts), true);
     }
 
     public function setSelected($chatObj){
@@ -37,7 +37,6 @@ class ContactDetails extends Component
         $chatObj['contact_details'] = (array)$contact_details;
         $this->chat = $chatObj;
         $this->selected = $chatObj['id'];
-        $this->emit('refreshDesign');
     }
 
     public function addGroupParticipants($numbers,$phones){

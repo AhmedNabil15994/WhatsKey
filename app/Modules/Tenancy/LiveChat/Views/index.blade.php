@@ -64,7 +64,7 @@
 													<label>{{trans('main.numbers')}}</label>
 													<select name="newContacts[]" class="form-control" data-toggle="select2" multiple>
 														@foreach($data->contacts as $contact)
-														<option value="{{ str_replace('+','',$contact->phone) }}">{{ $contact->name }}</option>
+														<option value="{{ str_replace('+','',$contact->phone) }}">{{ $contact->name != null ? $contact->name : $contact->phone }}</option>
 														@endforeach
 													</select>
 												</div>
@@ -104,7 +104,7 @@
 												<label>{{trans('main.numbers')}}</label>
 												<select name="contactsPhone[]" class="form-control" data-toggle="select2" multiple>
 													@foreach($data->contacts as $contact)
-													<option value="{{ str_replace('+','',$contact->phone) }}">{{ $contact->name }}</option>
+													<option value="{{ str_replace('+','',$contact->phone) }}">{{ $contact->name != null ? $contact->name : $contact->phone }}</option>
 													@endforeach
 												</select>
 											</div>
@@ -127,8 +127,8 @@
 								</div>
 							</div>
 
-							<livewire:conversation :wire:key="viewConversation"/>
-							<livewire:contact-details :wire:key="viewDetails"/>
+							<livewire:conversation :wire:key="viewConversation" :contacts="json_decode($data->contacts)"/>
+							<livewire:contact-details :wire:key="viewDetails" :contacts="json_decode($data->contacts)"/>
 						</div>
 					</div>
 				</div>
@@ -137,7 +137,6 @@
 		
 		@include('tenant.Layouts.scripts')
 		@include('tenant.Partials.notf_messages')
-		@section('scripts')
 		<script type="module" src="{{asset('assets/tenant/js/emojiIndex.js')}}"></script>
 		<script src="{{asset('assets/tenant/js/recorder.js')}}"></script>
 		<script src="{{asset('assets/tenant/js/pages/custom/chat/chat.js')}}"></script>
