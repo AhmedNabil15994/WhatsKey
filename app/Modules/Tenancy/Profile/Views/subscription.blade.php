@@ -85,7 +85,7 @@
                 <h3 class="card-title"><i class="{{ $data->designElems['mainData']['icon'] }} mx-1"></i> {{ trans('main.actions') }}</h3>
             </div>
             <div class="card-body text-center">
-                <a href="#" class="btn btn-light-dark btn-md mr-3 mb-3 btn-pill screen"><i class="la la-mobile-alt"></i>{{ trans('main.screenshot') }}</a>
+                <a href="#" class="btn btn-light-dark btn-md mr-3 mb-3 btn-pill screen" id="screenshot"><i class="la la-mobile-alt"></i>{{ trans('main.screenshot') }}</a>
                 <a href="{{ URL::to('/profile/subscription/syncAll') }}" class="btn btn-light-success btn-md mr-3 mb-3 btn-pill"><i class="flaticon2-chat-1"></i>{{ trans('main.syncAll') }}</a>
                 <a href="{{ URL::to('/profile/subscription/closeConn') }}" class="btn btn-light-danger btn-md mr-3 mb-3 btn-pill"><i class="la la-close"></i>{{ trans('main.closeConn') }}</a>
                 <a href="{{ URL::to('/profile/subscription/read/1') }}" class="btn btn-light-dark btn-md mr-3 mb-3 btn-pill"><i class="la la-check-double"></i>{{ trans('main.readAll') }}</a>

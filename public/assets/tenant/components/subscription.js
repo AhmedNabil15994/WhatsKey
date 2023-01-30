@@ -3,6 +3,9 @@ $(function(){
 	    e.preventDefault();
 	    e.stopPropagation();
 	    $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
+
+	    var btn = KTUtil.getById("screenshot");
+	   	KTUtil.btnWait(btn, "spinner spinner-right spinner-white pr-15", "Please wait");
 	    $.ajax({
 	        type: 'get',
 	        url: myURL+'/screenshot',
@@ -11,8 +14,14 @@ $(function(){
 	            if(data.image){
 	            	$('#full-width-modal .modal-body').append(data.image);
 	            	$('#full-width-modal').modal('show');
+	            	setTimeout(function() {
+			            KTUtil.btnRelease(btn);
+			        }, 1000);
 	            }else{
 	                errorNotification(data.status.message);
+	                setTimeout(function() {
+			            KTUtil.btnRelease(btn);
+			        }, 1000);
 	            }
 	        },
 	    });
