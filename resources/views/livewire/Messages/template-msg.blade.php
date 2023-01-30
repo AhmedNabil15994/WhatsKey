@@ -24,7 +24,7 @@
         <div class="bts text-center">
             @foreach($msg['metadata']['buttons'] as $button)
             @php $button = (array)$button; @endphp
-            <button class="btn btn-block btn-secondary">
+            <button class="btn btn-block btn-{{$msg['fromMe'] ? 'secondary':'white'}}">
                 @if(isset($button['urlButton']))
                 @php $button['urlButton'] = (array)$button['urlButton']; @endphp                
                 <a class="w-100" href="{{$button['urlButton']['url']}}" target="_blank" data-toggle="tooltip" data-original-title="{{$button['urlButton']['url']}}">

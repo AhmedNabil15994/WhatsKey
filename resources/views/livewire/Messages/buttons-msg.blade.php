@@ -23,8 +23,8 @@
         
         <div class="bts text-center">
             @foreach($msg['metadata']['buttons'] as $button)
-            @php $button = (array)$button; @endphp
-            <button class="btn btn-block btn-secondary">{{$button['title']}}</button>
+            @php $button = (array)$button; @endphp            
+            <button class="btn btn-block btn-{{$msg['fromMe'] ? 'secondary':'white'}}">{{$button['title']}}</button>
             @endforeach
         </div>
     </div>
