@@ -22,7 +22,7 @@
 		        	<a class="nav-link" href="{{URL::to('/')}}#packages">الباقات</a>
 		      	</li>
 		      	<li class="nav-item">
-		        	<a class="nav-link {{Active(URL::to('/contactUs'))}}" href="{{URL::to('/contactUs')}}">اتصل بنا</a>
+		        	<a class="nav-link {{Active(URL::to('/contact'))}}" href="{{URL::to('/contact')}}">اتصل بنا</a>
 		      	</li>
 		    </ul>
 			<div class="form-inline">
