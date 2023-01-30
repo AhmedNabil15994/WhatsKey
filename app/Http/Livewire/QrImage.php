@@ -70,8 +70,7 @@ class QrImage extends Component
                 
                 // // Update User With Settings For Whatsapp Based On His Domain
                 $domain = User::first()->domain;
-                // dispatch(new QRSyncData($domain))->onConnection('cjobs');
-                dispatch(new QRSyncData($domain))->onConnection('database');
+                dispatch(new QRSyncData($domain))->onConnection('syncdata');
                 $this->emit('statusChanged'); 
             }
             

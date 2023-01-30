@@ -166,7 +166,7 @@
                             </div>
                             <div class='col-md-4 repy'>
                                 <div class="form-group textWrap {{ $oneItem['msg_type'] == 0 ? '' : 'hidden'  }}">
-                                    <textarea class="form-control" name='btn_reply_{{ $oneItem['id'] }}' placeholder='{{ trans('main.messageContent') }}' maxlength="140">{{ $oneItem['msg_type'] == 0 ? $oneItem['msg'] : ''  }}</textarea>
+                                    <textarea class="form-control" name='btn_reply_{{ $oneItem['id'] }}' placeholder='{{ trans('main.messageContent') }}' >{{ $oneItem['msg_type'] == 0 ? $oneItem['msg'] : ''  }}</textarea>
                                     <i class="la la-smile icon-xl emoji-icon"></i>
                                     <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                                 </div>

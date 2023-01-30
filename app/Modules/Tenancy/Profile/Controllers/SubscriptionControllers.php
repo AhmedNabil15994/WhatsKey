@@ -201,7 +201,6 @@ class SubscriptionControllers extends Controller
 
         try {
             dispatch(new NewClient($data))->onConnection('database');
-            // dispatch(new NewClient($data))->onConnection('cjobs');
         } catch (Exception $e) {
             
         }

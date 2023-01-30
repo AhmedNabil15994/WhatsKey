@@ -6,7 +6,7 @@
 	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 	    <!-- First Mobile Meta  -->
 		<meta name="viewport" content="width=device-width, height=device-height ,  maximum-scale=1 , initial-scale=1">
-		<title>واتس لووب | Whats Loop | @yield('title')</title>
+		<title>واتس كي | Whats Key | @yield('title')</title>
 		<meta name="description" content="#" />
 		<meta name="csrf-token" content="{{ csrf_token() }}">
 		<link rel="stylesheet" href="{{ asset('assets/dashboard/assets/V5/css/font.css') }}" />

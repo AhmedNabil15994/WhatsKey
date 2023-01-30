@@ -156,7 +156,7 @@
                                 </div>
                                 <div class="col-md-3">                                    
                                     <div class="form-group textWrap">
-                                        <textarea class="form-control" name='{{'item_description_'.$oneItem['id'].'_'.($key+1)}}' placeholder='{{ trans('main.desc') }}' maxlength="140">{{$oneRow['description']}}</textarea>
+                                        <textarea class="form-control" name='{{'item_description_'.$oneItem['id'].'_'.($key+1)}}' placeholder='{{ trans('main.desc') }}' >{{$oneRow['description']}}</textarea>
                                         <i class="la la-smile icon-xl emoji-icon"></i>
                                         <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                                     </div>
@@ -169,7 +169,7 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group textWrap textReply {{ $oneRow['msg_type'] == null ? '' : 'hidden'}}">
-                                        <textarea class="replyText form-control" name='{{ 'btn_reply_'.$oneItem['id'].'_'.($key+1) }}' placeholder='{{ trans('main.messageContent') }}' maxlength="140">{{ $oneRow['msg_type'] == 0 ? $oneRow['msg'] : ''  }}</textarea>
+                                        <textarea class="replyText form-control" name='{{ 'btn_reply_'.$oneItem['id'].'_'.($key+1) }}' placeholder='{{ trans('main.messageContent') }}' >{{ $oneRow['msg_type'] == 0 ? $oneRow['msg'] : ''  }}</textarea>
                                         <i class="la la-smile icon-xl emoji-icon"></i>
                                         <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                                     </div>

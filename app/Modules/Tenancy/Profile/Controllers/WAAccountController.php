@@ -167,8 +167,7 @@ class WAAccountController extends Controller
             $messages = $result['data'];
         }
         try {
-            // dispatch(new SyncMessagesJob($messages))->onConnection('cjobs');
-            dispatch(new SyncMessagesJob($messages))->onConnection('database');
+            dispatch(new SyncMessagesJob($messages))->onConnection('syncdata');
         } catch (Exception $e) {
 
         }
@@ -205,8 +204,7 @@ class WAAccountController extends Controller
 
         $messages = ChatMessage::where('fromMe', 0)->groupBy('chatId')->pluck('chatId');
         try {
-            // dispatch(new ReadChatsJob(reset($messages), $status))->onConnection('cjobs');
-            dispatch(new ReadChatsJob(reset($messages), $status))->onConnection('database');
+            dispatch(new ReadChatsJob(reset($messages), $status))->onConnection('syncdata');
         } catch (Exception $e) {
 
         }
@@ -231,8 +229,7 @@ class WAAccountController extends Controller
             $dialogs = $result['data'];
         }
         try {
-            // dispatch(new SyncDialogsJob($dialogs))->onConnection('cjobs');
-            dispatch(new SyncDialogsJob($dialogs))->onConnection('database');
+            dispatch(new SyncDialogsJob($dialogs))->onConnection('syncdata');
         } catch (Exception $e) {
 
         }
@@ -256,8 +253,7 @@ class WAAccountController extends Controller
             $contacts = $result['data'];
         }
         try {
-            // dispatch(new SyncContactsJob($contacts))->onConnection('cjobs');
-            dispatch(new SyncContactsJob($contacts))->onConnection('database');
+            dispatch(new SyncContactsJob($contacts))->onConnection('syncdata');
         } catch (Exception $e) {
 
         }
@@ -274,8 +270,7 @@ class WAAccountController extends Controller
             $updateResult = $updateResult->json();
             if (isset($updateResult['data']) && !empty($updateResult['data'])) {
                 try {
-                    // dispatch(new SyncLabelsJob($updateResult['data']))->onConnection('cjobs');
-                    dispatch(new SyncLabelsJob($updateResult['data']))->onConnection('database');
+                    dispatch(new SyncLabelsJob($updateResult['data']))->onConnection('syncdata');
                 } catch (Exception $e) {
 
                 }
@@ -295,8 +290,7 @@ class WAAccountController extends Controller
             $updateResult = $updateResult->json();
             if (isset($updateResult['data']) && !empty($updateResult['data'])) {
                 try {
-                    // dispatch(new SyncRepliesJob($updateResult['data']))->onConnection('cjobs');
-                    dispatch(new SyncRepliesJob($updateResult['data']))->onConnection('database');
+                    dispatch(new SyncRepliesJob($updateResult['data']))->onConnection('syncdata');
                 } catch (Exception $e) {
 
                 }
@@ -316,8 +310,7 @@ class WAAccountController extends Controller
             $updateResult = $updateResult->json();
             if (isset($updateResult['data']) && !empty($updateResult['data'])) {
                 try {
-                    // dispatch(new SyncOrdersJob($updateResult['data']))->onConnection('cjobs');
-                    dispatch(new SyncOrdersJob($updateResult['data']))->onConnection('database');
+                    dispatch(new SyncOrdersJob($updateResult['data']))->onConnection('syncdata');
                 } catch (Exception $e) {
 
                 }
@@ -337,8 +330,7 @@ class WAAccountController extends Controller
             $updateResult = $updateResult->json();
             if (isset($updateResult['data']) && !empty($updateResult['data'])) {
                 try {
-                    // dispatch(new SyncProductsJob($updateResult['data']))->onConnection('cjobs');
-                    dispatch(new SyncProductsJob($updateResult['data']))->onConnection('database');
+                    dispatch(new SyncProductsJob($updateResult['data']))->onConnection('syncdata');
                 } catch (Exception $e) {
 
                 }
@@ -358,8 +350,7 @@ class WAAccountController extends Controller
             $updateResult = $updateResult->json();
             if (isset($updateResult['data']) && !empty($updateResult['data'])) {
                 try {
-                    // dispatch(new SyncCollectionsJob($updateResult['data']))->onConnection('cjobs');
-                    dispatch(new SyncCollectionsJob($updateResult['data']))->onConnection('database');
+                    dispatch(new SyncCollectionsJob($updateResult['data']))->onConnection('syncdata');
                 } catch (Exception $e) {
 
                 }
@@ -491,8 +482,7 @@ class WAAccountController extends Controller
                 $contacts = $result['data'];
             }
             try {
-                // dispatch(new SyncContactsJob($contacts))->onConnection('cjobs');
-                dispatch(new SyncContactsJob($contacts))->onConnection('database');
+                dispatch(new SyncContactsJob($contacts))->onConnection('syncdata');
             } catch (Exception $e) {
 
             }

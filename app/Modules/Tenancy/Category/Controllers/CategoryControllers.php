@@ -227,8 +227,7 @@ class CategoryControllers extends Controller {
             $updateResult = $updateResult->json();
             if (isset($updateResult['data']) && !empty($updateResult['data'])) {
                 try {
-                    // dispatch(new SyncLabelsJob($updateResult['data']))->onConnection('cjobs');
-                    dispatch(new SyncLabelsJob($updateResult['data']))->onConnection('database');
+                    dispatch(new SyncLabelsJob($updateResult['data']))->onConnection('syncdata');
                 } catch (Exception $e) {
 
                 }

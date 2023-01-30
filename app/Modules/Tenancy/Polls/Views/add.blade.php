@@ -111,7 +111,7 @@
                             </div>
                             <div class='col-md-4 repy'>
                                 <div class="textWrap form-group">
-                                    <textarea class="form-control" name='poll_reply_1' placeholder='{{ trans('main.messageContent') }}' maxlength="140"></textarea>
+                                    <textarea class="form-control" name='poll_reply_1' placeholder='{{ trans('main.messageContent') }}' ></textarea>
                                     <i class="la la-smile icon-xl emoji-icon"></i>
                                     <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                                 </div>

@@ -41,7 +41,7 @@ class CheckContacts extends Command
     {   
         $data = Contact::NotDeleted()->where('has_whatsapp','!=',1)->get();
         try {
-            dispatch(new CheckWhatsappJob($data))->onConnection('database');
+            dispatch(new CheckWhatsappJob($data))->onConnection('open');
         } catch (Exception $e) {
             
         }

@@ -685,8 +685,7 @@ class GroupMsgsControllers extends Controller {
         if($flag == 0){
             $contacts = Contact::NotDeleted()->where('group_id',$groupObj->id)->where('status',1)->chunk($chunks,function($data) use ($dataObj){
                 try {
-                    dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('database');
-                    // dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('cjobs');
+                    dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('open');
                 } catch (Exception $e) {}
             });
         }else{
@@ -696,8 +695,7 @@ class GroupMsgsControllers extends Controller {
             $on = \Carbon\Carbon::now()->addSeconds($diff);   
             $contacts = Contact::NotDeleted()->where('group_id',$groupObj->id)->where('status',1)->chunk($chunks,function($data) use ($dataObj,$on){
                 try {
-                    dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('database')->delay($on);
-                    // dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('cjobs')->delay($on);
+                    dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('open')->delay($on);
                 } catch (Exception $e) {}
             });
         }
@@ -776,8 +774,7 @@ class GroupMsgsControllers extends Controller {
         if($status == 1){
             $contacts = Contact::NotDeleted()->where('group_id',$groupMsgObj->group_id)->where('status',1)->chunk($chunks,function($data) use ($dataObj){
                 try {
-                    // dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('cjobs');
-                    dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('database');
+                    dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('open');
                 } catch (Exception $e) {}
             });
         }else{
@@ -795,8 +792,7 @@ class GroupMsgsControllers extends Controller {
 
             $contacts = Contact::NotDeleted()->where('group_id',$groupMsgObj->group_id)->whereIn('phone',$oldContacts)->chunk($chunks,function($data) use ($dataObj){
                 try {
-                    // dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('cjobs');
-                    dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('database');
+                    dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('open');
                 } catch (Exception $e) {}
             });
         }

@@ -61,8 +61,7 @@ class QRSyncData implements ShouldQueue
         $diags = $diags->json();
         if($diags != null && isset($diags['data']) && !empty($diags['data'])){
             try {
-                // dispatch(new SyncDialogsJob($diags['data']))->onConnection('cjobs');
-                dispatch(new SyncDialogsJob($diags['data']))->onConnection('database');
+                dispatch(new SyncDialogsJob($diags['data']))->onConnection('syncdata');
             } catch (Exception $e) {
                 
             }   
@@ -72,8 +71,7 @@ class QRSyncData implements ShouldQueue
         $msgRespone = $msgResult->json();
         if($msgRespone != null && isset($msgRespone['data']) && !empty($msgRespone['data'])){
             try {
-                // dispatch(new SyncMessagesJob($msgRespone['data']))->onConnection('cjobs');
-                dispatch(new SyncMessagesJob($msgRespone['data']))->onConnection('database');
+                dispatch(new SyncMessagesJob($msgRespone['data']))->onConnection('syncdata');
             } catch (Exception $e) {
                 
             }
@@ -83,8 +81,7 @@ class QRSyncData implements ShouldQueue
         $contactResponse = $contactResult->json();
         if($contactResponse != null && isset($contactResponse['data']) && !empty($contactResponse['data'])){
             try {
-                // dispatch(new SyncMessagesJob($contactResponse['data']))->onConnection('cjobs');
-                dispatch(new SyncContactsJob($contactResponse['data']))->onConnection('database');
+                dispatch(new SyncContactsJob($contactResponse['data']))->onConnection('syncdata');
             } catch (Exception $e) {
                 
             }
