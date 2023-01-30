@@ -45,7 +45,7 @@ class OfficialHelper
 
         $this->instanceId = $myInstanceId;
         $this->token = $myInstanceToken;
-        $this->authToken = '29dc355a906104097199332d378dfc10';
+        $this->authToken = '8c5728b6c059424b7820abbf7e22fa9d';
         $this->baseUrl = config('app.OFFICIAL_DOMAIN') . '/';
     }
 
