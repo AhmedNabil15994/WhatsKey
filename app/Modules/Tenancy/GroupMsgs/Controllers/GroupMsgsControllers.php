@@ -683,21 +683,17 @@ class GroupMsgsControllers extends Controller {
         $chunks = 100;
 
         if($flag == 0){
-            $contacts = Contact::NotDeleted()->where('group_id',$groupObj->id)->where('status',1)->chunk($chunks,function($data) use ($dataObj){
-                try {
-                    dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs');
-                } catch (Exception $e) {}
-            });
+            try {
+                dispatch(new GroupMessageJob($dataObj))->onConnection('groupMsgs');
+            } catch (Exception $e) {}
         }else{
             $now = \Carbon\Carbon::now();
             $sendDate = \Carbon\Carbon::parse($date);
             $diff =  $sendDate->diffInSeconds($now);
             $on = \Carbon\Carbon::now()->addSeconds($diff);   
-            $contacts = Contact::NotDeleted()->where('group_id',$groupObj->id)->where('status',1)->chunk($chunks,function($data) use ($dataObj,$on){
-                try {
-                    dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs')->delay($on);
-                } catch (Exception $e) {}
-            });
+            try {
+                dispatch(new GroupMessageJob($dataObj))->onConnection('groupMsgs')->delay($on);
+            } catch (Exception $e) {}
         }
 
         Session::forget('msgFile');
@@ -772,11 +768,9 @@ class GroupMsgsControllers extends Controller {
         $dataObj = GroupMsg::getData($groupMsgObj);
         $chunks = 100;
         if($status == 1){
-            $contacts = Contact::NotDeleted()->where('group_id',$groupMsgObj->group_id)->where('status',1)->chunk($chunks,function($data) use ($dataObj){
-                try {
-                    dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs');
-                } catch (Exception $e) {}
-            });
+            try {
+                dispatch(new GroupMessageJob($dataObj))->onConnection('groupMsgs');
+            } catch (Exception $e) {}
         }else{
             $sentContacts = ContactReport::where('group_message_id',$id)->where('message_id','!=',null)->pluck('contact');
             $sentContacts = reset($sentContacts);
@@ -790,11 +784,9 @@ class GroupMsgsControllers extends Controller {
             $allContacts = array_diff( $allContacts, $sentContacts );
             $oldContacts = array_unique(array_merge( $allContacts, $notSentContacts ));
 
-            $contacts = Contact::NotDeleted()->where('group_id',$groupMsgObj->group_id)->whereIn('phone',$oldContacts)->chunk($chunks,function($data) use ($dataObj){
-                try {
-                    dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs');
-                } catch (Exception $e) {}
-            });
+            try {
+                dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs');
+            } catch (Exception $e) {}
         }
 
         Session::flash('success', trans('main.addSuccess'));
