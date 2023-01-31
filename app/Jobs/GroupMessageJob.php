@@ -47,7 +47,7 @@ class GroupMessageJob implements ShouldQueue
     {   
         $unsent = $this->messageObj->unsent_msgs;
         $sent = $this->messageObj->sent_msgs;
-        $this->contacts = Contact::NotDeleted()->where('group_id',$this->messageObj->group_id)->take(500)->get();
+        $this->contacts = Contact::NotDeleted()->where('group_id',$this->messageObj->group_id)->orderBy('id','DESC')->take(1000)->get();
         $botObj = null;
         $messageObj = GroupMsg::NotDeleted()->where('id',$this->messageObj->id)->first();
         if($messageObj->bot_plus_id != null){
