@@ -612,7 +612,7 @@
                             </div>
                         </div>
                         @endif
-                        <span class="label label-xs label-{{$statusColors[$extra_quota->status]}} label-inline font-weight-bold py-4 float-right">{{$extra_quota->statusText}}</span>
+                        <span class="label label-xs label-{{$colors[$extra_quota->status]}} label-inline font-weight-bold py-4 float-right">{{$extra_quota->statusText}}</span>
                     </div>
                 </div>
                 @endforeach
