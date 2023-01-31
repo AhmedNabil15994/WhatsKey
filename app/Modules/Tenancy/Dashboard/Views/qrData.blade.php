@@ -108,7 +108,7 @@
                                             <span class="stepQr">{{ trans('main.alert7') }}</span>
                                         </div>
                                         <div class="col-md-4 mt-5">
-                                            {{-- <img src="{{ asset('assets/tenant/images/scanQR.gif') }}" class="imgPhone" alt="" /> --}}
+                                            <img src="{{ asset('assets/tenant/images/scanQR.gif') }}" class="imgPhone" alt="" />
                                         </div>
                                     </div>
                                 </div>
