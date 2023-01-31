@@ -58,6 +58,15 @@ return [
             'retry_after' => 90,
             'after_commit' => false,
         ],
+        'groupMsgs' => [
+            'driver' => 'database',
+            'table' => 'jobs',
+            'connection' => 'main',
+            'queue' => 'default',
+            'retry_after' => 90,
+            'after_commit' => false,
+        ],
+
 
         'beanstalkd' => [
             'driver' => 'beanstalkd',
