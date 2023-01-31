@@ -102,19 +102,23 @@ class GroupMessageJob implements ShouldQueue
         $phones = [];
         $messageData = [];
         $messageFunction = '';
+        $hasVar = 0;
         foreach ($allowedContacts as $key => $contact){
             $phones[$key] = str_replace('+', '', $contact['phone']);
             if($messageObj['message_type'] == 1){
                 $messageData[$key]['body'] = $this->reformMessage($messageObj['message'],$contact['name'],str_replace('+', '', $contact['phone']));
                 $messageFunction = 'sendBulkText';
+                $hasVar = str_contains($messageObj['message'], '{CUSTOMER_NAME}') || str_contains($messageObj['message'], '{CUSTOMER_PHONE}') ? 1 : 0;
             }else if($messageObj['message_type'] == 2){
                 $messageData[$key]['caption'] = $this->reformMessage($messageObj['message'],$contact['name'],str_replace('+', '', $contact['phone']));
                  $messageData[$key]['url'] = $messageObj['file'];
                 $messageFunction = 'sendBulkImage';
+                $hasVar = str_contains($messageObj['message'], '{CUSTOMER_NAME}') || str_contains($messageObj['message'], '{CUSTOMER_PHONE}') ? 1 : 0;
             }else if($messageObj['message_type'] == 3){
                 $messageData[$key]['caption'] = $this->reformMessage($messageObj['message'],$contact['name'],str_replace('+', '', $contact['phone']));
                 $messageData[$key]['url'] = $messageObj['file'];
                 $messageFunction = 'sendBulkVideo';
+                $hasVar = str_contains($messageObj['message'], '{CUSTOMER_NAME}') || str_contains($messageObj['message'], '{CUSTOMER_PHONE}') ? 1 : 0;
             }else if($messageObj['message_type'] == 4){
                 $messageData[$key]['url'] = $messageObj['file'];
                 $messageFunction = 'sendBulkAudio';
@@ -126,22 +130,27 @@ class GroupMessageJob implements ShouldQueue
                 $messageData[$key]['lat'] = $messageObj['lat'];
                 $messageData[$key]['lng'] = $messageObj['lng'];
                 $messageFunction = 'sendBulkLocation';
+                $hasVar = str_contains($messageObj['message'], '{CUSTOMER_NAME}') || str_contains($messageObj['message'], '{CUSTOMER_PHONE}') ? 1 : 0;
             }else if($messageObj['message_type'] == 9){
                 $messageData[$key]['contact'] = str_replace('+', '', $messageObj['message']);
                 $messageData[$key]['name'] = str_replace('+', '', $messageObj['message']);
                 $messageFunction = 'sendBulkContact';
+                $hasVar = str_contains($messageObj['message'], '{CUSTOMER_NAME}') || str_contains($messageObj['message'], '{CUSTOMER_PHONE}') ? 1 : 0;
             }else if($messageObj['message_type'] == 10){
                 $messageData[$key]['body'] = $this->reformMessage($messageObj['message'],$contact['name'],str_replace('+', '', $contact['phone']));
                 $messageData[$key]['expiration'] = $messageObj['expiration_in_seconds'];
                 $messageFunction = 'sendBulkDisappearing';
+                $hasVar = str_contains($messageObj['message'], '{CUSTOMER_NAME}') || str_contains($messageObj['message'], '{CUSTOMER_PHONE}') ? 1 : 0;
             }else if($messageObj['message_type'] == 11){
                 $messageData[$key]['contact'] = str_replace('+','',$messageObj['message']);
                 $messageFunction = 'sendBulkMention';
+                $hasVar = str_contains($messageObj['message'], '{CUSTOMER_NAME}') || str_contains($messageObj['message'], '{CUSTOMER_PHONE}') ? 1 : 0;
             }else if($messageObj['message_type'] == 16){
                 $messageData[$key]['title'] = $this->reformMessage($messageObj['url_title'],$contact['name'],str_replace('+', '', $contact['phone']));
                 $messageData[$key]['url'] = $messageObj['message'];
                 $messageData[$key]['description'] = $this->reformMessage($messageObj['url_title'],$contact['name'],str_replace('+', '', $contact['phone']));
                 $messageFunction = 'sendBulkLink';
+                $hasVar = str_contains($messageObj['url_title'], '{CUSTOMER_NAME}') || str_contains($messageObj['url_title'], '{CUSTOMER_PHONE}') ? 1 : 0;
             }else if($messageObj['message_type'] == 30){
                 $buttons = [];
                 foreach ($botObj->buttonsData as $buttonKey => $oneItem) {
@@ -155,6 +164,7 @@ class GroupMessageJob implements ShouldQueue
                 $messageData[$key]['footer'] = $botObj->footer;
                 $messageData[$key]['buttons'] = $buttons;
                 $messageFunction = 'sendBulkButtons';
+                $hasVar = str_contains($botObj->body, '{CUSTOMER_NAME}') || str_contains($messageObj['message'], '{CUSTOMER_PHONE}') ? 1 : 0;
             }else if($messageObj['message_type'] == 31){
                 $sections = [];
                 foreach ($botObj->sectionsData as $listKey => $oneItem) {
@@ -178,6 +188,7 @@ class GroupMessageJob implements ShouldQueue
                 $messageData[$key]['buttonText'] = $botObj->buttonText;
                 $messageData[$key]['sections'] = $sections;
                 $messageFunction = 'sendBulkList';
+                $hasVar = str_contains($botObj->body, '{CUSTOMER_NAME}') || str_contains($messageObj['message'], '{CUSTOMER_PHONE}') ? 1 : 0;
             }else if($messageObj['message_type'] == 32){
                 $options = [];
                 foreach ($botObj->optionsData as $pollKey => $oneItem) {
@@ -188,14 +199,20 @@ class GroupMessageJob implements ShouldQueue
                 $messageData[$key]['selectableOptionsCount'] = $botObj->selected_options;
                 $messageData[$key]['options'] = $options;
                 $messageFunction = 'sendBulkPoll';
+                $hasVar = str_contains($botObj->body, '{CUSTOMER_NAME}') || str_contains($messageObj['message'], '{CUSTOMER_PHONE}') ? 1 : 0;
             }
         }
 
         $sendRequest = [
             'phones' => $phones,
             'interval' => $messageObj['interval_in_sec'],
-            'messageData' => $messageData
         ];
+
+        if($hasVar){
+            $sendRequest['messageData'] = $messageData;
+        }else{
+            $sendRequest = array_merge($sendRequest,$messageData[0]);
+        }
 
         if(!empty($phones)){
             if($messageObj['message_type'] == 4){
