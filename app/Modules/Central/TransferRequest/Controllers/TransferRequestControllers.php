@@ -161,7 +161,7 @@ class TransferRequestControllers extends Controller {
             ];        
 
             try {
-                dispatch(new NewClient($data))->onConnection('database');
+                dispatch(new NewClient($data))->onConnection('syncdata');
             } catch (Exception $e) {}
         }
 
