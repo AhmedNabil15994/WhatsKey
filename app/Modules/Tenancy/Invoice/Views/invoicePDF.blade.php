@@ -501,7 +501,6 @@
 		                        <div class="font-size-lg font-weight-bold mb-10">{{ date('M d, Y',strtotime($data->invoice->created_at)) }}</div>
 		                        <div class="text-dark-50 font-size-lg font-weight-bold mb-3">{{ trans('main.eInvoice') }}.</div>
 		                        <div class="font-size-lg font-weight-bold mb-3">
-		                        	{{dd($data->qrImage)}}
 		                            <img src="{{$data->qrImage}}" width="200" height="200">
 		                        </div>
 		                    </div>
