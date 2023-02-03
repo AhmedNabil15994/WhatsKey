@@ -459,9 +459,9 @@ class SubscriptionHelper {
 
         $baseURL = config('app.MY_DOMAIN');
         $baseURL = str_replace('myDomain', $userObj->domain, $baseURL);
-        $data['fontFile'] = $baseURL. '/assets/tenant/css/font.css';
-        $data['logoFile'] = $baseURL. '/assets/images/whiteLogo.png';
-        $data['backFile'] = $baseURL. '/assets/tenant/media/bg/bg-invoice-5.jpg';            
+        $data['fontFile'] = config('app.BASE_URL'). '/assets/tenant/css/font.css';
+        $data['logoFile'] = config('app.BASE_URL'). '/assets/images/whiteLogo.png';
+        $data['backFile'] = config('app.BASE_URL'). '/assets/tenant/media/bg/bg-invoice-5.jpg';            
 
         $tax = \Helper::calcTax($data['invoice']->total);
         tenancy()->initialize($tenant_id);
