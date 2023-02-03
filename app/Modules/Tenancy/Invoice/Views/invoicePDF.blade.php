@@ -7,14 +7,45 @@
 		<title>واتس كي | WhatsKey | @yield('title')</title>
 		<meta name="description" content="#" />
 		<meta name="csrf-token" content="{{ csrf_token() }}">
-		@php 
-		$logoFile = !isset($data->logoFile) ? config('app.BASE_URL') . '/assets/images/whiteLogo.png' : $data->logoFile;
-		$backFile = !isset($data->backFile) ? config('app.BASE_URL') . '/assets/tenant/media/bg/bg-invoice-5.jpg' : $data->backFile;
-		@endphp
-		<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" rel="stylesheet">
+		{{-- <link rel="stylesheet" href="{{ !isset($data->fontFile) ? asset('assets/tenant/css/font.css') : $data->fontFile }}" /> --}}
+		{{-- <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" rel="stylesheet"> --}}
+		<style>
+			@font-face {
+			    font-family: "Tajawal-Light";
+			    src:url({{config('app.BASE_URL').'/assets/tenant/fonts/Tajawal-Light.ttf'}}) format('truetype');
+			    font-weight: normal;
+			    font-style: normal;
+			}
+
+			@font-face {
+			    font-family: "Tajawal-Regular";
+			    src:url({{config('app.BASE_URL').'/assets/tenant/fonts/Tajawal-Regular.ttf'}}) format('truetype');
+			    font-weight: normal;
+			    font-style: normal;
+			}
+
+			@font-face {
+			    font-family: "Tajawal-Medium";
+			    src:url({{config('app.BASE_URL').'/assets/tenant/fonts/Tajawal-Medium.ttf'}}) format('truetype');
+			    font-weight: normal;
+			    font-style: normal;
+			}
 
 
+			@font-face {
+			    font-family: "Tajawal-Bold";
+			    src: url({{config('app.BASE_URL').'/assets/tenant/fonts/Tajawal-Bold.ttf'}}) format('truetype');
+			    font-weight: normal;
+			    font-style: normal;
+			}
 
+			@font-face {
+			    font-family: "Tajawal-ExtraBold";
+			    src: url({{config('app.BASE_URL').'/assets/tenant/fonts/Tajawal-ExtraBold.ttf'}}) format('truetype');
+			    font-weight: normal;
+			    font-style: normal;
+			}
+		</style>
 		<style type="text/css">
 			html,body{
 				font-family: "Tajawal-Regular" !important;
@@ -328,7 +359,7 @@
 			                    <div class="d-flex flex-column align-items-md-end px-0">
 			                        <a href="#" class="mb-5 max-w-200px">
 			                            <span class="svg-icon svg-icon-full">
-			                                <img src="{{ str_replace('https://whatskey','https://'.DOMAIN.'.whatskey',$logoFile) }}" alt="">
+			                                <img src="{{!isset($data->logoFile) ? asset('assets/images/whiteLogo.png') : $data->logoFile}}" alt="">
 			                            </span>
 			                        </a>
 			                        <span class="spans align-items-md-end font-size-h5 font-weight-bold text-muted">
@@ -342,7 +373,7 @@
 			                </div>
 		                </div>
 		                <div class="rounded-xl overflow-hidden w-100 max-h-md-250px mb-10">
-		                    <img src="{{ str_replace('https://whatskey','https://'.DOMAIN.'.whatskey',$backFile) }}" class="w-100" alt="">
+		                    <img src="{{!isset($data->backFile) ? asset('assets/tenant/media/bg/bg-invoice-5.jpg') : $data->backFile}}" class="w-100" alt="">
 		                </div>
 		                <!--begin: Invoice body-->
 		                <div class="row border-bottom pb-10">
