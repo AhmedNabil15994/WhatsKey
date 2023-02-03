@@ -9,7 +9,43 @@
 		<meta name="csrf-token" content="{{ csrf_token() }}">
 		{{-- <link rel="stylesheet" href="{{ !isset($data->fontFile) ? asset('assets/tenant/css/font.css') : $data->fontFile }}" /> --}}
 		{{-- <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" rel="stylesheet"> --}}
-		
+		<style>
+			@font-face {
+			    font-family: "Tajawal-Light";
+			    src:url({{config('app.BASE_URL').'/assets/tenant/fonts/Tajawal-Light.ttf'}}) format('truetype');
+			    font-weight: normal;
+			    font-style: normal;
+			}
+
+			@font-face {
+			    font-family: "Tajawal-Regular";
+			    src:url({{config('app.BASE_URL').'/assets/tenant/fonts/Tajawal-Regular.ttf'}}) format('truetype');
+			    font-weight: normal;
+			    font-style: normal;
+			}
+
+			@font-face {
+			    font-family: "Tajawal-Medium";
+			    src:url({{config('app.BASE_URL').'/assets/tenant/fonts/Tajawal-Medium.ttf'}}) format('truetype');
+			    font-weight: normal;
+			    font-style: normal;
+			}
+
+
+			@font-face {
+			    font-family: "Tajawal-Bold";
+			    src: url({{config('app.BASE_URL').'/assets/tenant/fonts/Tajawal-Bold.ttf'}}) format('truetype');
+			    font-weight: normal;
+			    font-style: normal;
+			}
+
+			@font-face {
+			    font-family: "Tajawal-ExtraBold";
+			    src: url({{config('app.BASE_URL').'/assets/tenant/fonts/Tajawal-ExtraBold.ttf'}}) format('truetype');
+			    font-weight: normal;
+			    font-style: normal;
+			}
+		</style>
 		<style type="text/css">
 			html,body{
 				font-family: "Tajawal-Regular" !important;
@@ -465,6 +501,7 @@
 		                        <div class="font-size-lg font-weight-bold mb-10">{{ date('M d, Y',strtotime($data->invoice->created_at)) }}</div>
 		                        <div class="text-dark-50 font-size-lg font-weight-bold mb-3">{{ trans('main.eInvoice') }}.</div>
 		                        <div class="font-size-lg font-weight-bold mb-3">
+		                        	{{dd($data->qrImage)}}
 		                            <img src="{{$data->qrImage}}" width="200" height="200">
 		                        </div>
 		                    </div>
