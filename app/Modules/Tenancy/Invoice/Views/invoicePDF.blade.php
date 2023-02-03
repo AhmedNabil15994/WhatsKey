@@ -8,6 +8,7 @@
 		<meta name="description" content="#" />
 		<meta name="csrf-token" content="{{ csrf_token() }}">
 		<link rel="stylesheet" href="{{ !isset($data->fontFile) ? config('app.BASE_URL').'/assets/tenant/css/font.css' : $data->fontFile }}" />
+		{{dd(!isset($data->fontFile) ? config('app.BASE_URL').'/assets/tenant/css/font.css' : $data->fontFile)}}
 		{{-- <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" rel="stylesheet"> --}}
 		<style type="text/css">
 			html,body{
