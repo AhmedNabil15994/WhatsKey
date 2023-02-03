@@ -30,10 +30,45 @@ $(function(){
     });
 
 	document.querySelector('emoji-picker').database.close()
+
+	Livewire.on('scrollDown',chat => {
+    	$('#kt_scrollDown').click()
+    	$('.sendMsg textarea').focus()
+	});
+
+	Livewire.on('updateMessages', chat => {
+    	document.querySelector('emoji-picker').database.close()
+    	$('[data-toggle="tooltip"').tooltip();
+    });
+
 	Livewire.on('conversationOpened', chat => {
     	$('#kt_scrollDown').click()
     	$('[data-toggle="tooltip"]').tooltip()
     	$('.sendMsg textarea').focus()
+    });
+
+    Livewire.on('focusInput', chat => {
+    	$('.sendMsg textarea').focus()
+    });
+
+    Livewire.on('refreshDesign', chat => {
+		document.querySelector('emoji-picker').database.close()
+    	$('[data-toggle="tooltip"').tooltip();
+    	$('[data-toggle="select2"]').select2()
+		var avatar5 = new KTImageInput('kt_image_5');
+		const demo = document.querySelector('.scroll-pulld');
+		if(demo){
+			const ps = new PerfectScrollbar(demo);
+			ps.update()
+		}
+		if($('.sendMsg textarea').length){
+    		$('.sendMsg textarea').focus()
+    		$('#kt_scrollDown').click()
+		}
+    });        
+
+    Livewire.on('errorMsg', error => {
+    	errorNotification(error)
     });
 
 	$('#kt_scrollDown').on('click',function(){
@@ -157,31 +192,7 @@ $(function(){
     });
 
     Livewire.on('playAudio', chat => {
-    	new Audio("assets/tenant/swiftly.mp3").play();
-    });
-
-    Livewire.on('focusInput', chat => {
-    	$('.sendMsg textarea').focus()
-    });
-
-    Livewire.on('refreshDesign', chat => {
-		document.querySelector('emoji-picker').database.close()
-    	$('[data-toggle="tooltip"').tooltip();
-    	$('[data-toggle="select2"]').select2()
-		var avatar5 = new KTImageInput('kt_image_5');
-		const demo = document.querySelector('.scroll-pulld');
-		if(demo){
-			const ps = new PerfectScrollbar(demo);
-			ps.update()
-		}
-		if($('.sendMsg textarea').length){
-    		$('.sendMsg textarea').focus()
-    		$('#kt_scrollDown').click()
-		}
-    });        
-
-    Livewire.on('errorMsg', error => {
-    	errorNotification(error)
+    	new Audio("/assets/tenant/swiftly.mp3").play();
     });
 
     $(document).on('keydown','.sendMsg textarea', function(e) {
@@ -448,7 +459,6 @@ $(function(){
 	$(document).on('change','select[name="participants_type"]',function(){
 		$(this).parents('.form-group').siblings('[data-id="'+$(this).val()+'"]').show(250).siblings('.form-group[data-id]').hide(250)
 	})
-        	// window.livewire.emitTo('chat-actions','newMessage',msg,numbers,JSON.stringify(phones))
 
 	$(document).on('click','.addParticipants',function(){
 		let type = $('select[name="participants_type"]').val();

@@ -51,13 +51,11 @@ class Chats extends Component
         $this->page += 1;
         $chats = array_merge($this->chats,ChatDialog::generateObj($dialogs,0)['data']);
         $this->chats = json_decode(json_encode($chats), true);
-        $this->emit('refreshDesign');
     }
 
     public function searchAllChats($chats){
         $this->chats = $chats['chats'];
         $this->hasSearch = $chats['hasSearch'];
-        $this->emit('refreshDesign');
     }
 
     public function chatsChanges($chatId,$delete=false){

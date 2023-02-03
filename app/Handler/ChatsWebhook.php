@@ -169,6 +169,13 @@ class ChatsWebhook extends ProcessWebhookJob
             if(isset($actions['last_time'])){
                 $chatObj->update(['last_time' => $actions['last_time']]);
             }
+            if(isset($actions['unreadCount'])){
+                if($actions['unreadCount'] == 0){
+                    $chatObj->update(['unreadCount' => 0]);
+                }else{
+                    $chatObj->update(['unreadCount' => $chatObj->unreadCount+$actions['unreadCount']]);
+                }
+            }
             if(isset($actions['labelled'])){
                 $oldLabels = $chatObj->labels;
                 $newLabels = $actions['labelled'] == true ? $oldLabels.= $actions['label_id'].',' : str_replace($actions['label_id'].',','',$oldLabels);

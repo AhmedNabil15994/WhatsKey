@@ -30,6 +30,7 @@ class Chat extends Component
             if(!$this->chat['disable_read']){
                 $mainWhatsLoopObj = new \OfficialHelper();
                 $result = $mainWhatsLoopObj->readChat(str_contains($this->chat['id'], '@g.us') ? ['chat'=>$this->chat['id']] : ['phone'=>$this->chat['id']]);
+                ChatDialog::where('id',$this->chat['id'])->update(['unreadCount'=>0]);
             }
             $this->emitTo('conversation','loadMessages',[
                 'chat' => $this->chat,
@@ -38,9 +39,7 @@ class Chat extends Component
 
             $this->emitTo('contact-details','setSelected',(array) $this->chat);
         }
-        // dd(ChatMessage::dataList($this->chat['id'], 30)['data']);
         Session::put('selected_chat_id',$chatId);
-        $this->emit('refreshDesign');
     }
 
     public function lastUpdates($msgId,$chatId,$status,$domain){
@@ -55,7 +54,6 @@ class Chat extends Component
                 $this->chat =  $chat;
             }
         }
-        $this->emit('refreshDesign');
     }
 
     // public function changeDialogStatus($chatId){

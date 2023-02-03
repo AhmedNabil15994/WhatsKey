@@ -16,7 +16,7 @@
                         <div class="symbol symbol-60 symbol-circle symbol-xl-90">
                             <div class="symbol-label" style="background-image:url('{{$chat['image']}}')"></div>
                         </div>
-                        <h4 class="font-weight-bold my-2">{{$chat['name']}}</h4>
+                        <h4 class="font-weight-bold my-2" dir="ltr">{{$chat['name']}}</h4>
                         <span class="label label-inline font-weight-bold label-lg" dir="ltr">{{$chat['reformedPhone']}}</span>
                         @foreach($chat['labelsArr'] as $labelObj)
                         <span class="catLabel text-dark mt-2 d-block fa-icon" dir="ltr"> 

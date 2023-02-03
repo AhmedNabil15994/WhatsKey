@@ -59,7 +59,7 @@ class Conversation extends Component
         $msgs = ChatMessage::where('chatId',$this->chat['id'])->orderBy('time','DESC')->skip($start)->take($this->page_size);
         $this->page += 1;
         $this->messages = json_decode(json_encode(array_merge($this->messages,ChatMessage::generateObj($msgs,0)['data'])), true);
-        $this->emit('refreshDesign');
+        $this->emit('updateMessages');
     }
 
     public function render()
@@ -105,7 +105,7 @@ class Conversation extends Component
             'chatId' => $msg['chatId'],
             'presence' => '',
         ]);
-        $this->emit('refreshDesign');
+        $this->emit('scrollDown');
 
         if($msg['message_type'] == 'call'){
             $varObj = Variable::getVar('disableReceivingCalls');
@@ -163,7 +163,8 @@ class Conversation extends Component
             // $this->emitTo('chats','chatsChanges',$data['message'],$data['domain']); 
             $this->emitTo('chat','lastUpdates',$data['messageId'],$data['chatId'],$data['statusInt'],$data['domain']); 
         }
-    }    
+        $this->emit('updateMessages');
+    }
 
     public function updateMsg($msgId,$type){
         $msgs = [];
@@ -176,7 +177,6 @@ class Conversation extends Component
                 $msgs[] = $value;
             }
             $this->messages = $msgs;
-            $this->emit('focusInput');
         }
 
         if($msgObj->chatId){
@@ -195,7 +195,6 @@ class Conversation extends Component
             $this->emitTo('chat-actions','updateSelected',$chat['name']);
             $this->emitTo('contact-details','setSelected',$chat);
         }
-        $this->emit('refreshDesign');
     }
 
     public function rejectCall($callId){

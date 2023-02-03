@@ -37,6 +37,7 @@ class ContactDetails extends Component
         $chatObj['contact_details'] = (array)$contact_details;
         $this->chat = $chatObj;
         $this->selected = $chatObj['id'];
+        $this->emit('refreshDesign');
     }
 
     public function addGroupParticipants($numbers,$phones){
