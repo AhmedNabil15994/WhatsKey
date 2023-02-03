@@ -7,7 +7,7 @@
 		<title>واتس كي | WhatsKey | @yield('title')</title>
 		<meta name="description" content="#" />
 		<meta name="csrf-token" content="{{ csrf_token() }}">
-		<link rel="stylesheet" href="{{ !isset($data->fontFile) ? config('app.BASE_URL').'assets/tenant/css/font.css' : $data->fontFile }}" />
+		<link rel="stylesheet" href="{{ !isset($data->fontFile) ? config('app.BASE_URL').'/assets/tenant/css/font.css' : $data->fontFile }}" />
 		{{-- <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" rel="stylesheet"> --}}
 		<style type="text/css">
 			html,body{
@@ -322,7 +322,7 @@
 			                    <div class="d-flex flex-column align-items-md-end px-0">
 			                        <a href="#" class="mb-5 max-w-200px">
 			                            <span class="svg-icon svg-icon-full">
-			                                <img src="{{!isset($data->logoFile) ? config('app.BASE_URL') . 'assets/images/whiteLogo.png' : $data->logoFile}}" alt="">
+			                                <img src="{{!isset($data->logoFile) ? config('app.BASE_URL') . '/assets/images/whiteLogo.png' : $data->logoFile}}" alt="">
 			                            </span>
 			                        </a>
 			                        <span class="spans align-items-md-end font-size-h5 font-weight-bold text-muted">
@@ -336,7 +336,7 @@
 			                </div>
 		                </div>
 		                <div class="rounded-xl overflow-hidden w-100 max-h-md-250px mb-10">
-		                    <img src="{{!isset($data->backFile) ? config('app.BASE_URL') . 'assets/tenant/media/bg/bg-invoice-5.jpg' : $data->backFile}}" class="w-100" alt="">
+		                    <img src="{{!isset($data->backFile) ? config('app.BASE_URL') . '/assets/tenant/media/bg/bg-invoice-5.jpg' : $data->backFile}}" class="w-100" alt="">
 		                </div>
 		                <!--begin: Invoice body-->
 		                <div class="row border-bottom pb-10">
