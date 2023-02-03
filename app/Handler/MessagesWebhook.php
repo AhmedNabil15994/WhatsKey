@@ -469,7 +469,8 @@ class MessagesWebhook extends ProcessWebhookJob
         if(isset($message['metadata']['quotedMessageId'])){
         	$messageObjs = ChatMessage::where('id', 'LIKE', '%' . $message['metadata']['quotedMessageId'])->first();
         	if($messageObjs){
-        		$msgText = json_decode($messageObjs->metadata)->botPlusId;
+                $metDa = json_decode($messageObjs->metadata);
+        		$msgText = isset($metDa) && isset($metDa->botPlusId) ? $metDa->botPlusId : '';
         	}
 
         	$botObjs = BotPlus::getMsgBotByMsg($msgText);
