@@ -682,9 +682,10 @@ class GroupMsgsControllers extends Controller {
         $dataObj = GroupMsg::getData($dataObj);
         $chunks = 100;
 
+        $contacts = Contact::NotDeleted()->where('group_id',$groupObj->id)->where('status',1)->get();
         if($flag == 0){
             try {
-                dispatch(new GroupMessageJob($dataObj))->onConnection('groupMsgs');
+                dispatch(new GroupMessageJob($contacts,$dataObj))->onConnection('groupMsgs');
             } catch (Exception $e) {}
         }else{
             $now = \Carbon\Carbon::now();
@@ -692,7 +693,7 @@ class GroupMsgsControllers extends Controller {
             $diff =  $sendDate->diffInSeconds($now);
             $on = \Carbon\Carbon::now()->addSeconds($diff);   
             try {
-                dispatch(new GroupMessageJob($dataObj))->onConnection('groupMsgs')->delay($on);
+                dispatch(new GroupMessageJob($contacts,$dataObj))->onConnection('groupMsgs')->delay($on);
             } catch (Exception $e) {}
         }
 
@@ -768,8 +769,9 @@ class GroupMsgsControllers extends Controller {
         $dataObj = GroupMsg::getData($groupMsgObj);
         $chunks = 100;
         if($status == 1){
+            $contacts = Contact::NotDeleted()->where('group_id',$groupMsgObj->group_id)->where('status',1)->get();
             try {
-                dispatch(new GroupMessageJob($dataObj))->onConnection('groupMsgs');
+                dispatch(new GroupMessageJob($contacts,$dataObj))->onConnection('groupMsgs');
             } catch (Exception $e) {}
         }else{
             $sentContacts = ContactReport::where('group_message_id',$id)->where('message_id','!=',null)->pluck('contact');
@@ -784,8 +786,9 @@ class GroupMsgsControllers extends Controller {
             $allContacts = array_diff( $allContacts, $sentContacts );
             $oldContacts = array_unique(array_merge( $allContacts, $notSentContacts ));
 
+            $contacts = Contact::NotDeleted()->where('group_id',$groupMsgObj->group_id)->whereIn('phone',$oldContacts)->get();
             try {
-                dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs');
+                dispatch(new GroupMessageJob($contacts,$dataObj))->onConnection('groupMsgs');
             } catch (Exception $e) {}
         }
 
