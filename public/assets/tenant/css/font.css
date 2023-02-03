@@ -10,21 +10,21 @@
 
 @font-face {
     font-family: "Tajawal-Light";
-    src:url('../fonts/Tajawal-Light.ttf') format('truetype');
+    src:url('/assets/tenant/fonts/Tajawal-Light.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: "Tajawal-Regular";
-    src:url('../fonts/Tajawal-Regular.ttf') format('truetype');
+    src:url('/assets/tenant/fonts/Tajawal-Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: "Tajawal-Medium";
-    src:url('../fonts/Tajawal-Medium.ttf') format('truetype');
+    src:url('/assets/tenant/fonts/Tajawal-Medium.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
@@ -32,14 +32,14 @@
 
 @font-face {
     font-family: "Tajawal-Bold";
-    src: url('../fonts/Tajawal-Bold.ttf') format('truetype');
+    src: url('/assets/tenant/fonts/Tajawal-Bold.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: "Tajawal-ExtraBold";
-    src: url('../fonts/Tajawal-ExtraBold.ttf') format('truetype');
+    src: url('/assets/tenant/fonts/Tajawal-ExtraBold.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
