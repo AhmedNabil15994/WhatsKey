@@ -8,12 +8,50 @@
 		<meta name="description" content="#" />
 		<meta name="csrf-token" content="{{ csrf_token() }}">
 		@php 
-		$fontFile = !isset($data->fontFile) ? config('app.BASE_URL').'/assets/tenant/css/font.css' : $data->fontFile;
 		$logoFile = !isset($data->logoFile) ? config('app.BASE_URL') . '/assets/images/whiteLogo.png' : $data->logoFile;
 		$backFile = !isset($data->backFile) ? config('app.BASE_URL') . '/assets/tenant/media/bg/bg-invoice-5.jpg' : $data->backFile;
 		@endphp
-		<link rel="stylesheet" href="{{ str_replace('https://whatskey','https://'.DOMAIN.'.whatskey',$fontFile) }}" />
 		{{-- <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" rel="stylesheet"> --}}
+
+		<style>
+			@font-face {
+			    font-family: "Tajawal-Light";
+			    src:url('{{asset("/assets/tenant/fonts/Tajawal-Light.ttf")}}') format('truetype');
+			    font-weight: normal;
+			    font-style: normal;
+			}
+
+			@font-face {
+			    font-family: "Tajawal-Regular";
+			    src:url('{{asset("/assets/tenant/fonts/Tajawal-Regular.ttf")}}') format('truetype');
+			    font-weight: normal;
+			    font-style: normal;
+			}
+
+			@font-face {
+			    font-family: "Tajawal-Medium";
+			    src:url('{{asset("/assets/tenant/fonts/Tajawal-Medium.ttf")}}') format('truetype');
+			    font-weight: normal;
+			    font-style: normal;
+			}
+
+
+			@font-face {
+			    font-family: "Tajawal-Bold";
+			    src: url('{{asset("/assets/tenant/fonts/Tajawal-Bold.ttf")}}') format('truetype');
+			    font-weight: normal;
+			    font-style: normal;
+			}
+
+			@font-face {
+			    font-family: "Tajawal-ExtraBold";
+			    src: url('{{asset("/assets/tenant/fonts/Tajawal-ExtraBold.ttf")}}') format('truetype');
+			    font-weight: normal;
+			    font-style: normal;
+			}
+		</style>
+
+
 		<style type="text/css">
 			html,body{
 				font-family: "Tajawal-Regular" !important;
