@@ -270,7 +270,16 @@ class MessagesWebhook extends ProcessWebhookJob
         }
 
         $messageObj = ChatMessage::newMessage($message);
-		$dialog = ChatDialog::updateOrCreate(['id' => $message['chatId']], ['last_time' => $message['time']]);
+		$dialog = ChatDialog::find($message['chatId']);
+        if(!$dialog){
+            ChatDialog::create([
+                'id' => $message['chatId'],
+                'last_time' => $message['time'],
+            ]);
+        }else{
+            $dialog->last_time = $message['time'];
+            $dialog->save();
+        }
 
         $dialogObj = ChatDialog::getData($dialog);
         $dialogObj->lastMessage = ChatMessage::getData($messageObj);
