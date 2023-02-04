@@ -76,12 +76,12 @@ class GroupMessageJob implements ShouldQueue
         $hasNotWhatsapp=0;
         foreach ($contacts as $contact){
             $checkData['phone'] = str_replace('+', '', $contact->phone);
-            $status = 0;
-            $checkResult = $mainWhatsLoopObj->checkPhone($checkData);
-            $result = $checkResult->json();
-            if($result && isset($result['data'])){
-                $status = $result['data']['exists'] == true ? 1 : 0;
-            }
+            $status = 1;
+            // $checkResult = $mainWhatsLoopObj->checkPhone($checkData);
+            // $result = $checkResult->json();
+            // if($result && isset($result['data'])){
+            //     $status = $result['data']['exists'] == true ? 1 : 0;
+            // }
 
             if($status){
                 $hasWhatsapp+=1;
