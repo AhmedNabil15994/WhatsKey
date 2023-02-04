@@ -690,7 +690,7 @@ class GroupMsgsControllers extends Controller {
                         dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs');
                     }else{
                         $oneJobTime = $contactsChunk * $dataObj->interval_in_sec;
-                        $breakBetweenTwoJobs = 300; // 5 Minutes
+                        $breakBetweenTwoJobs = 600; // 10 Minutes
                         $jobsMustWait = $iterationCount * ($oneJobTime + $breakBetweenTwoJobs);
                         $on = \Carbon\Carbon::now()->addSeconds($jobsMustWait);  
                         dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs')->delay($on);
@@ -710,7 +710,7 @@ class GroupMsgsControllers extends Controller {
                         dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs')->delay($on);
                     }else{
                         $oneJobTime = $contactsChunk * $dataObj->interval_in_sec;
-                        $breakBetweenTwoJobs = 300; // 5 Minutes
+                        $breakBetweenTwoJobs = 600; // 10 Minutes
                         $jobsMustWait = $iterationCount * ($oneJobTime + $breakBetweenTwoJobs);
                         $newOn = $on->addSeconds($jobsMustWait);  
                         dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs')->delay($newOn);
@@ -799,7 +799,7 @@ class GroupMsgsControllers extends Controller {
                         dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs');
                     }else{
                         $oneJobTime = $contactsChunk * $dataObj->interval_in_sec;
-                        $breakBetweenTwoJobs = 300; // 5 Minutes
+                        $breakBetweenTwoJobs = 600; // 10 Minutes
                         $jobsMustWait = $iterationCount * ($oneJobTime + $breakBetweenTwoJobs);
                         $on = \Carbon\Carbon::now()->addSeconds($jobsMustWait);  
                         dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs')->delay($on);
@@ -827,7 +827,7 @@ class GroupMsgsControllers extends Controller {
                         dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs');
                     }else{
                         $oneJobTime = $contactsChunk * $dataObj->interval_in_sec;
-                        $breakBetweenTwoJobs = 300; // 5 Minutes
+                        $breakBetweenTwoJobs = 600; // 10 Minutes
                         $jobsMustWait = $iterationCount * ($oneJobTime + $breakBetweenTwoJobs);
                         $on = \Carbon\Carbon::now()->addSeconds($jobsMustWait);  
                         dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs')->delay($on);
