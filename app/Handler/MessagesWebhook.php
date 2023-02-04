@@ -277,6 +277,8 @@ class MessagesWebhook extends ProcessWebhookJob
                 'last_time' => $message['time'],
             ]);
         }else{
+            $dialog = new ChatDialog;
+            $dialog->id = $message['chatId'];
             $dialog->last_time = $message['time'];
             $dialog->save();
         }
