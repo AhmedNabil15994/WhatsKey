@@ -278,10 +278,8 @@ class MessagesWebhook extends ProcessWebhookJob
             $dialog->save();
             
         }else{
-            ChatDialog::update([
-                'id' => $message['chatId'],
-                'last_time' => $message['time'],
-            ]);
+            $dialog->last_time = $message['time'];
+            $dialog->save();
         }
 
         $dialogObj = ChatDialog::getData($dialog);
