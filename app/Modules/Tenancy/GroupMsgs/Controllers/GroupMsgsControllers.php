@@ -680,21 +680,44 @@ class GroupMsgsControllers extends Controller {
         }
 
         $dataObj = GroupMsg::getData($dataObj);
-        $chunks = 100;
+        $contactsChunk = 500;
 
-        $contacts = Contact::NotDeleted()->where('group_id',$groupObj->id)->where('status',1)->get();
         if($flag == 0){
-            try {
-                dispatch(new GroupMessageJob($contacts,$dataObj))->onConnection('groupMsgs');
-            } catch (Exception $e) {}
+            $iterationCount = 0;
+            $contacts = Contact::NotDeleted()->where('group_id',$groupObj->id)->where('status',1)->chunk($contactsChunk,function($data) use ($dataObj,$contactsChunk,&$iterationCount){
+                try {
+                    if($iterationCount == 0){
+                        dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs');
+                    }else{
+                        $oneJobTime = $contactsChunk * $dataObj->interval_in_sec;
+                        $breakBetweenTwoJobs = 300; // 5 Minutes
+                        $jobsMustWait = $iterationCount * ($oneJobTime + $breakBetweenTwoJobs);
+                        $on = \Carbon\Carbon::now()->addSeconds($jobsMustWait);  
+                        dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs')->delay($on);
+                    }
+                    $iterationCount++;
+                } catch (Exception $e) {}
+            });
         }else{
+            $iterationCount = 0;
             $now = \Carbon\Carbon::now();
             $sendDate = \Carbon\Carbon::parse($date);
             $diff =  $sendDate->diffInSeconds($now);
             $on = \Carbon\Carbon::now()->addSeconds($diff);   
-            try {
-                dispatch(new GroupMessageJob($contacts,$dataObj))->onConnection('groupMsgs')->delay($on);
-            } catch (Exception $e) {}
+            $contacts = Contact::NotDeleted()->where('group_id',$groupObj->id)->where('status',1)->chunk($contactsChunk,function($data) use ($dataObj,$contactsChunk,&$iterationCount,$on){
+                try {
+                    if($iterationCount == 0){
+                        dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs')->delay($on);
+                    }else{
+                        $oneJobTime = $contactsChunk * $dataObj->interval_in_sec;
+                        $breakBetweenTwoJobs = 300; // 5 Minutes
+                        $jobsMustWait = $iterationCount * ($oneJobTime + $breakBetweenTwoJobs);
+                        $newOn = $on->addSeconds($jobsMustWait);  
+                        dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs')->delay($newOn);
+                    }
+                    $iterationCount++;
+                } catch (Exception $e) {}
+            });
         }
 
         Session::forget('msgFile');
@@ -767,13 +790,25 @@ class GroupMsgsControllers extends Controller {
         }
 
         $dataObj = GroupMsg::getData($groupMsgObj);
-        $chunks = 100;
+        $contactsChunk = 500;
         if($status == 1){
-            $contacts = Contact::NotDeleted()->where('group_id',$groupMsgObj->group_id)->where('status',1)->get();
-            try {
-                dispatch(new GroupMessageJob($contacts,$dataObj))->onConnection('groupMsgs');
-            } catch (Exception $e) {}
+            $iterationCount = 0;
+            $contacts = Contact::NotDeleted()->where('group_id',$groupMsgObj->group_id)->where('status',1)->chunk($contactsChunk,function($data) use ($dataObj,$contactsChunk,&$iterationCount){
+                try {
+                    if($iterationCount == 0){
+                        dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs');
+                    }else{
+                        $oneJobTime = $contactsChunk * $dataObj->interval_in_sec;
+                        $breakBetweenTwoJobs = 300; // 5 Minutes
+                        $jobsMustWait = $iterationCount * ($oneJobTime + $breakBetweenTwoJobs);
+                        $on = \Carbon\Carbon::now()->addSeconds($jobsMustWait);  
+                        dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs')->delay($on);
+                    }
+                    $iterationCount++;
+                } catch (Exception $e) {}
+            });
         }else{
+            $iterationCount = 0;
             $sentContacts = ContactReport::where('group_message_id',$id)->where('message_id','!=',null)->pluck('contact');
             $sentContacts = reset($sentContacts);
             
@@ -786,10 +821,20 @@ class GroupMsgsControllers extends Controller {
             $allContacts = array_diff( $allContacts, $sentContacts );
             $oldContacts = array_unique(array_merge( $allContacts, $notSentContacts ));
 
-            $contacts = Contact::NotDeleted()->where('group_id',$groupMsgObj->group_id)->whereIn('phone',$oldContacts)->get();
-            try {
-                dispatch(new GroupMessageJob($contacts,$dataObj))->onConnection('groupMsgs');
-            } catch (Exception $e) {}
+            $contacts = Contact::NotDeleted()->where('group_id',$groupMsgObj->group_id)->whereIn('phone',$oldContacts)->chunk($contactsChunk,function($data) use ($dataObj,$contactsChunk,&$iterationCount){
+                try {
+                    if($iterationCount == 0){
+                        dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs');
+                    }else{
+                        $oneJobTime = $contactsChunk * $dataObj->interval_in_sec;
+                        $breakBetweenTwoJobs = 300; // 5 Minutes
+                        $jobsMustWait = $iterationCount * ($oneJobTime + $breakBetweenTwoJobs);
+                        $on = \Carbon\Carbon::now()->addSeconds($jobsMustWait);  
+                        dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs')->delay($on);
+                    }
+                    $iterationCount++;
+                } catch (Exception $e) {}
+            });
         }
 
         Session::flash('success', trans('main.addSuccess'));
