@@ -215,6 +215,7 @@ class GroupMessageJob implements ShouldQueue
         }
 
         if(!empty($phones)){
+            Logger($sendRequest);
             if($messageObj['message_type'] == 4){
                 $testResult = $mainWhatsLoopObj->sendBulkAudio([
                     'phones' => $phones,
