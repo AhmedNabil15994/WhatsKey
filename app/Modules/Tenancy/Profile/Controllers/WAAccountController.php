@@ -16,8 +16,6 @@ use App\Models\CentralUser;
 use App\Models\ChatDialog;
 use App\Models\ChatMessage;
 use App\Models\Contact;
-use App\Models\ContactGroup;
-use App\Models\ContactReport;
 use App\Models\Membership;
 use App\Models\Order;
 use App\Models\Product;
@@ -374,8 +372,6 @@ class WAAccountController extends Controller
         Category::where('id', '!=', null)->delete();
         ChatMessage::where('id', '!=', null)->delete();
         ChatDialog::where('id', '!=', null)->delete();
-        ContactGroup::where('id', '!=', null)->delete();
-        ContactReport::where('id', '!=', null)->delete();
         Product::where('id', '!=', null)->delete();
         Order::where('id', '!=', null)->delete();
         WACollection::where('id', '!=', null)->delete();
@@ -434,8 +430,6 @@ class WAAccountController extends Controller
         Reply::where('reply_id', '!=', null)->delete();
         ChatMessage::where('id', '!=', null)->delete();
         ChatDialog::where('id', '!=', null)->delete();
-        ContactGroup::where('id', '!=', null)->delete();
-        ContactReport::where('id', '!=', null)->delete();
         UserStatus::where('id', '!=', null)->delete();
         Product::where('id', '!=', null)->delete();
         Order::where('id', '!=', null)->delete();
