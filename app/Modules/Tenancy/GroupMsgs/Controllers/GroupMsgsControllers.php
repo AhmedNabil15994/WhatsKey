@@ -820,6 +820,7 @@ class GroupMsgsControllers extends Controller {
             
             $allContacts = array_diff( $allContacts, $sentContacts );
             $oldContacts = array_unique(array_merge( $allContacts, $notSentContacts ));
+            dd(Contact::NotDeleted()->where('group_id',$groupMsgObj->group_id)->whereIn('phone',$oldContacts)->count());
 
             $contacts = Contact::NotDeleted()->where('group_id',$groupMsgObj->group_id)->whereIn('phone',$oldContacts)->chunk($contactsChunk,function($data) use ($dataObj,$contactsChunk,&$iterationCount){
                 try {
