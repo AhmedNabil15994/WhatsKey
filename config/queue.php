@@ -63,7 +63,7 @@ return [
             'table' => 'jobs',
             'connection' => 'main',
             'queue' => 'default',
-            'retry_after' => 90,
+            'retry_after' => 3700,
             'after_commit' => false,
         ],
 
