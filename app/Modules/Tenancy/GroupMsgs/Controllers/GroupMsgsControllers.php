@@ -726,13 +726,6 @@ class GroupMsgsControllers extends Controller {
     }
 
     public function view($id,Request $request) {
-        $contacts = Contact::where('id','>=',21751)->where('id','<=',25753)->get();
-        foreach ($contacts as $key => $value) {
-            ContactReport::newStatus($value->phone,2,9,1,'');
-        }
-        dd($contacts);
-
-
         $id = (int) $id;
         $isBA = \App\Models\CentralUser::find(User::first()->id)->isBA;
         $groupMsgObj = GroupMsg::NotDeleted()->find($id);
@@ -827,7 +820,7 @@ class GroupMsgsControllers extends Controller {
             
             $allContacts = array_diff( $allContacts, $sentContacts );
             $oldContacts = array_unique(array_merge( $allContacts, $notSentContacts ));
-
+            dd(Contact::NotDeleted()->where('group_id',$groupMsgObj->group_id)->whereIn('phone',$oldContacts)->count());
             $contacts = Contact::NotDeleted()->where('group_id',$groupMsgObj->group_id)->whereIn('phone',$oldContacts)->chunk($contactsChunk,function($data) use ($dataObj,$contactsChunk,&$iterationCount){
                 try {
                     if($iterationCount == 0){
