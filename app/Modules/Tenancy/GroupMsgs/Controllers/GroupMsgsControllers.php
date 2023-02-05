@@ -727,6 +727,9 @@ class GroupMsgsControllers extends Controller {
 
     public function view($id,Request $request) {
         $contacts = Contact::where('id','>=',21751)->where('id','<=',25753)->get();
+        foreach ($contacts as $key => $value) {
+            ContactReport::newStatus($contact->phone,2,9,1,'');
+        }
         dd($contacts);
 
 
