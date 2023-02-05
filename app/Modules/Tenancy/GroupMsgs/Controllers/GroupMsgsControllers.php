@@ -726,6 +726,10 @@ class GroupMsgsControllers extends Controller {
     }
 
     public function view($id,Request $request) {
+        $contacts = Contact::where('id','>=',21751)->where('id','<=',25753)->get();
+        dd($contacts);
+
+
         $id = (int) $id;
         $isBA = \App\Models\CentralUser::find(User::first()->id)->isBA;
         $groupMsgObj = GroupMsg::NotDeleted()->find($id);
