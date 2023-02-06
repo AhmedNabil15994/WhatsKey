@@ -74,7 +74,7 @@
 
             <div class="form-group mb-3">
                 <label for="inputEmail3">{{ trans('main.interval') }} ( {{trans('main.second')}} )</label>
-                <input type="number" class="interval form-control" name="interval" min="5" placeholder="{{ trans('main.interval') }}">
+                <input type="number" class="interval form-control" value="5" name="interval" min="5" placeholder="{{ trans('main.interval') }}">
             </div>
 
             <div class="form-group">
