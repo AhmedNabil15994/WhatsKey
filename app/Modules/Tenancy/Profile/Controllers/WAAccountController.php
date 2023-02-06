@@ -164,6 +164,7 @@ class WAAccountController extends Controller
         if ($result != null && $result['data'] != null) {
             $messages = $result['data'];
         }
+        dd($messages);
         try {
             dispatch(new SyncMessagesJob($messages))->onConnection('syncdata');
         } catch (Exception $e) {
