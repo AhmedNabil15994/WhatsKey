@@ -409,12 +409,11 @@ class WAAccountController extends Controller
         $updateResult = $mainWhatsLoopObj->updateChannelSetting($myData);
         $result = $updateResult->json();
 
-        $updateResult1 = $mainWhatsLoopObj->disconnect();
-        $result1 = $updateResult1->json();
-
-
         $updateResult2 = $mainWhatsLoopObj->clearInstanceData();
         $result2 = $updateResult2->json();
+
+        $updateResult1 = $mainWhatsLoopObj->disconnect();
+        $result1 = $updateResult1->json();
 
         $userObj = User::first();
         $centralUser = CentralUser::getOne($userObj->id);
