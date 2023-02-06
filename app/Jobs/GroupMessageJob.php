@@ -76,12 +76,12 @@ class GroupMessageJob implements ShouldQueue
         $hasNotWhatsapp=0;
         foreach ($contacts as $contact){
             $checkData['phone'] = str_replace('+', '', $contact->phone);
-            $status = 1;
-            // $checkResult = $mainWhatsLoopObj->checkPhone($checkData);
-            // $result = $checkResult->json();
-            // if($result && isset($result['data'])){
-            //     $status = $result['data']['exists'] == true ? 1 : 0;
-            // }
+            $status = 0;
+            $checkResult = $mainWhatsLoopObj->checkPhone($checkData);
+            $result = $checkResult->json();
+            if($result && isset($result['data'])){
+                $status = $result['data']['exists'] == true ? 1 : 0;
+            }
 
             if($status){
                 $hasWhatsapp+=1;
@@ -215,15 +215,15 @@ class GroupMessageJob implements ShouldQueue
         }
 
         if(!empty($phones)){
-            if($messageObj['message_type'] == 4){
-                $testResult = $mainWhatsLoopObj->sendBulkAudio([
-                    'phones' => $phones,
-                    'interval' => 30 + $messageObj['interval_in_sec'],
-                    'url' => $messageObj['file'],
-                ]);
-            }else{
-                $mainWhatsLoopObj->$messageFunction($sendRequest);
-            }
+            // if($messageObj['message_type'] == 4){
+            //     $testResult = $mainWhatsLoopObj->sendBulkAudio([
+            //         'phones' => $phones,
+            //         'interval' => 30 + $messageObj['interval_in_sec'],
+            //         'url' => $messageObj['file'],
+            //     ]);
+            // }else{
+            //     $mainWhatsLoopObj->$messageFunction($sendRequest);
+            // }
             $oldObj = GroupMsg::find($messageObj['id']);
             if($messageObj['messages'] > $oldObj->sent_count + $oldObj->unsent_count){
                 $oldObj->sent_count = $oldObj->sent_count + $hasWhatsapp;

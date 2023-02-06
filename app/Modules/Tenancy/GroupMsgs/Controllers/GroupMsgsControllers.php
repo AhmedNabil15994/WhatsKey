@@ -680,7 +680,7 @@ class GroupMsgsControllers extends Controller {
         }
 
         $dataObj = GroupMsg::getData($dataObj);
-        $contactsChunk = 1000;
+        $contactsChunk = 500;
 
         if($flag == 0){
             $iterationCount = 0;
@@ -790,7 +790,7 @@ class GroupMsgsControllers extends Controller {
         }
 
         $dataObj = GroupMsg::getData($groupMsgObj);
-        $contactsChunk = 1000;
+        $contactsChunk = 500;
         if($status == 1){
             $iterationCount = 0;
             $contacts = Contact::NotDeleted()->where('group_id',$groupMsgObj->group_id)->where('status',1)->chunk($contactsChunk,function($data) use ($dataObj,$contactsChunk,&$iterationCount){
