@@ -40,6 +40,13 @@
 
 
 @section('content')
+@if($data->checkGroupMsg == 1)
+<div class="alert alert-custom alert-dark" role="alert" >
+    <div class="alert-icon"><i class="flaticon-info"></i></div>
+    <div class="alert-text">{{trans('main.groupNumberNotify')}}</div>
+</div>
+@endif
+
 <input type="hidden" name="modelProps" value="{{ json_encode($data->modelProps) }}">
 <div class="card card-custom formNumbers">
     <div class="card-header">

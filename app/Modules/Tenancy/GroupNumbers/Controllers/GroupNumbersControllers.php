@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use App\Models\UserExtraQuota;
 use App\Models\Variable;
+use App\Models\UserAddon;
 use App\Jobs\CheckWhatsappJob;
 use App\Exports\ContactImport;
 use DataTables;
@@ -258,6 +259,8 @@ class GroupNumbersControllers extends Controller {
         $data['groups'] = GroupNumber::dataList(1,[1])['data'];
         $data['channels'] =[];
         $data['channels'][0] = Session::get('channelCode');
+        $data['checkGroupMsg'] = UserAddon::checkUserAvailability('GroupMsgs');
+
         $data['modelProps'] = ['name'=>trans('main.name'),'email'=>trans('main.email'),'country'=>trans('main.country'),'city'=>trans('main.city'),'phone'=>trans('main.whats')];
         return view('Tenancy.GroupNumbers.Views.add')->with('data', (object) $data);
     }

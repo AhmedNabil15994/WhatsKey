@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use App\Models\Variable;
+use App\Models\UserAddon;
 use App\Jobs\SyncLabelsJob;
 use DataTables;
 use Storage;
@@ -135,6 +136,10 @@ class CategoryControllers extends Controller {
     }
 
     public function index(Request $request) {
+        $checkAvail = UserAddon::checkUserAvailability('BusinessProfile');
+        if(!$checkAvail) {
+            return Redirect('404');
+        }
         if($request->ajax()){
             $data = Category::dataList();
             return Datatables::of($data['data'])->make(true);
@@ -147,8 +152,9 @@ class CategoryControllers extends Controller {
     public function edit($id) {
         $id = (int) $id;
 
+        $checkAvail = UserAddon::checkUserAvailability('BusinessProfile');
         $userObj = Category::NotDeleted()->find($id);
-        if($userObj == null) {
+        if($userObj == null || !$checkAvail) {
             return Redirect('404');
         }
 
@@ -187,6 +193,10 @@ class CategoryControllers extends Controller {
     }
 
     public function add() {
+        $checkAvail = UserAddon::checkUserAvailability('BusinessProfile');
+        if($userObj == null || !$checkAvail) {
+            return Redirect('404');
+        }
         $data['designElems'] = $this->getData();
         $data['designElems']['mainData']['title'] = trans('main.add') . ' '.trans('main.categories') ;
         $data['designElems']['mainData']['icon'] = 'fa fa-plus';
@@ -219,6 +229,10 @@ class CategoryControllers extends Controller {
     }
 
     public function syncLabels(){
+        $checkAvail = UserAddon::checkUserAvailability('BusinessProfile');
+        if($userObj == null || !$checkAvail) {
+            return Redirect('404');
+        }
         $data = ['page'=>1,'page_size'=>1000000];
         $varObj = Variable::getVar('ME');
         if($varObj && json_decode($varObj)->isBussines){

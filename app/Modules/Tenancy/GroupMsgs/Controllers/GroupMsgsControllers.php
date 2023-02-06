@@ -26,15 +26,6 @@ class GroupMsgsControllers extends Controller {
 
     use \TraitsFunc;
 
-    public function checkPerm(){
-        $disabled = UserAddon::getDeactivated(User::first()->id);
-        $dis = 0;
-        if(in_array(3,$disabled)){
-            $dis = 1;
-        }
-        return $dis;
-    }
-
     public function getData(){
         $groups = GroupNumber::dataList(1)['data'];
 
@@ -231,10 +222,10 @@ class GroupMsgsControllers extends Controller {
 
     public function add() {
 
-        // if($this->checkPerm()){
-        //     Session::flash('error','Please Re-activate Group Messages Addon');
-        //     return redirect()->back();
-        // }
+        if(UserAddon::checkUserAvailability('GroupMsgs')){
+            Session::flash('error','Please Re-activate Group Messages Addon');
+            return redirect()->back();
+        }
 
         $startDay = strtotime(date('Y-m-d 00:00:00'));
         $endDay = strtotime(date('Y-m-d 23:59:59'));
@@ -247,8 +238,8 @@ class GroupMsgsControllers extends Controller {
         }
 
         Session::forget('msgFile');
-        $checkAvailBot = 1;//UserAddon::checkUserAvailability(USER_ID,1);
-        $checkAvailBotPlus = 1;//UserAddon::checkUserAvailability(USER_ID,10);
+        $checkAvailBot = UserAddon::checkUserAvailability('Bot');
+        $checkAvailBotPlus = UserAddon::checkUserAvailability('BotPlus');
 
         $data['designElems'] = $this->getData();
         $data['designElems']['mainData']['title'] = trans('main.add') . ' '.trans('main.groupMsgs') ;
@@ -257,7 +248,6 @@ class GroupMsgsControllers extends Controller {
         $data['contacts'] = Contact::dataList(1)['data'];
         $data['bots'] = $checkAvailBot ? Bot::dataList(1)['data'] : [];
         $data['botPlus'] = $checkAvailBotPlus ? BotPlus::dataList(1)['data'] : [];
-        // $data['botPlus'] = $dataObj->type > 1 ? BotPlus::getData(BotPlus::find($dataObj->type)) : [];        
         $data['checkAvailBotPlus'] = $checkAvailBotPlus != null ? 1 : 0;        
         $data['checkAvailBot'] = $checkAvailBot != null ? 1 : 0;
         return view('Tenancy.GroupMsgs.Views.add')->with('data', (object) $data);
@@ -739,7 +729,7 @@ class GroupMsgsControllers extends Controller {
         }
 
         $phone = str_replace("+", '', $groupMsgObj->Creator->phone);
-        $checkAvailBotPlus = 1;//UserAddon::checkUserAvailability(USER_ID,10);
+        $checkAvailBotPlus = UserAddon::checkUserAvailability('GroupMsgs');
 
         $data['checkAvailBotPlus'] = $checkAvailBotPlus != null ? 1 : 0;        
         $data['msg'] = GroupMsg::getData($groupMsgObj);        

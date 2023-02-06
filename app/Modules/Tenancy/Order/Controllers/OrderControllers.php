@@ -145,6 +145,10 @@ class OrderControllers extends Controller {
     }
 
     public function index(Request $request) {
+        $checkAvail = UserAddon::checkUserAvailability('BusinessProfile');
+        if(!$checkAvail) {
+            return Redirect('404');
+        }
         if($request->ajax()){
             $data = Order::dataList();
             return Datatables::of($data['data'])->make(true);
@@ -155,9 +159,10 @@ class OrderControllers extends Controller {
 
     public function view($id) {
         $id = (int) $id;
-
+        $checkAvail = UserAddon::checkUserAvailability('BusinessProfile');
+    
         $userObj = Order::find($id);
-        if($userObj == null) {
+        if($userObj == null || !$checkAvail) {
             return Redirect('404');
         }
 

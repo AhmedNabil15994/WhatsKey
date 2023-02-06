@@ -107,6 +107,11 @@ class QuickRepliesControllers extends Controller {
     }
 
     public function index(Request $request) {
+        $checkAvail = UserAddon::checkUserAvailability('BusinessProfile');
+        if(!$checkAvail) {
+            return Redirect('404');
+        }
+
         if($request->ajax()){
             $data = Reply::dataList(null,2);
             return Datatables::of($data['data'])->make(true);
@@ -118,6 +123,11 @@ class QuickRepliesControllers extends Controller {
     }
 
     public function edit($id) {
+        $checkAvail = UserAddon::checkUserAvailability('BusinessProfile');
+        if(!$checkAvail) {
+            return Redirect('404');
+        }
+        
         $id = (int) $id;
 
         $userObj = Reply::NotDeleted()->find($id);

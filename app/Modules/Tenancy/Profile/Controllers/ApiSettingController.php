@@ -18,6 +18,11 @@ class ApiSettingController extends Controller
 
     public function apiSetting(Request $request)
     {
+        $checkAvail = UserAddon::checkUserAvailability('api');
+        if(!$checkAvail) {
+            return Redirect('404');
+        }
+
         $data['designElems']['mainData'] = [
             'title' => trans('main.api_setting'),
             'icon' => 'fas fa-handshake',
@@ -105,6 +110,11 @@ class ApiSettingController extends Controller
 
     public function webhookSetting()
     {
+        $checkAvail = UserAddon::checkUserAvailability('api');
+        if(!$checkAvail) {
+            return Redirect('404');
+        }
+
         $data['designElems']['mainData'] = [
             'title' => trans('main.webhook_setting'),
             'icon' => 'mdi mdi-webhook',
@@ -152,6 +162,11 @@ class ApiSettingController extends Controller
 
     public function apiGuide()
     {
+        $checkAvail = UserAddon::checkUserAvailability('api');
+        if(!$checkAvail) {
+            return Redirect('404');
+        }
+        
         $userObj = User::authenticatedUser();
         $data['designElems']['mainData'] = [
             'title' => trans('main.api_guide'),

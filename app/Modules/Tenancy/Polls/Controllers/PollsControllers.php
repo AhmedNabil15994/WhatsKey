@@ -137,9 +137,9 @@ class PollsControllers extends Controller {
 
     public function edit($id) {
         $id = (int) $id;
-        // $checkAvail = UserAddon::checkUserAvailability(USER_ID,$this->addonId);
+        $checkAvail = UserAddon::checkUserAvailability('Polls');
         $dataObj = Poll::find($id);
-        if($dataObj == null /*|| !$checkAvail*/) {
+        if($dataObj == null || !$checkAvail) {
             return Redirect('404');
         }
         $checkAsvail = 1;
@@ -147,7 +147,6 @@ class PollsControllers extends Controller {
         $data['designElems'] = $this->getData();
         $data['designElems']['mainData']['title'] = trans('main.edit') . ' '.trans('main.polls') ;
         $data['designElems']['mainData']['icon'] = 'fa fa-pencil-alt';
-        // $checkAsvail = UserAddon::checkUserAvailability(USER_ID,1);
         $data['bots'] = $checkAsvail ? Bot::dataList(1)['data'] : [];
         $data['botPlus'] = BotPlus::dataList(1)['data'];
         $data['templates'] = Template::dataList(1)['data'];
@@ -158,8 +157,8 @@ class PollsControllers extends Controller {
         $id = (int) $id;
 
         $dataObj = Poll::find($id);
-        // $checkAvail = UserAddon::checkUserAvailability(USER_ID,$this->addonId);
-        if($dataObj == null /*|| !$checkAvail*/) {
+        $checkAvail = UserAddon::checkUserAvailability('Polls');
+        if($dataObj == null || !$checkAvail) {
             return Redirect('404');
         }
 
@@ -172,8 +171,8 @@ class PollsControllers extends Controller {
         $id = (int) $id;
 
         $dataObj = Poll::find($id);
-        // $checkAvail = UserAddon::checkUserAvailability(USER_ID,$this->addonId);
-        if($dataObj == null /*|| !$checkAvail*/) {
+        $checkAvail = UserAddon::checkUserAvailability('Polls');
+        if($dataObj == null || !$checkAvail) {
             return Redirect('404');
         }
 
@@ -264,16 +263,14 @@ class PollsControllers extends Controller {
     }
 
     public function add() {
-        // $checkAvail = UserAddon::checkUserAvailability(USER_ID,$this->addonId);
-        // if(!$checkAvail){
-        //     return redirect(404);
-        // }
-        $checkAsvail = 1;
+        $checkAvail = UserAddon::checkUserAvailability('Polls');
+        if(!$checkAvail){
+            return redirect(404);
+        }
 
         $data['designElems'] = $this->getData();
         $data['designElems']['mainData']['title'] = trans('main.add') . ' '.trans('main.polls') ;
         $data['designElems']['mainData']['icon'] = 'fa fa-plus';
-        // $checkAsvail = UserAddon::checkUserAvailability(USER_ID,1);
         $data['bots'] = $checkAsvail ? Bot::dataList(1)['data'] : [];
         $data['botPlus'] = BotPlus::dataList(1)['data'];
         $data['templates'] = Template::dataList(1)['data'];
@@ -361,10 +358,10 @@ class PollsControllers extends Controller {
 
     public function delete($id) {
         $id = (int) $id;
-        // $checkAvail = UserAddon::checkUserAvailability(USER_ID,$this->addonId);
-        // if(!$checkAvail){
-        //     return \TraitsFunc::SuccessResponse(trans('main.unAvail'));
-        // }
+        $checkAvail = UserAddon::checkUserAvailability('Polls');
+        if(!$checkAvail){
+            return \TraitsFunc::SuccessResponse(trans('main.unAvail'));
+        }
 
         $dataObj = Poll::getOne($id);
         \ImagesHelper::deleteDirectory(public_path('/').'uploads/'.TENANT_ID.'/'.$this->getData()['mainData']['name'].'/'.$id);
@@ -373,10 +370,10 @@ class PollsControllers extends Controller {
 
     public function fastEdit() {
         $input = \Request::all();
-        // $checkAvail = UserAddon::checkUserAvailability(USER_ID,$this->addonId);
-        // if(!$checkAvail){
-        //     return \TraitsFunc::SuccessResponse(trans('main.unAvail'));
-        // }
+        $checkAvail = UserAddon::checkUserAvailability('Polls');
+        if(!$checkAvail){
+            return \TraitsFunc::SuccessResponse(trans('main.unAvail'));
+        }
         
         foreach ($input['data'] as $item) {
             $col = $item[1];

@@ -144,14 +144,14 @@ class ListMsgControllers extends Controller {
 
     public function edit($id) {
         $id = (int) $id;
-        $checkAvail = 1;//UserAddon::checkUserAvailability(USER_ID,$this->addonId);
+        $checkAvail = UserAddon::checkUserAvailability('Polls');
         $dataObj = ListMsg::find($id);
         if($dataObj == null || !$checkAvail) {
             return Redirect('404');
         }
 
-        $checkAvailBot = 1;//UserAddon::checkUserAvailability(ROOT_ID,1);
-        $checkAvailBotPlus = 1;//UserAddon::checkUserAvailability(ROOT_ID,10);
+        $checkAvailBot = UserAddon::checkUserAvailability('Bot');
+        $checkAvailBotPlus = UserAddon::checkUserAvailability('BotPlus');
 
         $data['data'] = ListMsg::getData($dataObj);
         $data['designElems'] = $this->getData();
@@ -167,7 +167,7 @@ class ListMsgControllers extends Controller {
         $id = (int) $id;
 
         $dataObj = ListMsg::find($id);
-        $checkAvail = 1;//UserAddon::checkUserAvailability(USER_ID,$this->addonId);
+        $checkAvail = UserAddon::checkUserAvailability('Polls');
         if($dataObj == null || !$checkAvail) {
             return Redirect('404');
         }
@@ -181,7 +181,7 @@ class ListMsgControllers extends Controller {
         $id = (int) $id;
 
         $dataObj = ListMsg::find($id);
-        $checkAvail = 1;//UserAddon::checkUserAvailability(USER_ID,$this->addonId);
+        $checkAvail = UserAddon::checkUserAvailability('Polls');
         if($dataObj == null || !$checkAvail) {
             return Redirect('404');
         }
@@ -302,13 +302,13 @@ class ListMsgControllers extends Controller {
     }
 
     public function add() {
-        $checkAvail = 1;//UserAddon::checkUserAvailability(USER_ID,$this->addonId);
+        $checkAvail = UserAddon::checkUserAvailability('Polls');
         if(!$checkAvail){
             return redirect(404);
         }
 
-        $checkAvailBot = 1;//UserAddon::checkUserAvailability(ROOT_ID,1);
-        $checkAvailBotPlus = 1;//UserAddon::checkUserAvailability(ROOT_ID,10);
+        $checkAvailBot = UserAddon::checkUserAvailability('Bot');
+        $checkAvailBotPlus = UserAddon::checkUserAvailability('BotPlus');
 
         $data['designElems'] = $this->getData();
         $data['designElems']['mainData']['title'] = trans('main.add') . ' '.trans('main.listMsg') ;
@@ -427,7 +427,7 @@ class ListMsgControllers extends Controller {
 
     public function delete($id) {
         $id = (int) $id;
-        $checkAvail = 1;//UserAddon::checkUserAvailability(USER_ID,$this->addonId);
+        $checkAvail = UserAddon::checkUserAvailability('Polls');
         if(!$checkAvail){
             return \TraitsFunc::SuccessResponse(trans('main.unAvail'));
         }
@@ -438,7 +438,7 @@ class ListMsgControllers extends Controller {
 
     public function fastEdit() {
         $input = \Request::all();
-        $checkAvail = 1;//UserAddon::checkUserAvailability(USER_ID,$this->addonId);
+        $checkAvail = UserAddon::checkUserAvailability('Polls');
         if(!$checkAvail){
             return \TraitsFunc::SuccessResponse(trans('main.unAvail'));
         }

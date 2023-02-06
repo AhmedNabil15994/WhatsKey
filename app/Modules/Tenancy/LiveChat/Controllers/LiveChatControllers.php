@@ -59,13 +59,13 @@ class LiveChatControllers extends Controller
     }
 
 
-    public function checkPerm()
-    {
-        return (in_array(2, UserAddon::getDeactivated(User::first()->id))) ? 1 : 0;
-    }
-
     public function index()
     {   
+        $checkAvail = UserAddon::checkUserAvailability('Livechat');
+        if(!$checkAvail){
+            return redirect(404);
+        }
+
         $varObj = Variable::getVar('ME');
         $business = 0;
         if($varObj && isset(json_decode($varObj)->isBussines) && json_decode($varObj)->isBussines){
@@ -95,7 +95,8 @@ class LiveChatControllers extends Controller
         $input = \Request::all();
         $domain = User::first()->domain;
         $input['chatId'] = Session::get('selected_chat_id');
-        if ($this->checkPerm()) {
+        $checkAvail = UserAddon::checkUserAvailability('Livechat');
+        if(!$checkAvail){
             return \TraitsFunc::ErrorMessage('Please Re-activate LiveChat Addon');
         }
 

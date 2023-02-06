@@ -176,10 +176,10 @@ class BotControllers extends Controller {
     }
 
     public function add() {
-        // $checkAvail = UserAddon::checkUserAvailability(USER_ID,$this->addonId);
-        // if(!$checkAvail){
-        //     return redirect(404);
-        // }
+        $checkAvail = UserAddon::checkUserAvailability('Bot');
+        if(!$checkAvail){
+            return redirect(404);
+        }
 
         $data['designElems'] = $this->getData();
         $data['designElems']['mainData']['title'] = trans('main.add') . ' '.trans('main.classicBot') ;
@@ -274,7 +274,7 @@ class BotControllers extends Controller {
 
     public function edit($id) {
         $id = (int) $id;
-        // $checkAvail = UserAddon::checkUserAvailability(USER_ID,$this->addonId);
+        $checkAvail = UserAddon::checkUserAvailability('Bot');
         $dataObj = Bot::NotDeleted()->find($id);
         if($dataObj == null /*|| !$checkAvail*/) {
             return Redirect('404');
@@ -293,8 +293,8 @@ class BotControllers extends Controller {
         $id = (int) $id;
 
         $dataObj = Bot::NotDeleted()->find($id);
-        $checkAvail = UserAddon::checkUserAvailability(USER_ID,$this->addonId);
-        if($dataObj == null /*|| !$checkAvail*/) {
+        $checkAvail = UserAddon::checkUserAvailability("Bot");
+        if($dataObj == null || !$checkAvail) {
             return Redirect('404');
         }
 
@@ -307,8 +307,8 @@ class BotControllers extends Controller {
         $id = (int) $id;
 
         $dataObj = Bot::NotDeleted()->find($id);
-        $checkAvail = UserAddon::checkUserAvailability(USER_ID,$this->addonId);
-        if($dataObj == null /*|| !$checkAvail*/) {
+        $checkAvail = UserAddon::checkUserAvailability("Bot");
+        if($dataObj == null || !$checkAvail) {
             return Redirect('404');
         }
 
@@ -415,10 +415,10 @@ class BotControllers extends Controller {
 
     public function delete($id) {
         $id = (int) $id;
-        // $checkAvail = UserAddon::checkUserAvailability(USER_ID,$this->addonId);
-        // if(!$checkAvail){
-        //     return \TraitsFunc::SuccessResponse(trans('main.unAvail'));
-        // }
+        $checkAvail = UserAddon::checkUserAvailability('Bot');
+        if(!$checkAvail){
+            return \TraitsFunc::SuccessResponse(trans('main.unAvail'));
+        }
 
         $dataObj = Bot::getOne($id);
         \ImagesHelper::deleteDirectory(public_path('/').'uploads/'.TENANT_ID.'/'.$this->getData()['mainData']['name'].'/'.$id);
@@ -427,10 +427,10 @@ class BotControllers extends Controller {
 
     public function fastEdit() {
         $input = \Request::all();
-        // $checkAvail = UserAddon::checkUserAvailability(USER_ID,$this->addonId);
-        // if(!$checkAvail){
-        //     return \TraitsFunc::SuccessResponse(trans('main.unAvail'));
-        // }
+        $checkAvail = UserAddon::checkUserAvailability('Bot');
+        if(!$checkAvail){
+            return \TraitsFunc::SuccessResponse(trans('main.unAvail'));
+        }
         
         foreach ($input['data'] as $item) {
             $col = $item[1];

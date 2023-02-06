@@ -141,9 +141,8 @@ class UserAddon extends Model{
         return $text;
     }
 
-    static function checkUserAvailability($userId,$addonId){
-        $first = User::first()->id;
-        $userId = $userId != $first ? $first : $userId;
-        return self::where('user_id',$userId)->where('addon_id',$addonId)->where('status',1)->first();
+    static function checkUserAvailability($addonName){
+        $addonsName = array_unique(array_merge(Session::get('membershipAddons'),Session::get('addons')));
+        return in_array($addonName, $addonsName);
     }
 }

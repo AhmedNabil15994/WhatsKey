@@ -18,8 +18,6 @@ use Redirect;
 class BotPlusControllers extends Controller {
 
     use \TraitsFunc;
-    public $addonId = '10';
-
     public function getData(){
         $messageTypes=[
             [
@@ -139,9 +137,9 @@ class BotPlusControllers extends Controller {
 
     public function edit($id) {
         $id = (int) $id;
-        // $checkAvail = UserAddon::checkUserAvailability(USER_ID,$this->addonId);
+        $checkAvail = UserAddon::checkUserAvailability('BotPlus');
         $dataObj = BotPlus::find($id);
-        if($dataObj == null /*|| !$checkAvail*/) {
+        if($dataObj == null || !$checkAvail) {
             return Redirect('404');
         }
 
@@ -150,7 +148,7 @@ class BotPlusControllers extends Controller {
         $data['designElems'] = $this->getData();
         $data['designElems']['mainData']['title'] = trans('main.edit') . ' '.trans('main.smartBot') ;
         $data['designElems']['mainData']['icon'] = 'fa fa-pencil-alt';
-        // $checkAsvail = UserAddon::checkUserAvailability(USER_ID,1);
+        $checkAsvail = UserAddon::checkUserAvailability('Bot');
         $data['bots'] = $checkAsvail ? Bot::dataList(1)['data'] : [];
         $data['botPlus'] = BotPlus::dataList(1)['data'];
         $data['templates'] = Template::dataList(1)['data'];
@@ -161,8 +159,8 @@ class BotPlusControllers extends Controller {
         $id = (int) $id;
 
         $dataObj = BotPlus::find($id);
-        // $checkAvail = UserAddon::checkUserAvailability(USER_ID,$this->addonId);
-        if($dataObj == null /*|| !$checkAvail*/) {
+        $checkAvail = UserAddon::checkUserAvailability('BotPlus');
+        if($dataObj == null || !$checkAvail) {
             return Redirect('404');
         }
 
@@ -175,8 +173,8 @@ class BotPlusControllers extends Controller {
         $id = (int) $id;
 
         $dataObj = BotPlus::find($id);
-        // $checkAvail = UserAddon::checkUserAvailability(USER_ID,$this->addonId);
-        if($dataObj == null /*|| !$checkAvail*/) {
+        $checkAvail = UserAddon::checkUserAvailability('BotPlus');
+        if($dataObj == null || !$checkAvail) {
             return Redirect('404');
         }
 
@@ -292,10 +290,10 @@ class BotPlusControllers extends Controller {
     }
 
     public function add() {
-        // $checkAvail = UserAddon::checkUserAvailability(USER_ID,$this->addonId);
-        // if(!$checkAvail){
-        //     return redirect(404);
-        // }
+        $checkAvail = UserAddon::checkUserAvailability('BotPlus');
+        if(!$checkAvail){
+            return redirect(404);
+        }
         $checkAsvail = 1;
         $userObj = User::find(USER_ID);
         $channels = [];
@@ -307,7 +305,7 @@ class BotPlusControllers extends Controller {
         $data['designElems'] = $this->getData();
         $data['designElems']['mainData']['title'] = trans('main.add') . ' '.trans('main.smartBot') ;
         $data['designElems']['mainData']['icon'] = 'fa fa-plus';
-        // $checkAsvail = UserAddon::checkUserAvailability(USER_ID,1);
+        $checkAsvail = UserAddon::checkUserAvailability('Bot');
         $data['bots'] = $checkAsvail ? Bot::dataList(1)['data'] : [];
         $data['botPlus'] = BotPlus::dataList(1)['data'];
         $data['templates'] = Template::dataList(1)['data'];
@@ -420,10 +418,10 @@ class BotPlusControllers extends Controller {
 
     public function delete($id) {
         $id = (int) $id;
-        // $checkAvail = UserAddon::checkUserAvailability(USER_ID,$this->addonId);
-        // if(!$checkAvail){
-        //     return \TraitsFunc::SuccessResponse(trans('main.unAvail'));
-        // }
+        $checkAvail = UserAddon::checkUserAvailability('BotPlus');
+        if(!$checkAvail){
+            return \TraitsFunc::SuccessResponse(trans('main.unAvail'));
+        }
 
         $dataObj = BotPlus::getOne($id);
         \ImagesHelper::deleteDirectory(public_path('/').'uploads/'.TENANT_ID.'/'.$this->getData()['mainData']['name'].'/'.$id);
@@ -432,10 +430,10 @@ class BotPlusControllers extends Controller {
 
     public function fastEdit() {
         $input = \Request::all();
-        // $checkAvail = UserAddon::checkUserAvailability(USER_ID,$this->addonId);
-        // if(!$checkAvail){
-        //     return \TraitsFunc::SuccessResponse(trans('main.unAvail'));
-        // }
+        $checkAvail = UserAddon::checkUserAvailability('BotPlus');
+        if(!$checkAvail){
+            return \TraitsFunc::SuccessResponse(trans('main.unAvail'));
+        }
         
         foreach ($input['data'] as $item) {
             $col = $item[1];

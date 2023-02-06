@@ -14,6 +14,11 @@ class WACollectionControllers extends Controller {
     use \TraitsFunc;
 
     public function index(Request $request) {
+        $checkAvail = UserAddon::checkUserAvailability('BusinessProfile');
+        if(!$checkAvail) {
+            return Redirect('404');
+        }
+
         if($request->ajax()){
             $data = WACollection::dataList();
             return Datatables::of($data['data'])->make(true);
@@ -105,6 +110,11 @@ class WACollectionControllers extends Controller {
     }
 
     public function sendCatalog(){
+        $checkAvail = UserAddon::checkUserAvailability('BusinessProfile');
+        if(!$checkAvail) {
+            return Redirect('404');
+        }
+        
         $input = \Request::all();
 
         if(!isset($input['phones']) || empty($input['phones'])){

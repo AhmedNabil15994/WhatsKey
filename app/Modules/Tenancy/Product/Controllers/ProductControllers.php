@@ -185,6 +185,11 @@ class ProductControllers extends Controller {
     }
 
     public function index(Request $request) {
+        $checkAvail = UserAddon::checkUserAvailability('BusinessProfile');
+        if(!$checkAvail) {
+            return Redirect('404');
+        }
+
         if($request->ajax()){
             $data = Product::dataList();
             return Datatables::of($data['data'])->make(true);
@@ -202,6 +207,11 @@ class ProductControllers extends Controller {
     }
 
     public function add() {
+        $checkAvail = UserAddon::checkUserAvailability('BusinessProfile');
+        if(!$checkAvail) {
+            return Redirect('404');
+        }
+
         $data['designElems'] = $this->getData();
         $data['designElems']['mainData']['title'] = trans('main.add') . ' '.trans('main.products') ;
         $data['designElems']['mainData']['icon'] = 'fa fa-plus';
@@ -263,6 +273,12 @@ class ProductControllers extends Controller {
     }
 
     public function view($id) {
+
+        $checkAvail = UserAddon::checkUserAvailability('BusinessProfile');
+        if(!$checkAvail) {
+            return Redirect('404');
+        }
+
         $id = (int) $id;
 
         $userObj = Product::NotDeleted()->find($id);
@@ -281,6 +297,11 @@ class ProductControllers extends Controller {
     }
 
     public function sendProduct($id){
+        $checkAvail = UserAddon::checkUserAvailability('BusinessProfile');
+        if(!$checkAvail) {
+            return Redirect('404');
+        }
+
         $input = \Request::all();
         $id = (int) $id;
 
@@ -319,6 +340,11 @@ class ProductControllers extends Controller {
     }
 
     public function edit($id) {
+        $checkAvail = UserAddon::checkUserAvailability('BusinessProfile');
+        if(!$checkAvail) {
+            return Redirect('404');
+        }
+
         $id = (int) $id;
 
         $userObj = Product::NotDeleted()->find($id);
@@ -409,6 +435,12 @@ class ProductControllers extends Controller {
     }
 
     public function delete($id) {
+
+        $checkAvail = UserAddon::checkUserAvailability('BusinessProfile');
+        if(!$checkAvail) {
+            return Redirect('404');
+        }
+        
         $id = (int) $id;
         $dataObj = Product::getOne($id);
         if(!$dataObj){

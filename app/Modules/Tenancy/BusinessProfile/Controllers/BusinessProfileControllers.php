@@ -8,6 +8,7 @@ use DataTables;
 use Storage;
 use App\Models\Contact;
 use App\Models\Variable;
+use App\Models\UserAddon;
 use App\Models\UserExtraQuota;
 
 class BusinessProfileControllers extends Controller {
@@ -15,6 +16,10 @@ class BusinessProfileControllers extends Controller {
     use \TraitsFunc;
 
     public function index(Request $request) {
+        $checkAvail = UserAddon::checkUserAvailability('BusinessProfile');
+        if(!$checkAvail) {
+            return Redirect('404');
+        }
         $mainWhatsLoopObj = new \OfficialHelper();
         $me = $mainWhatsLoopObj->me();
         $meResult = $me->json();

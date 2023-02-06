@@ -26,6 +26,15 @@
 @endsection
 
 @section('content')
+<div class="alert alert-custom alert-danger" role="alert" >
+    <div class="alert-icon"><i class="flaticon-alert"></i></div>
+    <div class="alert-text">{{trans('main.groupMsgNotify1')}}</div>
+</div>
+
+<div class="alert alert-custom alert-danger" role="alert" >
+    <div class="alert-icon"><i class="flaticon-alert"></i></div>
+    <div class="alert-text">{{trans('main.groupMsgNotify2')}}</div>
+</div>
 @if($data->checkAvailBotPlus == 1)
 <div class="alert alert-custom alert-dark" role="alert" >
     <div class="alert-icon"><i class="flaticon-warning"></i></div>
