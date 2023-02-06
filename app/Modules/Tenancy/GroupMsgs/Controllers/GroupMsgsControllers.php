@@ -583,7 +583,7 @@ class GroupMsgsControllers extends Controller {
         $dataObj->message = $message;
         $dataObj->publish_at = $date;
         $dataObj->later = $flag;
-        $dataObj->interval_in_sec = isset($input['interval']) && !empty($input['interval']) ? $input['interval'] : 3;
+        $dataObj->interval_in_sec = isset($input['interval']) && !empty($input['interval']) ? $input['interval'] : 5;
         $dataObj->contacts_count = $contactsCount;
         $dataObj->messages_count = 1;
         $dataObj->sort = GroupMsg::newSortIndex();
