@@ -296,7 +296,7 @@ class GroupNumbersControllers extends Controller {
         $rows = Excel::toArray(new ContactImport, public_path('uploads/excels/'.$folder.'/'.$fileName));
         $mainData = $rows[0];
 
-        $modelProps = ['name','email','country','city','phone','Phone'];
+        $modelProps = ['name','email','country','city','phone','Phone','الاسم','الرقم_المرسل'];
         $userInputs = $input;
         unset($userInputs['status']);
         unset($userInputs['group_id']);
@@ -304,17 +304,19 @@ class GroupNumbersControllers extends Controller {
         unset($userInputs['file']);
         unset($userInputs['files']);
 
+        $dateTime = DATE_TIME;
         $storeData = [];
         $consForQueue = [];
         $myData = [];
         foreach ($userInputs as $key=> $userInput) {
-            if(in_array(strtolower($key), $modelProps)){
-                $myData[strtolower($key)] = $userInputs[$key];
+            $key = strtolower($key);
+            if(in_array($key, $modelProps)){
+                $myData[$key] = $userInputs[$key];
             }
         }
-        
-        $dateTime = DATE_TIME;
+
         $rows =  array_slice($rows[0], 1);
+        // dd($mainData);
         for ($i = 1; $i < count($mainData); $i++) {
             $header = $mainData[0];
             for ($x = 0; $x < count($header); $x++) {
@@ -322,19 +324,32 @@ class GroupNumbersControllers extends Controller {
                     if(!isset($storeData[$i])){
                         $storeData[$i] = [];
                     }
-                    if(!isset($storeData[$i][$key])){
-                        $storeData[$i][$key] = '';
+                    $myKey = $key;
+                    if($key == 'الرقم_المرسل' || $key == 'الرقم المرسل'){
+                        $myKey = 'phone';
+                    }else if($key == 'الاسم'){
+                        $myKey = 'name';
                     }
-                    if($key == strtolower($header[$x])){
-                        $storeData[$i][$key] = $mainData[$i][$x];
+                    if(!isset($storeData[$i][$myKey])){
+                        $storeData[$i][$myKey] = '';
+                    }
+                    if($key == strtolower($header[$x]) || str_replace('_', ' ', $key) == strtolower($header[$x])){
+                        $myKey = $key;
+                        if($key == 'الرقم_المرسل' || $key == 'الرقم المرسل'){
+                            $myKey = 'phone';
+                        }else if($key == 'الاسم'){
+                            $myKey = 'name';
+                        }
+                        $storeData[$i][$myKey] = $mainData[$i][$x];
                     }
                 }
             }
-            $storeData[$i]['status'] = $input['status'];
+            $storeData[$i]['status'] = 1;
             $storeData[$i]['group_id'] = $input['group_id'];
             $storeData[$i]['created_at'] = $dateTime;
             $storeData[$i]['created_by'] = USER_ID;
         }
+
         $contsArr = [];
         $phones = [];
         foreach ($storeData as $value) {
@@ -379,7 +394,7 @@ class GroupNumbersControllers extends Controller {
             ]);
         }
         
-        $chunks = 100;
+        $chunks = 1000;
         $contacts = array_chunk($consForQueue,$chunks);
         foreach ($contacts as $contact) {
             try {
