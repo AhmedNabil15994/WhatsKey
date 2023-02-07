@@ -276,7 +276,7 @@ class BotControllers extends Controller {
         $id = (int) $id;
         $checkAvail = UserAddon::checkUserAvailability('Bot');
         $dataObj = Bot::NotDeleted()->find($id);
-        if($dataObj == null /*|| !$checkAvail*/) {
+        if($dataObj == null || !$checkAvail) {
             return Redirect('404');
         }
 

@@ -215,15 +215,15 @@ class GroupMessageJob implements ShouldQueue
         }
 
         if(!empty($phones)){
-            // if($messageObj['message_type'] == 4){
-            //     $testResult = $mainWhatsLoopObj->sendBulkAudio([
-            //         'phones' => $phones,
-            //         'interval' => 30 + $messageObj['interval_in_sec'],
-            //         'url' => $messageObj['file'],
-            //     ]);
-            // }else{
-            //     $mainWhatsLoopObj->$messageFunction($sendRequest);
-            // }
+            if($messageObj['message_type'] == 4){
+                $testResult = $mainWhatsLoopObj->sendBulkAudio([
+                    'phones' => $phones,
+                    'interval' => 30 + $messageObj['interval_in_sec'],
+                    'url' => $messageObj['file'],
+                ]);
+            }else{
+                $mainWhatsLoopObj->$messageFunction($sendRequest);
+            }
             $oldObj = GroupMsg::find($messageObj['id']);
             if($messageObj['messages'] > $oldObj->sent_count + $oldObj->unsent_count){
                 $oldObj->sent_count = $oldObj->sent_count + $hasWhatsapp;
