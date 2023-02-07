@@ -138,7 +138,7 @@ class Contact extends Model{
     }
 
     static function generateReportObj($source,$group_message_id){
-        $sourceArr = $source->paginate(10);
+        $sourceArr = $source->get();
         $groupMsgObj = GroupMsg::getOne($group_message_id);
         $groupMsgObj = $groupMsgObj ? GroupMsg::getData($groupMsgObj) : null;
         $list = [];
@@ -147,7 +147,7 @@ class Contact extends Model{
             $list[$key] = self::getReportData($value,$groupMsgObj);
         }
         $data['data'] = $list;
-        $data['pagination'] = \Helper::GeneratePagination($sourceArr);
+        // $data['pagination'] = \Helper::GeneratePagination($sourceArr);
         return $data;
     }
 
