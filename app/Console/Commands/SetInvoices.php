@@ -321,24 +321,24 @@ class SetInvoices extends Command
     public function sendInvoice($oneItem,$invoiceObj,$userObj){
         $myDomain = config('app.MY_DOMAIN');
         $loginUrl = str_replace('myDomain', $userObj->domain, $myDomain).'/invoices/view/'.$invoiceObj->id;
-        if($oneItem['data']['leftDays'] == 7 /*&& (int) date('H') == 12*/){
+        if($oneItem['data']['leftDays'] == 7 && (int) date('H') == 12){
             $notificationTemplateObj = NotificationTemplate::getOne(2,'newInvoice');
             $whatsappTemplateObj = NotificationTemplate::getOne(1,'newInvoice');
-        }else if($oneItem['data']['leftDays'] == 3 /*&& (int) date('H') == 12*/){
+        }else if($oneItem['data']['leftDays'] == 3 && (int) date('H') == 12){
             // First Reminder
             $notificationTemplateObj = NotificationTemplate::getOne(2,'firstReminder');
             $whatsappTemplateObj = NotificationTemplate::getOne(1,'firstReminder');
-        }else if($oneItem['data']['leftDays'] == 1 /*&& (int) date('H') == 12*/){
+        }else if($oneItem['data']['leftDays'] == 1 && (int) date('H') == 12){
             // Second Reminder // تذكير بسداد الفاتورة
             $notificationTemplateObj = NotificationTemplate::getOne(2,'secondReminder');
             $whatsappTemplateObj = NotificationTemplate::getOne(1,'secondReminder');
-        }else if($oneItem['data']['leftDays'] <= 0 /*&& (int) date('H') == 12*/){
+        }else if($oneItem['data']['leftDays'] <= 0 && (int) date('H') == 12){
             // Suspend 
-            if($invoiceObj->status == 2  /*&& (int) date('H') == 9*/ ){
+            if($invoiceObj->status == 2  && (int) date('H') == 9 ){
                 $notificationTemplateObj = NotificationTemplate::getOne(2,'accountSuspended');                
                 $whatsappTemplateObj = NotificationTemplate::getOne(1,'accountSuspended');
             }   
-        }else if($oneItem['data']['leftDays'] == -1 /*&& (int) date('H') == 12*/){
+        }else if($oneItem['data']['leftDays'] == -1 && (int) date('H') == 12){
             // Whatskey Customer Service
             $notificationTemplateObj = NotificationTemplate::getOne(2,'leadContact');
             $whatsappTemplateObj = NotificationTemplate::getOne(1,'leadContact');
