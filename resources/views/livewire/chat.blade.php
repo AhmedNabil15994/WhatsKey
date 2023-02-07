@@ -118,7 +118,7 @@
                         <li class="navi-item">
                             <a href="#" class="navi-link p-2" onclick="Livewire.emitTo('chats','readChat','{{$chat['id']}}')">
                                 <span class="text-dark">
-                                    @if($chat['unreadCount'] < 0)
+                                    @if($chat['unreadCount'] <= 0)
                                     Read <i class="la la-check-double icon-md"></i>
                                     @else
                                     Un-Read <i class="la la-check icon-md"></i>

@@ -165,7 +165,7 @@ class Chats extends Component
         $chatObj = ChatDialog::getOne($chatId);
         if($chatObj){
             $mainWhatsLoopObj = new \OfficialHelper();
-            if($chatObj->unreadCount < 0){
+            if($chatObj->unreadCount <= 0){
                 $result = $mainWhatsLoopObj->readChat(str_contains($chatId, '@g.us') ? ['chat'=>$chatId] : ['phone'=>$chatId]);
                 $chatObj->unreadCount = 0;
                 $chatObj->save();
