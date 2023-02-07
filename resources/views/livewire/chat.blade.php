@@ -69,7 +69,7 @@
             }
         }
     @endphp
-    @if($chat['lastMessage'])
+    @if(isset($chat['lastMessage']))
     <div class="card py-3 px-3 mb-1 chatItem {{$chat['pinned'] > 0 ? 'pinned' : ''}}" data-pin="{{$chat['pinned']}}" data-id="{{$chat['id']}}">
         <div class="d-flex">
             <div class="symbol symbol-circle symbol-50 mr-3">
