@@ -1,4 +1,4 @@
-<div class="msgD {{$msg['fromMe'] == 1 ? 'left':'right'}}">
+<div class="msgD {{$msg['fromMe'] == 1 ? 'left':'right mb-5'}}">
     @php 
         $msg = (array) $msg; 
         $id = array_reverse(explode('_',$msg['id']))[0];
@@ -186,7 +186,7 @@
     </div>
     @endif
     @if($msg['fromMe'])
-    <div class="text-dark text-right font-weight-bolder mb-5 {{count($msg['reactions']) > 0 && !empty($msg['reactions']) && isset($msg['reactions'][0]['id']) && $msg['reactions'][0]['body'] != null ? 'mt-6' : 'mt-2'}} bg-gray-100 px-2 pt-1 w-fit float-right" style="z-index: 99999999;position: relative;width: fit-content;border-radius: 5px">{{$msg['status']}}</div>    
+    <div class="text-dark text-right font-weight-bolder mb-5 {{count($msg['reactions']) > 0 && !empty($msg['reactions']) && isset($msg['reactions'][0]['id']) && $msg['reactions'][0]['body'] != null ? 'mt-6' : 'mt-2'}} bg-gray-100 px-2 pt-1 w-fit float-right" style="z-index: 999;position: relative;width: fit-content;border-radius: 5px">{{$msg['status']}}</div>    
     @endif
     <div class="clearfix"></div>
 </div>
