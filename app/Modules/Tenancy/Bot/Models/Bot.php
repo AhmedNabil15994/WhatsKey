@@ -33,7 +33,7 @@ class Bot extends Model{
         if($senderMessage != ''){
             $obj = self::NotDeleted()->where('status',1)->where('message_type',1)->where('message',$senderMessage)->first();
             if(!$obj){
-                $obj = self::NotDeleted()->where('status',1)->where('message_type',2)->search(strtolower($senderMessage))->first();
+                $obj = self::NotDeleted()->where('status',1)->where('message_type',2)->search(strtolower($senderMessage),null, true, true)->first();
                 return $obj ? $obj : null;
             }else{
                 return $obj;
