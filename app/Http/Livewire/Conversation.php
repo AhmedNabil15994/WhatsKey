@@ -80,7 +80,9 @@ class Conversation extends Component
                     $msgs[]= $msg;
                 }else{
                     $newMsgs = [];
+                    $msg = json_decode(json_encode($msg), true);
                     foreach ($msgs as $key => $value) {
+                        $value = json_decode(json_encode($value), true);
                         if(isset($msg['metadata']['quotedMessageId']) && $value['id'] == $msg['metadata']['quotedMessageId']){
                             $value = ChatMessage::getData(ChatMessage::getOne($msg['metadata']['quotedMessageId']));
                         }
