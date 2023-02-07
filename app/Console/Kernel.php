@@ -24,6 +24,13 @@ class Kernel extends ConsoleKernel
 
     protected function schedule(Schedule $schedule)
     {
+        $tenants = \DB::table('tenants')->get();
+        foreach ($tenants as $tenant) {
+            $schedule->command('tenants:run instance:status --tenants=' . $tenant->id)->everyFiveMinutes()->withoutOverlapping();
+        }
+        $schedule->command('set:invoices')->twiceDaily(9, 12);
+        $schedule->command('push:channelSetting')->hourly(1, 13);
+        $schedule->command('transfer:days')->dailyAt('03:00');
         // $schedule->command('inspire')->hourly();
     }
 
