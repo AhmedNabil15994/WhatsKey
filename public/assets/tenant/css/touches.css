@@ -557,7 +557,7 @@ html[dir="ltr"] .right .messageItem emoji-picker{
 }
 
 html[dir="rtl"] .left .messageItem .msgEmoji{
-	right: -50px;
+	right: -75px;
 }
 html[dir="rtl"] .left .messageItem emoji-picker{
 	right: -250px;
@@ -709,4 +709,10 @@ html[dir="ltr"] .newGroup emoji-picker{
 .replyHeader span,
 .messageItem span:not(.fa-icon,.notPre){
 	white-space: pre-line;
+}
+.daySeperator span{
+	background: #FFF;
+    padding: 5px;
+    border-radius: 5px;
+    font-weight: bold;
 }
