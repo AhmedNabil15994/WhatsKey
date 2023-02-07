@@ -3,6 +3,7 @@
 use App\Models\CentralChannel;
 use App\Models\Variable;
 use App\Models\User;
+use App\Models\UserAddon;
 use DataTables;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
