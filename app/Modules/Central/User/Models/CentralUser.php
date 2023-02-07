@@ -206,7 +206,7 @@ class CentralUser extends Model implements SyncMaster
         
         if($source->group_id == 0){
             $centralChannel = CentralChannel::getOneByID($data->channelCodes);
-            $data->leftDays = isset($data->channelCodes) ? ($centralChannel != null ?  $centralChannel->leftDays : 0) : 0;
+            $data->leftDays = isset($data->channelCodes) ? ($centralChannel != null ? ($centralChannel->leftDays < 0 ? 0 : $centralChannel->leftDays) : 0) : 0;
             $data->balance = $source->balance != null ? $source->balance : 0;
         }
         return $data;
