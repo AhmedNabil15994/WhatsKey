@@ -36,6 +36,7 @@ class BotPlus extends Model{
             if(!$obj){
                 $allBots = self::NotDeleted()->where('status',1)->where('message_type',2)->search(strtolower($senderMessage))->get();
                 foreach ($allBots as $key => $value) {
+                    Logger(explode(',',$value->message));
                     if(in_array(strtolower($senderMessage),explode(',',$value->message))){
                         return $value;
                     }
