@@ -31,7 +31,12 @@ class ListMsg extends Model{
         if($senderMessage != ''){
             $obj = self::NotDeleted()->where('status',1)->where('message_type',1)->where('message',$senderMessage)->first();
             if(!$obj){
-                $obj = self::NotDeleted()->where('status',1)->where('message_type',2)->search(strtolower($senderMessage))->first();
+                $allBots = self::NotDeleted()->where('status',1)->where('message_type',2)->search(strtolower($senderMessage))->get();
+                foreach ($allBots as $key => $value) {
+                    if(in_array(strtolower($senderMessage),array_map('trim', explode(',', $value->message)))){
+                        return $value;
+                    }
+                }
                 return $obj ? $obj : null;
             }else{
                 return $obj;
