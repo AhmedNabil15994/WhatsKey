@@ -88,6 +88,20 @@ class ChatMessage extends Model{
                 ['caption','LIKE','%'.$input['message']]
             ]);
         }
+
+
+        if(isset($input['message_status']) && !empty($input['message_status'])){
+            if($input['message_status'] == 1){
+                $source->where('isForwarded',1);
+            }else if($input['message_status'] == 2){
+                $source->where('metadata','LIKE','%'.'"type":"reply"'.'%');
+            }else if($input['message_status'] == 3){
+                $source->where('starred',>,0);
+            }else if($input['message_status'] == 4){
+                $source->where('labelled',>,0);
+            }
+        }
+
         if(isset($input['id']) && !empty($input['id'])){
             $source->where('id',$input['id'])->orderBy('time','DESC');
         }

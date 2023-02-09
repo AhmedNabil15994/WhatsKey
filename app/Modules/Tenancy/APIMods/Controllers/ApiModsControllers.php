@@ -223,6 +223,18 @@ class ApiModsControllers extends Controller {
                 'id' => 'datepicker2',
                 'label' => trans('main.dateTo'),
             ],
+            'message_status' => [
+                'type' => 'select',
+                'class' => 'form-control datatable-input',
+                'index' => '',
+                'options' => [
+                    ['id'=>'1','title'=>'message_status_1'],
+                    ['id'=>'2','title'=>'message_status_2'],
+                    ['id'=>'3','title'=>'message_status_3'],          
+                    ['id'=>'4','title'=>'message_status_4'],          
+                ],
+                'label' => trans('main.message_status'),
+            ],
         ];
         $data['designElems']['tableData'] = [
             'id' => [
