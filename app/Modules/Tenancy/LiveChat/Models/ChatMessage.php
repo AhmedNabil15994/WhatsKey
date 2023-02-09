@@ -96,9 +96,9 @@ class ChatMessage extends Model{
             }else if($input['message_status'] == 2){
                 $source->where('metadata','LIKE','%'.'"type":"reply"'.'%');
             }else if($input['message_status'] == 3){
-                $source->where('starred', > , 0);
+                $source->where('starred', '>', 0);
             }else if($input['message_status'] == 4){
-                $source->where('labelled', > , 0);
+                $source->where('labelled','>' , 0);
             }
         }
 
