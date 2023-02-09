@@ -145,12 +145,6 @@ class ApiModsControllers extends Controller {
             'icon' => 'mdi mdi-archive-outline',
         ];
         $data['designElems']['searchData'] = [
-            'id' => [
-                'type' => 'text',
-                'class' => 'form-control datatable-input',
-                'index' => '0',
-                'label' => trans('main.id'),
-            ],
             'fromMe' => [
                 'type' => 'select',
                 'class' => 'form-control datatable-input',
@@ -209,6 +203,18 @@ class ApiModsControllers extends Controller {
                 ],
                 'label' => trans('main.message_type'),
             ],
+            'message_status' => [
+                'type' => 'select',
+                'class' => 'form-control datatable-input',
+                'index' => '',
+                'options' => [
+                    ['id'=>'1','title'=> trans('main.message_status_1')],
+                    ['id'=>'2','title'=> trans('main.message_status_2')],
+                    ['id'=>'3','title'=> trans('main.message_status_3')],          
+                    ['id'=>'4','title'=> trans('main.message_status_4')],          
+                ],
+                'label' => trans('main.message_status'),
+            ],
             'from' => [
                 'type' => 'text',
                 'class' => 'form-control datatable-input datepicker',
@@ -222,18 +228,6 @@ class ApiModsControllers extends Controller {
                 'index' => '',
                 'id' => 'datepicker2',
                 'label' => trans('main.dateTo'),
-            ],
-            'message_status' => [
-                'type' => 'select',
-                'class' => 'form-control datatable-input',
-                'index' => '',
-                'options' => [
-                    ['id'=>'1','title'=> trans('main.message_status_1')],
-                    ['id'=>'2','title'=> trans('main.message_status_2')],
-                    ['id'=>'3','title'=> trans('main.message_status_3')],          
-                    ['id'=>'4','title'=> trans('main.message_status_4')],          
-                ],
-                'label' => trans('main.message_status'),
             ],
         ];
         $data['designElems']['tableData'] = [
