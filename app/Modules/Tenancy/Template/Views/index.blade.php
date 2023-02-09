@@ -181,9 +181,9 @@ $varObj = \App\Models\Variable::getVar('ME');
                     <label>{{ $searchItem['label'] }}:</label>
                     @if(in_array($searchItem['type'],['email','text','number','password']))
                         @if($searchKey == 'from' || $searchKey == 'to')
-                            <input type="{{ $searchItem['type'] }}" data-date-format="dd-mm-yyyy" data-date-autoclose="true" class="{{ $searchItem['class'] }}" value="{{ Request::get($searchKey) }}" name="{{ $searchKey }}" id="{{ $searchItem['id'] }}" placeholder="{{ $searchItem['label'] }}">
+                            <input type="{{ $searchItem['type'] }}" data-date-format="dd-mm-yyyy" data-date-autoclose="true" class="{{ $searchItem['class'] }} w-100" value="{{ Request::get($searchKey) }}" name="{{ $searchKey }}" id="{{ $searchItem['id'] }}" placeholder="{{ $searchItem['label'] }}">
                         @else
-                            <input type="{{ $searchItem['type'] }}" data-col-index="{{$searchItem['index']}}" class="{{ $searchItem['class'] }}" value="{{ Request::get($searchKey) }}" placeholder="{{ $searchItem['label'] }}" name="{{ $searchKey }}">
+                            <input type="{{ $searchItem['type'] }}" data-col-index="{{$searchItem['index']}}" class="{{ $searchItem['class'] }} w-100" value="{{ Request::get($searchKey) }}" placeholder="{{ $searchItem['label'] }}" name="{{ $searchKey }}">
                         @endif
                     @endif
                     @if($searchItem['type'] == 'select')
