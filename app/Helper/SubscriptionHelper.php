@@ -139,12 +139,7 @@ class SubscriptionHelper {
         }
 
         foreach($extraQuotaData as $oneItemData){
-            $userExtraQuotaObj = UserExtraQuota::where('user_id',$oneItemData['user_id'])->where('extra_quota_id',$oneItemData['extra_quota_id'])->first();
-            if($userExtraQuotaObj){
-                $userExtraQuotaObj->update($oneItemData);
-            }else{
-                UserExtraQuota::insert($oneItemData);                
-            }
+            UserExtraQuota::insert($oneItemData);
         }
 
         $invoiceObj = Invoice::find($data['invoice_id']);

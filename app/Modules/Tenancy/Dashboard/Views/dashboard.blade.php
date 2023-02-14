@@ -44,6 +44,12 @@
     html[dir="ltr"] .timeline.timeline-6:before{
         left: 100px;
     }
+    .timer img{
+        width: 300px;
+        height: 300px;
+        display: block;
+        margin: auto;
+    }
 </style>
 @endsection
 

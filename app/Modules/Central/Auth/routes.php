@@ -30,4 +30,8 @@ Route::group(['prefix' => '/'] , function () {
     Route::get('/status', [$authController,'status'])->name('status');
     // Route::get('/appLogin', [$authController,'appLogin']);
     // Route::post('/appLogins', [$authController,'appLogins']);
+    // 
+    Route::get('/paymentError', [$authController,'paymentError']);
+    Route::get('/pushInvoice', [$authController,'pushInvoice']);
+    
 });

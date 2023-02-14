@@ -184,25 +184,69 @@ class SubscriptionControllers extends Controller
             return back()->withInput();
         }
 
-        tenancy()->initialize(TENANT_ID);
-        $type = Variable::getVar('inv_status');
-        tenancy()->end(TENANT_ID);
+        $price = $invoiceObj->total;
+        $transaction_id = (string) \Str::uuid();
+        $payment_gateaway = 'EPayment';
+        $priceData['return_auth'] = \URL::to('/pushInvoice');
+        $priceData['return_can']  = \URL::to('/paymentError');
+        $priceData['return_decl'] = \URL::to('/paymentError');
+        $priceData['amount'] = $price;
+        $priceData['order_id'] = $transaction_id;
+        Session::put('pay_invoice_id',$input['invoice_id']);
+        Session::put('pay_transaction_id',$transaction_id);
+        Session::put('pay_payment_gateaway',$payment_gateaway);
 
-        $data = [
-            'user_id' => ROOT_ID,
-            'tenant_id' => TENANT_ID,
-            'global_id' => GLOBAL_ID,
-            'cartData' => json_decode(json_encode(unserialize($invoiceObj->items)), true), 
-            'type' => $type,
-            'transaction_id' => isset($input['transaction_id']) && !empty($input['transaction_id']) ? $input['transaction_id'] : rand(1,1000000),
-            'payment_gateaway' => isset($input['payment_gateaway']) && !empty($input['payment_gateaway']) ? $input['payment_gateaway'] : 'Noon',
-            'invoice_id' => $invoiceObj->id,
-        ];        
+        $paymentRequest = \PaymentHelper::hostedPayment($priceData);
+        if (isset($paymentRequest) && isset($paymentRequest['order']) && isset($paymentRequest['order']['url'])) {
+            Session::put('order_ref',$paymentRequest['order']['ref']);
+            return redirect()->away($paymentRequest['order']['url']);
+        }else{
+            \Session::flash('error', trans('main.paymentFailedP'));
+            return redirect()->back()->withInput();
+        }
+    }
 
-        try {
-            dispatch(new NewClient($data))->onConnection('syncdata');
-        } catch (Exception $e) {
-            
+    public function pushInvoice(Request $request)
+    {
+        if(!Session::has('pay_invoice_id')){
+            return back()->withInput();
+        }
+        $input['invoice_id'] = Session::get('pay_invoice_id');
+        if(Session::has('pay_transaction_id')){
+            $input['transaction_id'] = Session::get('pay_transaction_id');
+        }
+        if(Session::has('pay_payment_gateaway')){
+            $input['payment_gateaway'] = Session::get('pay_payment_gateaway');
+        }
+
+        $invoiceObj = Invoice::NotDeleted()->where('client_id',ROOT_ID)->where('id',(int) $input['invoice_id'])->first();
+        if(!$invoiceObj){
+            return back()->withInput();
+        }
+
+        $paymentRequest = \PaymentHelper::checkOrder(['order_id'=>Session::get('order_ref')]);
+        if(isset($paymentRequest) && isset($paymentRequest['order']) && isset($paymentRequest['order']['status']) && isset($paymentRequest['order']['status']['code']) && $paymentRequest['order']['status']['code'] == 3 ){
+
+            tenancy()->initialize(TENANT_ID);
+            $type = Variable::getVar('inv_status');
+            tenancy()->end(TENANT_ID);
+
+            $data = [
+                'user_id' => ROOT_ID,
+                'tenant_id' => TENANT_ID,
+                'global_id' => GLOBAL_ID,
+                'cartData' => json_decode(json_encode(unserialize($invoiceObj->items)), true), 
+                'type' => $type,
+                'transaction_id' => isset($input['transaction_id']) && !empty($input['transaction_id']) ? $input['transaction_id'] : rand(1,1000000),
+                'payment_gateaway' => isset($input['payment_gateaway']) && !empty($input['payment_gateaway']) ? $input['payment_gateaway'] : 'EPayment',
+                'invoice_id' => $invoiceObj->id,
+            ];        
+
+            try {
+                dispatch(new NewClient($data))->onConnection('syncdata');
+            } catch (Exception $e) {
+                
+            }
         }
         return redirect()->to('/dashboard');
     }
@@ -529,138 +573,6 @@ class SubscriptionControllers extends Controller
         }
         Session::flash('success', trans('main.editSuccess'));
         return redirect()->back();
-    }
-
-    public function paymentError()
-    {
-        return view('Tenancy.Dashboard.Views.V5.paymentError');
-    }
-    
-    public function pushInvoice()
-    {
-        $input = \Request::all();
-        $data['data'] = json_decode($input['data']);
-        $data['status'] = json_decode($input['status']);
-        if ($data['status']->status == 1) {
-            //paytabs
-            return $this->activate($data['data']->tran_ref, $data['data']->paymentGateaway);
-            //noon
-            //return $this->activate($data['data']->transaction_id, $data['data']->paymentGateaway);
-        } else {
-            $userObj = User::first();
-            User::setSessions($userObj);
-            \Session::flash('error', $data['status']->message);
-            return redirect()->to('/paymentError')->withInput();
-        }
-    }
-
-    
-    public function completeOrder()
-    {
-        $input = \Request::all();
-        if (!IS_ADMIN) {
-            return redirect()->to('/dashboard');
-        }
-
-        $userObj = User::first();
-        $centralUser = CentralUser::getOne($userObj->id);
-
-        if (isset($input['name']) && !empty($input['name'])) {
-
-            $names = explode(' ', $input['name']);
-            // if(count($names) < 2){
-            //     Session::flash('error', trans('main.name2Validate'));
-            //     return redirect()->back()->withInput();
-            // }
-
-            $userObj->name = $input['name'];
-            $userObj->save();
-
-            $centralUser->name = $input['name'];
-            $centralUser->save();
-        }
-
-        if (isset($input['company_name']) && !empty($input['company_name'])) {
-            $userObj->company = $input['company_name'];
-            $userObj->save();
-
-            $centralUser->company = $input['company_name'];
-            $centralUser->save();
-        }
-
-        $cartData = $input['data'];
-
-        $this->calcData($input['totals'], $cartData, $userObj);
-
-        $url = \URL::to('/pushInvoice');
-        // if(isset($input['dataType']) && $input['dataType'] > 1){
-        //     $url = \URL::to('/pushInvoice2');
-        //     if($input['dataType'] == 2){
-        //         $nextStartMonth = date('Y-m-d',strtotime('first day of +1 month',strtotime(date('Y-m-d'))));
-
-        //         Variable::where('var_key','endDate')->firstOrCreate([
-        //             'var_key' => 'endDate',
-        //             'var_value' => $nextStartMonth,
-        //         ]);
-        //     }else{
-        //         $nextStartMonth = date('Y-m-d',strtotime('+1 month',strtotime(date('Y-m-d'))));
-
-        //         Variable::where('var_key','endDate')->firstOrCreate([
-        //             'var_key' => 'endDate',
-        //             'var_value' => $nextStartMonth,
-        //         ]);
-        //     }
-        //     Variable::where('var_key','start_date')->firstOrCreate([
-        //         'var_key' => 'start_date',
-        //         'var_value' => date('Y-m-d'),
-        //     ]);
-        // }
-
-        if ($input['payType'] == 2) { // Noon Integration
-            // paytabs - noon
-            $urlSecondSegment = '/paytabs';
-            $noonData = [
-                'returnURL' => $url,
-                'cart_id' => 'whatsloop-' . rand(1, 100000),
-                'cart_amount' => json_decode($input['totals'])[3],
-                'cart_description' => 'New Membership',
-                'paypage_lang' => LANGUAGE_PREF,
-                'description' => 'WhatsLoop Membership For User ' . $userObj->id,
-            ];
-
-            $paymentObj = new \PaymentHelper();
-            $resultData = $paymentObj->initNoon($noonData);
-
-            $result = $paymentObj->hostedPayment($resultData['dataArr'], $urlSecondSegment, $resultData['extraHeaders']);
-            $result = json_decode($result);
-            // dd($result);
-            // paytabs
-            if (($result->data) && $result->data->redirect_url) {
-                return redirect()->away($result->data->redirect_url);
-            }
-            // noon
-            // if(($result->data) && $result->data->result->redirect_url){
-            //     return redirect()->away($result->data->result->redirect_url);
-            // }
-        }
-    }
-
-    public function getDiffs($end_date, $oldDuration, $monthly_after_vat, $annual_after_vat)
-    {
-        
-
-
-        $newPriceAfterVat = $monthly_after_vat;
-
-        if ($oldDuration == 1) {
-        } else if ($oldDuration == 2) {
-            
-        }
-        return [
-            'mustPaid' => $membershipMustPaid,
-            'daysLeft' => $daysLeft,
-            'nextStartMonth' => $nextStartMonth,
-        ];
     }
     
 }

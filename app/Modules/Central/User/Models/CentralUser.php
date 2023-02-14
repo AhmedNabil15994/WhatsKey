@@ -199,7 +199,7 @@ class CentralUser extends Model implements SyncMaster
         $data->domain = self::getDomain($source);
         $data->sort = $source->sort;
         $data->extra_rules = $source->extra_rules != null ? unserialize($source->extra_rules) : [];
-        $data->channelCodes = implode(',', unserialize($source->channels));
+        $data->channelCodes = $source->channels != null ? implode(',', unserialize($source->channels)) : '';
         $data->channelIDS = unserialize($source->channels);
         $data->channels = $data->channelIDS;
         $data->created_at = \Helper::formatDateForDisplay($source->created_at,true);

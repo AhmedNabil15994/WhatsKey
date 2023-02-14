@@ -548,125 +548,34 @@ class CentralAuthControllers extends Controller {
         }
 
         $package_id = Session::get('package_id');
-        $package_duration = 3;//Session::get('package_duration');
+        $package_duration = Session::get('package_duration');
         $membershipObj = Membership::getData(Membership::getOne($package_id));
         if(!$membershipObj){
             Session::flash('error', trans('main.membershipValidate'));
             return redirect()->back()->withInput();
         }
 
-        $tenant = Tenant::create([
-            'phone' => $input['phone'],
-            'title' => $input['name'],
-            'description' => '',
-        ]);
-        
-        $tenant->domains()->create([
-            'domain' => $input['domain'],
-        ]);
-
-        $centralUser = CentralUser::create([
-            'global_id' => (string) Str::orderedUuid(),
-            'name' => $input['name'],
-            'phone' => $input['phone'],
-            'email' => $input['email'],
-            'company' => $input['company'],
-            'password' => Hash::make($input['password']),
-            'notifications' => 0,
-            'setting_pushed' => 0,
-            'offers' => 0,
-            'group_id' => 0,
-            'is_active' => 1,
-            'is_approved' => 1,
-            'status' => 1,
-            'two_auth' => 0,
-            'is_old' => 0,
-            'is_synced' => 0,
-            'isBA' => 1,
-        ]);
-
-        \DB::connection('main')->table('tenant_users')->insert([
-            'tenant_id' => $tenant->id,
-            'global_user_id' => $centralUser->global_id,
-        ]);
-        
-        $user = $tenant->run(function() use(&$centralUser,$input){
-            $userObj = User::create([
-                'id' => $centralUser->id,
-                'global_id' => $centralUser->global_id,
-                'name' => $input['name'],
-                'phone' => $input['phone'],
-                'email' => $input['email'],
-                'company' => $input['company'],
-                'group_id' => 1,
-                'status' => 1,
-                'domain' => $input['domain'],
-                'is_old' => $centralUser->is_old,
-                'is_synced' => $centralUser->is_synced,
-                'two_auth' => 0,
-                'sort' => 1,
-                'setting_pushed' => 0,
-                'password' => Hash::make($input['password']),
-                'is_active' => 1,
-                'is_approved' => 1,
-                'notifications' => 0,
-                'offers' => 0,
-            ]);
-            return $userObj;
-        });
-
-        // Session::flash('success', trans('main.addSuccess'));
-        // $token = tenancy()->impersonate($tenant,$user->id,'/');
-
-        // Activate Account Here
-        $start_date = date('Y-m-d');
-        $cartData = [
-            [
-                'id' => $package_id,
-                'type' => 'membership',
-                'title' => $membershipObj->{'title_' . LANGUAGE_PREF},
-                'duration_type' => $package_duration,
-                'start_date' => $start_date,
-                'end_date' => $package_duration == 1 ? date('Y-m-d', strtotime('+1 month', strtotime($start_date))) : ($package_duration == 2 ?  date('Y-m-d', strtotime('+1 year', strtotime($start_date))) :  date('Y-m-d', strtotime('+3 days', strtotime($start_date)))),
-                'price' => $package_duration == 1 ? $membershipObj->monthly_after_vat : $membershipObj->annual_after_vat,
-                'quantity' => 1,
-            ]
-        ];
-        $total = $cartData[0]['price'];
-
-        if (true) {
-            $data = [
-                'user_id' => $user->id,
-                'tenant_id' => $tenant->id,
-                'global_id' => $centralUser->global_id,
-                'cartData' => $cartData,
-                'type' => 'New',
-                'transaction_id' => rand(1,100000),
-                'payment_gateaway' => 'EPayment',
-            ];
-
-            try {
-                dispatch(new NewClient($data))->onConnection('syncdata');
-            } catch (Exception $e) {}
-
-            tenancy()->initialize($tenant->id);
-            User::setSessions($user);
-            Variable::where('var_key','hasJob')->firstOrCreate(['var_key'=>'hasJob','var_value'=>1]);
-            tenancy()->end();
-
-            Session::put('check_user_id',$user->id);
-
-            $token = tenancy()->impersonate($tenant,$user->id,'/dashboard');
-            return redirect(tenant_route($tenant->domains()->first()->domain  . '.' . request()->getHttpHost(), 'impersonate',[
-                'token' => $token
-            ]));   
-        } else {
-            tenancy()->initialize($tenant->id);
-            User::setSessions($user);
-            tenancy()->end();
-
-            \Session::flash('error', $data['status']->message);
-            return redirect()->to('/paymentError')->withInput();
+        $price = $package_duration == 1 ? $membershipObj->monthly_after_vat : $membershipObj->annual_after_vat;
+        $priceData['amount'] = $price;
+        $priceData['order_id'] = (string) \Str::uuid();
+        $priceData['return_auth'] = \URL::to('/pushInvoice');
+        $priceData['return_can']  = \URL::to('/paymentError');
+        $priceData['return_decl'] = \URL::to('/paymentError');
+        $paymentRequest = \PaymentHelper::hostedPayment($priceData);
+        if (isset($paymentRequest) && isset($paymentRequest['order']) && isset($paymentRequest['order']['url'])) {
+            Session::put('new_user_name',$input['name']);
+            Session::put('new_user_phone',$input['phone']);
+            Session::put('new_user_email',$input['email']);
+            Session::put('new_user_company',$input['company']);
+            Session::put('new_user_domain',$input['domain']);
+            Session::put('new_user_password',$input['password']);
+            Session::put('package_name',$membershipObj->{'title_' . LANGUAGE_PREF});
+            Session::put('package_price',$price);
+            Session::put('order_ref',$paymentRequest['order']['ref']);
+            return redirect()->away($paymentRequest['order']['url']);
+        }else{
+            \Session::flash('error', trans('main.paymentFailedP'));
+            return redirect()->back()->withInput();
         }
     }
 
@@ -682,9 +591,154 @@ class CentralAuthControllers extends Controller {
         }
     }
 
-    public function paymentError()
+    public function paymentError(Request $request)
     {
-        return view('Tenancy.Dashboard.Views.V5.paymentError');
+        Session::forget('new_user_name');
+        Session::forget('new_user_phone');
+        Session::forget('new_user_email');
+        Session::forget('new_user_company');
+        Session::forget('new_user_domain');
+        Session::forget('new_user_password');
+        Session::forget('package_duration');
+        Session::forget('package_id');
+        Session::forget('package_name');
+        Session::forget('package_price');
+        Session::forget('order_ref');
+        Session::flash('error', trans('main.paymentFailedP'));
+        return redirect()->to('/checkAvailability');
+    }
+
+    public function pushInvoice(Request $request)
+    {
+        $paymentRequest = \PaymentHelper::checkOrder(['order_id'=>Session::get('order_ref')]);
+        if(isset($paymentRequest) && isset($paymentRequest['order']) && isset($paymentRequest['order']['status']) && isset($paymentRequest['order']['status']['code']) && $paymentRequest['order']['status']['code'] == 3 ){
+
+            $package_id = Session::get('package_id');
+            $package_duration = Session::get('package_duration');
+            $package_name = Session::get('package_name');
+            $package_price = Session::get('package_price');
+            $start_date = date('Y-m-d');
+            $phone = Session::get('new_user_phone');
+            $name = Session::get('new_user_name');
+            $email = Session::get('new_user_email');
+            $company = Session::get('new_user_company');
+            $domain = Session::get('new_user_domain');
+            $password = Session::get('new_user_password');
+
+            $tenant = Tenant::create([
+                'phone' => $phone,
+                'title' => $name,
+                'description' => '',
+            ]);
+            
+            $tenant->domains()->create([
+                'domain' => $domain,
+            ]);
+
+            $centralUser = CentralUser::create([
+                'global_id' => (string) Str::orderedUuid(),
+                'name' => $name,
+                'phone' => $phone,
+                'email' => $email,
+                'company' => $company,
+                'password' => Hash::make($password),
+                'notifications' => 0,
+                'setting_pushed' => 0,
+                'offers' => 0,
+                'group_id' => 0,
+                'is_active' => 1,
+                'is_approved' => 1,
+                'status' => 1,
+                'two_auth' => 0,
+                'is_old' => 0,
+                'is_synced' => 0,
+                'isBA' => 1,
+            ]);
+
+            \DB::connection('main')->table('tenant_users')->insert([
+                'tenant_id' => $tenant->id,
+                'global_user_id' => $centralUser->global_id,
+            ]);
+            
+            $user = $tenant->run(function() use(&$centralUser,$name,$phone,$password,$email,$company,$domain){
+                $userObj = User::create([
+                    'id' => $centralUser->id,
+                    'global_id' => $centralUser->global_id,
+                    'name' => $name,
+                    'phone' => $phone,
+                    'email' => $email,
+                    'company' => $company,
+                    'group_id' => 1,
+                    'status' => 1,
+                    'domain' => $domain,
+                    'is_old' => $centralUser->is_old,
+                    'is_synced' => $centralUser->is_synced,
+                    'two_auth' => 0,
+                    'sort' => 1,
+                    'setting_pushed' => 0,
+                    'password' => Hash::make($password),
+                    'is_active' => 1,
+                    'is_approved' => 1,
+                    'notifications' => 0,
+                    'offers' => 0,
+                ]);
+                return $userObj;
+            });
+
+            // Activate Account Here
+            $cartData = [
+                [
+                    'id' => $package_id,
+                    'type' => 'membership',
+                    'title' => $package_name,
+                    'duration_type' => $package_duration,
+                    'start_date' => $start_date,
+                    'end_date' => $package_duration == 1 ? date('Y-m-d', strtotime('+1 month', strtotime($start_date))) : ($package_duration == 2 ?  date('Y-m-d', strtotime('+1 year', strtotime($start_date))) :  date('Y-m-d', strtotime('+3 days', strtotime($start_date)))),
+                    'price' => $package_price,
+                    'quantity' => 1,
+                ]
+            ];
+            $total = $cartData[0]['price'];
+            $data = [
+                'user_id' => $user->id,
+                'tenant_id' => $tenant->id,
+                'global_id' => $centralUser->global_id,
+                'cartData' => $cartData,
+                'type' => 'New',
+                'transaction_id' => Session::get('order_ref'),
+                'payment_gateaway' => 'EPayment',
+            ];
+
+            try {
+                dispatch(new NewClient($data))->onConnection('syncdata');
+            } catch (Exception $e) {}
+
+            tenancy()->initialize($tenant->id);
+            User::setSessions($user);
+            Variable::where('var_key','hasJob')->firstOrCreate(['var_key'=>'hasJob','var_value'=>1]);
+            tenancy()->end();
+
+            Session::put('check_user_id',$user->id);
+            Session::forget('new_user_name');
+            Session::forget('new_user_phone');
+            Session::forget('new_user_email');
+            Session::forget('new_user_company');
+            Session::forget('new_user_domain');
+            Session::forget('new_user_password');
+            Session::forget('package_duration');
+            Session::forget('package_id');
+            Session::forget('package_name');
+            Session::forget('package_price');
+            Session::forget('order_ref');
+
+            $token = tenancy()->impersonate($tenant,$user->id,'/dashboard');
+            return redirect(tenant_route($tenant->domains()->first()->domain  . '.' . request()->getHttpHost(), 'impersonate',[
+                'token' => $token
+            ]));   
+        }else{
+            return redirect()->to('/checkAvailability');
+        }
+        // return view('Tenancy.Dashboard.Views.V5.pushInvoice');
     }
 
     public function completeJob()

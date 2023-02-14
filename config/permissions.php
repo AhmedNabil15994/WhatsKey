@@ -9,6 +9,7 @@ return [
     'DashboardControllers@qrIndex' => 'general',
     'DashboardControllers@updateName' => 'general',
     'DashboardControllers@getQR' => 'general',
+    'DashboardControllers@paymentError' => 'general',
 
     'DashboardControllers@faqs' => 'general',
     'DashboardControllers@changeLogs' => 'general',
@@ -119,15 +120,13 @@ return [
     'UserStorageControllers@chats' => 'list-storage',
     'UserStorageControllers@getByTypeAndId' => 'list-storage',
     'UserStorageControllers@removeByTypeAndId' => 'delete-storage',
-    'UserStorageControllers@removeChatFile' => 'delete-storage',
-
-    // ********************* Business ************************** //
-    
+    'UserStorageControllers@removeChatFile' => 'delete-storage',    
 
     'SubscriptionControllers@memberships' => 'changeSubscription',
     'SubscriptionControllers@updateMembership' => 'changeSubscription',
     'SubscriptionControllers@addCoupon' => 'addCoupon',
     'SubscriptionControllers@checkout' => 'checkout',
+    'SubscriptionControllers@activate' => 'checkout',
     'SubscriptionControllers@activate' => 'checkout',
     'SubscriptionControllers@addons' => 'changeSubscription',
     'SubscriptionControllers@postAddons' => 'changeSubscription',
@@ -138,8 +137,5 @@ return [
     'SubscriptionControllers@transferPayment' => 'changeSubscription',
     'SubscriptionControllers@disableAddonAutoInvoice' => 'changeSubscription',
     'SubscriptionControllers@disableExtraQuotaAutoInvoice' => 'changeSubscription',
-
-    /************************** In Review **************************/
-    'SubscriptionControllers@paymentError' => 'general',
-    'SubscriptionControllers@pushInvoice' => 'general',    
+    'SubscriptionControllers@pushInvoice' => 'checkout',    
 ];

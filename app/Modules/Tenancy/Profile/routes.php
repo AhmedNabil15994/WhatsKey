@@ -4,6 +4,7 @@
 Profile
 ----------------------------------------------------------*/
 Route::post('/checkout', [\App\Http\Controllers\SubscriptionControllers::class,'checkout']);
+Route::get('/pushInvoice', [\App\Http\Controllers\SubscriptionControllers::class,'pushInvoice']);
 Route::group(['prefix' => '/profile'] , function () {
     $controller = \App\Http\Controllers\ProfileControllers::class;    
     Route::get('/personalInfo', [$controller,'personalInfo']);
