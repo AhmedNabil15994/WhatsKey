@@ -14,6 +14,7 @@ use App\Models\Contact;
 use App\Models\ChatMessage;
 use App\Models\BotPlus;
 use App\Models\ListMsg;
+use App\Models\TemplateMsg;
 use App\Models\Poll;
 use App\Models\UserAddon;
 use App\Models\User;
@@ -64,6 +65,11 @@ class GroupMessageJob implements ShouldQueue
         if($messageObj->poll_id != null){
             $botObjs = Poll::find($messageObj->poll_id);
             $botObj = Poll::getData($botObjs);
+        }
+
+        if($messageObj->template_id != null){
+            $botObjs = TemplateMsg::find($messageObj->template_id);
+            $botObj = TemplateMsg::getData($botObjs);
         }
 
         return $this->reformData($this->contacts,(array) $this->messageObj,$botObj);
