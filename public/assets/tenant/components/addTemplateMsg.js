@@ -24,7 +24,7 @@ $(function(){
 		contact = "جهة اتصال";
 	}
 
-	$('select[name="buttons"]').on('change',function(e) {
+	$('select.buttons').on('change',function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 

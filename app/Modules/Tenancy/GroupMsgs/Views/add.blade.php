@@ -540,7 +540,7 @@
                 </div>
                 <div class="form-group">
                     <label>{{ trans('main.buttons') }} :</label>
-                    <select class="form-control" data-toggle="select2" data-style="btn-outline-myPR" name="TMbuttons">
+                    <select class="form-control buttons" data-toggle="select2" data-style="btn-outline-myPR" name="TMbuttons">
                         <option value="1" {{ old('buttons') == 1 ? 'selected' : '' }}>1</option>
                         <option value="2" {{ old('buttons') == 2 ? 'selected' : '' }}>2</option>
                         <option value="3" {{ old('buttons') == 3 ? 'selected' : '' }}>3</option>
