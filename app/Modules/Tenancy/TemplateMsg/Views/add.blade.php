@@ -87,7 +87,7 @@
             </div>
             <div class="form-group">
                 <label>{{ trans('main.buttons') }} :</label>
-                <select class="form-control" data-toggle="select2" data-style="btn-outline-myPR" name="buttons">
+                <select class="form-control buttons" data-toggle="select2" data-style="btn-outline-myPR" name="buttons">
                     <option value="1" {{ old('buttons') == 1 ? 'selected' : '' }}>1</option>
                     <option value="2" {{ old('buttons') == 2 ? 'selected' : '' }}>2</option>
                     <option value="3" {{ old('buttons') == 3 ? 'selected' : '' }}>3</option>
@@ -106,13 +106,13 @@
                         <div class='row'>
                             <div class='col-md-4'>
                                 <div class="form-group textWrap">
-                                    <input class="form-control" type='text' name='btn_text_1' value="" placeholder='{{ trans('main.text') }}'>
+                                    <input class="form-control" type='text' name='temp_text_1' value="" placeholder='{{ trans('main.text') }}'>
                                     <i class="la la-smile icon-xl emoji-icon"></i>
                                     <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                                 </div>
                             </div>
                             <div class='col-md-4'>
-                                <select data-toggle='select2' class='button_types form-control' name='btn_type_1'>
+                                <select data-toggle='select2' class='button_types form-control' name='temp_type_1'>
                                     <option value='1' selected>{{ trans('main.urlButton') }}</option>
                                     <option value='2'>{{ trans('main.callButton') }}</option>
                                     <option value='3'>{{ trans('main.normalButton') }}</option>
@@ -125,18 +125,18 @@
                                     <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                                 </div>
 
-                                <select data-toggle='' class='reply_types form-control hidden' name='btn_reply_type_1'>
+                                <select data-toggle='' class='reply_types form-control hidden' name='temp_reply_type_1'>
                                     <option value='1' selected>{{ trans('main.newReply') }}</option>
                                     <option value='2'>{{ trans('main.botMsg') }}</option>
                                 </select>
 
                                 <div class="form-group textWrap hidden textarea mt-3">
-                                    <textarea class="form-control" name='btn_reply_1' placeholder='{{ trans('main.messageContent') }}' ></textarea>
+                                    <textarea class="form-control" name='temp_reply_1' placeholder='{{ trans('main.messageContent') }}' ></textarea>
                                     <i class="la la-smile icon-xl emoji-icon"></i>
                                     <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                                 </div>
 
-                                <select data-toggle="" class='dets form-control mt-3 hidden' name='btn_msg_1'>
+                                <select data-toggle="" class='dets form-control mt-3 hidden' name='temp_msg_1'>
                                     <option value='' selected>{{ trans('main.choose') }}</optin>
                                     @foreach($data->bots as $bot)
                                     <option value="{{ $bot->id }}" data-type="1">{{ trans('main.clientMessage') . ' ( ' .$bot->message . ' ) ==== ' . trans('main.bot') }}</option>
@@ -145,7 +145,7 @@
                                     <option value="{{ $plusBot->id }}" data-type="2">{{ trans('main.clientMessage') . ' ( ' .$plusBot->message . ' ) ==== ' . trans('main.botPlus') }}</option>
                                     @endforeach
                                 </select>
-                                <input type='hidden' name='btn_msg_type_1' value=''>
+                                <input type='hidden' name='temp_msg_type_1' value=''>
                             </div>
                         </div>
                     </div> 

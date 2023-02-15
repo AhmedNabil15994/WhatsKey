@@ -87,7 +87,7 @@
             </div>
             <div class="form-group">
                 <label>{{ trans('main.buttons') }} :</label>
-                <select class="form-control" data-toggle="select2" data-style="btn-outline-myPR" name="buttons">
+                <select class="form-control buttons" data-toggle="select2" data-style="btn-outline-myPR" name="buttons">
                     <option value="1" {{ $data->data->buttons == 1 ? 'selected' : '' }}>1</option>
                     <option value="2" {{ $data->data->buttons == 2 ? 'selected' : '' }}>2</option>
                     <option value="3" {{ $data->data->buttons == 3 ? 'selected' : '' }}>3</option>
@@ -107,13 +107,13 @@
                         <div class='row'>
                             <div class='col-md-4'>
                                 <div class="form-group textWrap">
-                                    <input class="form-control" type='text' name='btn_text_{{$oneItem['id']}}' value="{{ $oneItem['text'] }}" placeholder='{{ trans('main.text') }}'>
+                                    <input class="form-control" type='text' name='temp_text_{{$oneItem['id']}}' value="{{ $oneItem['text'] }}" placeholder='{{ trans('main.text') }}'>
                                     <i class="la la-smile icon-xl emoji-icon"></i>
                                     <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                                 </div>
                             </div>
                             <div class='col-md-4'>
-                                <select data-toggle='select2' class='button_types form-control' name='btn_type_{{$oneItem['id']}}'>
+                                <select data-toggle='select2' class='button_types form-control' name='temp_type_{{$oneItem['id']}}'>
                                     <option value='1' {{ $oneItem['button_type'] == 1 ? 'selected' : '' }}>{{ trans('main.urlButton') }}</option>
                                     <option value='2' {{ $oneItem['button_type'] == 2 ? 'selected' : '' }}>{{ trans('main.callButton') }}</option>
                                     <option value='3' {{ $oneItem['button_type'] == 3 ? 'selected' : '' }}>{{ trans('main.normalButton') }}</option>
@@ -126,18 +126,18 @@
                                     <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                                 </div>
 
-                                <select data-toggle='{{ $oneItem['button_type'] == 3 ? 'select2' : ''  }}' class='reply_types form-control {{ $oneItem['button_type'] == 3 ? '' : 'hidden'  }}' name='btn_reply_type_{{$oneItem['id']}}'>
+                                <select data-toggle='{{ $oneItem['button_type'] == 3 ? 'select2' : ''  }}' class='reply_types form-control {{ $oneItem['button_type'] == 3 ? '' : 'hidden'  }}' name='temp_reply_type_{{$oneItem['id']}}'>
                                     <option value='1' {{ $oneItem['reply_type'] == 1 ? 'selected' : '' }}>{{ trans('main.newReply') }}</option>
                                     <option value='2' {{ $oneItem['reply_type'] == 2 ? 'selected' : '' }}>{{ trans('main.botMsg') }}</option>
                                 </select>
 
                                 <div class="form-group textWrap {{ $oneItem['button_type'] == 3 ? ($oneItem['model_name'] != '' ? 'hidden' : '' ) : 'hidden'  }} textarea mt-3">
-                                    <textarea class="form-control" name='btn_reply_{{$oneItem['id']}}' placeholder='{{ trans('main.messageContent') }}' >{{ $oneItem['model_name'] == '' ? $oneItem['msg'] : ''  }}</textarea>
+                                    <textarea class="form-control" name='temp_reply_{{$oneItem['id']}}' placeholder='{{ trans('main.messageContent') }}' >{{ $oneItem['model_name'] == '' ? $oneItem['msg'] : ''  }}</textarea>
                                     <i class="la la-smile icon-xl emoji-icon"></i>
                                     <emoji-picker class="hidden" locale="en" data-source="{{asset('assets/tenant/js/data.json')}}"></emoji-picker>
                                 </div>
 
-                                <select data-toggle="{{ $oneItem['model_name'] != '' ? 'select2' : ''  }}" class='dets form-control mt-3 {{ $oneItem['model_name'] != '' ? '' : 'hidden'  }}' name='btn_msg_{{$oneItem['id']}}'>
+                                <select data-toggle="{{ $oneItem['model_name'] != '' ? 'select2' : ''  }}" class='dets form-control mt-3 {{ $oneItem['model_name'] != '' ? '' : 'hidden'  }}' name='temp_msg_{{$oneItem['id']}}'>
                                     <option value='' selected>{{ trans('main.choose') }}</optin>
                                     @foreach($data->bots as $bot)
                                     <option value="{{ $bot->id }}" data-type="1" {{ $oneItem['msg_type'] == 1 && isset($oneItem['msg']) && $oneItem['msg'] == $bot->id ? 'selected' : '' }}>{{ trans('main.clientMessage') . ' ( ' .$bot->message . ' ) ==== ' . trans('main.bot') }}</option>
@@ -148,7 +148,7 @@
                                     @endif
                                     @endforeach
                                 </select>
-                                <input type='hidden' name='btn_msg_type_{{ $oneItem['id'] }}' value='{{ $oneItem['msg_type'] }}'>
+                                <input type='hidden' name='temp_msg_type_{{ $oneItem['id'] }}' value='{{ $oneItem['msg_type'] }}'>
                             </div>
                         </div>
                     </div> 

@@ -57,14 +57,14 @@ $(function(){
 							"<div class='row'>"+
 								"<div class='col-md-4'>" +
 									'<div class="form-group textWrap">'+
-										"<input type='text' name='btn_text_"+itemIndex+"' class='form-control' placeholder='"+text+"'>"+
+										"<input type='text' name='temp_text_"+itemIndex+"' class='form-control' placeholder='"+text+"'>"+
 										'<i class="la la-smile icon-xl emoji-icon"></i>'+
 										'<emoji-picker class="hidden" locale="en" data-source="'+emojiSrc+'"></emoji-picker>'+
 									" </div>"+
 								" </div>"+
 								
 								"<div class='col-md-4'>" +
-									"<select data-toggle='select2' class='button_types form-control' name='btn_type_"+itemIndex+"'>"+
+									"<select data-toggle='select2' class='button_types form-control' name='temp_type_"+itemIndex+"'>"+
 										"<option value='1' selected>"+urlButton+"</option>"+
 										"<option value='2'>"+callButton+"</option>"+
 										"<option value='3'>"+normalButton+"</option>"+
@@ -78,22 +78,22 @@ $(function(){
 										'<emoji-picker class="hidden" locale="en" data-source="'+emojiSrc+'"></emoji-picker>'+
 									" </div>"+
 
-                                    "<select data-toggle='' class='reply_types form-control hidden' name='btn_reply_type_"+itemIndex+"'>"+
+                                    "<select data-toggle='' class='reply_types form-control hidden' name='temp_reply_type_"+itemIndex+"'>"+
 										"<option value='1' selected>"+newReply+"</option>"+
 										"<option value='2'>"+botMsg+"</option>"+
 									"</select>"+
 
 									'<div class="form-group textWrap mt-3 textarea hidden">'+
-										"<textarea name='btn_reply_"+itemIndex+"' class='form-control' placeholder='"+msgContent+"'></textarea>"+
+										"<textarea name='temp_reply_"+itemIndex+"' class='form-control' placeholder='"+msgContent+"'></textarea>"+
 										'<i class="la la-smile icon-xl emoji-icon"></i>'+
 										'<emoji-picker class="hidden" locale="en" data-source="'+emojiSrc+'"></emoji-picker>'+
 									" </div>"+
 
-									"<select class='hidden dets form-control mt-3' name='btn_msg_"+itemIndex+"'>"+
+									"<select class='hidden dets form-control mt-3' name='temp_msg_"+itemIndex+"'>"+
 										"<option value='' selected>"+choose+"</optin>"+
 										$('select[name="bots"]').html()+
 									"</select>"+
-									"<input type='hidden' name='btn_msg_type_"+itemIndex+"' value=''>"+
+									"<input type='hidden' name='temp_msg_type_"+itemIndex+"' value=''>"+
 								" </div>"+
 							"</div>"+
 						"</div>";

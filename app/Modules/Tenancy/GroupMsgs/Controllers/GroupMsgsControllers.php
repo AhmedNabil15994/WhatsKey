@@ -544,44 +544,44 @@ class GroupMsgsControllers extends Controller {
                 return redirect()->back()->withInput();
             }
             for ($i = 0; $i < $input['TMbuttons']; $i++) {
-                if(!isset($input['btn_text_'.($i+1)]) || empty($input['btn_text_'.($i+1)]) || $input['btn_text_'.($i+1)] == null ){
+                if(!isset($input['temp_text_'.($i+1)]) || empty($input['temp_text_'.($i+1)]) || $input['temp_text_'.($i+1)] == null ){
                     Session::flash('error', trans('main.invalidText',['button'=>($i+1)]));
                     return redirect()->back()->withInput();
                 }
 
-                if(!isset($input['btn_type_'.($i+1)]) || empty($input['btn_type_'.($i+1)]) || $input['btn_type_'.($i+1)] == null ){
+                if(!isset($input['temp_type_'.($i+1)]) || empty($input['temp_type_'.($i+1)]) || $input['temp_type_'.($i+1)] == null ){
                     Session::flash('error', trans('main.invalidButtonType',['button'=>($i+1)]));
                     return redirect()->back()->withInput();
                 }
 
-                if(!isset($input['btn_reply_type_'.($i+1)]) || empty($input['btn_reply_type_'.($i+1)]) || $input['btn_reply_type_'.($i+1)] == null ){
+                if(!isset($input['temp_reply_type_'.($i+1)]) || empty($input['temp_reply_type_'.($i+1)]) || $input['temp_reply_type_'.($i+1)] == null ){
                     Session::flash('error', trans('main.invalidType',['button'=>($i+1)]));
                     return redirect()->back()->withInput();
                 }
 
-                $replyType = (int)$input['btn_reply_type_'.($i+1)];
-                if($replyType == 1 && ( !isset($input['btn_reply_'.($i+1)]) || empty($input['btn_reply_'.($i+1)]) ) && (!isset($input['url_'.($i+1)]) && !isset($input['contact_'.($i+1)])) ){
+                $replyType = (int)$input['temp_reply_type_'.($i+1)];
+                if($replyType == 1 && ( !isset($input['temp_reply_'.($i+1)]) || empty($input['temp_reply_'.($i+1)]) ) && (!isset($input['url_'.($i+1)]) && !isset($input['contact_'.($i+1)])) ){
                     Session::flash('error', trans('main.invalidReply',['button'=>($i+1)]));
                     return redirect()->back()->withInput();
                 }
 
-                if($replyType == 2 && ( !isset($input['btn_msg_'.($i+1)]) || empty($input['btn_msg_'.($i+1)]) ) && (!isset($input['url_'.($i+1)]) && !isset($input['contact_'.($i+1)]))){
+                if($replyType == 2 && ( !isset($input['temp_msg_'.($i+1)]) || empty($input['temp_msg_'.($i+1)]) ) && (!isset($input['url_'.($i+1)]) && !isset($input['contact_'.($i+1)]))){
                     Session::flash('error', trans('main.invalidMsg',['button'=>($i+1)]));
                     return redirect()->back()->withInput();
                 }
 
                 $modelType = '';
-                if($replyType == 2 && ( !isset($input['btn_msg_type_'.($i+1)]) || empty($input['btn_msg_type_'.($i+1)]) ) && (!isset($input['url_'.($i+1)]) && !isset($input['contact_'.($i+1)])) ){
+                if($replyType == 2 && ( !isset($input['temp_msg_type_'.($i+1)]) || empty($input['temp_msg_type_'.($i+1)]) ) && (!isset($input['url_'.($i+1)]) && !isset($input['contact_'.($i+1)])) ){
                     Session::flash('error', trans('main.invalidMsg',['button'=>($i+1)]));
                     return redirect()->back()->withInput();
                 }
 
-                $modelType = $input['btn_msg_type_'.($i+1)];
+                $modelType = $input['temp_msg_type_'.($i+1)];
                 $modelName = $modelType != null && $replyType >= 2 ?  ((int)$modelType == 1 ? '\App\Models\Bot' : '\App\Models\BotPlus')  : '';
-                $msg = $replyType == 1 ? $input['btn_reply_'.($i+1)] : '';
+                $msg = $replyType == 1 ? $input['temp_reply_'.($i+1)] : '';
 
                 if($modelName != '' && $msg == ''){
-                    $dataObj = $modelName::find($input['btn_msg_'.($i+1)]);
+                    $dataObj = $modelName::find($input['temp_msg_'.($i+1)]);
                     if($dataObj){
                         $msg = $dataObj->id;
                     }
@@ -596,8 +596,8 @@ class GroupMsgsControllers extends Controller {
 
                 $myData[] = [
                     'id' => $i + 1,
-                    'text' => $input['btn_text_'.($i+1)],
-                    'button_type' => $input['btn_type_'.($i+1)],
+                    'text' => $input['temp_text_'.($i+1)],
+                    'button_type' => $input['temp_type_'.($i+1)],
                     'reply_type' => $replyType,
                     'msg_type' => $modelType,
                     'model_name' => $modelName,
