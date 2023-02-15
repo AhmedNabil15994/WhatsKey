@@ -429,7 +429,7 @@ class MessagesWebhook extends ProcessWebhookJob
             	$lastMessage['metadata']['listId'] = $botId;
             }else if($message_type == 'poll'){
             	$lastMessage['metadata']['pollId'] = $botId;
-            }else if($message_type == 'templates'){
+            }else if($message_type == 'template'){
                 $lastMessage['metadata']['templateId'] = $botId;
             }
 
@@ -751,7 +751,7 @@ class MessagesWebhook extends ProcessWebhookJob
             $result = $mainWhatsLoopObj->sendTemplates($sendData);
 
             $sendData['chatId'] = $sender;
-            return $this->handleRequest($message, $domain, $result, $sendData, 'BOT PLUS', 'templates', 'BotMessage', $botObj,$botObj->id);
+            return $this->handleRequest($message, $domain, $result, $sendData, 'BOT PLUS', 'template', 'BotMessage', $botObj,$botObj->id);
         }
         return 1;
     }
