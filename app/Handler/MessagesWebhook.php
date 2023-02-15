@@ -777,6 +777,7 @@ class MessagesWebhook extends ProcessWebhookJob
                     }
                 }
             }
+            Logger($replyData);
             if (isset($replyData['reply_type']) && $replyData['reply_type'] == 1) {
                 $sendData['body'] = $replyData['msg'];
                 if(str_contains($sender, '@g.us')){
@@ -804,7 +805,7 @@ class MessagesWebhook extends ProcessWebhookJob
         return 1;
     }
 
-    
+
     // public function handleTemplateButtonsResponse($message, $sender, $userObj, $tenantObj)
     // {
     //     $mainWhatsLoopObj = new \OfficialHelper();
