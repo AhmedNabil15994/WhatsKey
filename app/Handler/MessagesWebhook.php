@@ -175,6 +175,8 @@ class MessagesWebhook extends ProcessWebhookJob
                     $this->handleListResponse($message, $sender, $userObj, $tenantObj);
                 }else if ($message['type'] == 'poll_vote') {
                     $this->handlePollResponse($message, $sender, $userObj, $tenantObj);
+                }else if ($message['type'] == 'template_buttons_response') {
+                    $this->handleTemplateButtonsResponse($message, $sender, $userObj, $tenantObj);
                 }else {    
                     // Find Out Bot Object Based on incoming message
                     $langPref = 0;
@@ -754,6 +756,55 @@ class MessagesWebhook extends ProcessWebhookJob
         return 1;
     }
 
+    public function handleTemplateButtonsResponse($message, $sender, $userObj, $tenantObj)
+    {
+        
+        $mainWhatsLoopObj = new \OfficialHelper();
+        $msgText = '';
+        if(isset($message['metadata']['quotedMessageId'])){
+            $messageObjs = ChatMessage::where('id', 'LIKE', '%' . $message['metadata']['quotedMessageId'])->first();
+            if($messageObjs){
+                $metDa = json_decode($messageObjs->metadata);
+                $msgText = isset($metDa) && isset($metDa->templateId) ? $metDa->templateId : '';
+            }
+
+            $botObjs = TemplateMsg::getMsgBotByMsg($msgText);
+            $replyData = null;
+            if (isset($botObjs->buttonsData)) {
+                foreach ($botObjs->buttonsData as $buttonData) {
+                    if ($buttonData['text'] == $message['metadata']['selectedButtonText']) {
+                        $replyData = $buttonData;
+                    }
+                }
+            }
+            if (isset($replyData['reply_type']) && $replyData['reply_type'] == 1) {
+                $sendData['body'] = $replyData['msg'];
+                if(str_contains($sender, '@g.us')){
+                    $sendData['chat'] = $sender;
+                }else{
+                    $sendData['phone'] = str_replace('@c.us', '', $sender);
+                }
+                $result = $mainWhatsLoopObj->sendMessage($sendData);
+                $sendData['chatId'] = $sender;
+                $this->handleRequest($message, $userObj->domain, $result, $sendData, 'BOT PLUS', 'text', 'BotMessage');
+            } else if (isset($replyData['reply_type']) && $replyData['reply_type'] == 2) {
+                if ($replyData['msg_type'] == 2) {
+                    $botObj = BotPlus::getOne($replyData['msg']);
+                    if($botObj){
+                        $this->handleBotPlus($message, $botObj, $userObj->domain, $sender,$tenantObj->tenant_id, $message);
+                    }
+                } elseif ($replyData['msg_type'] == 1) {
+                    $botObj = Bot::getOne($replyData['msg']);
+                    if($botObj){
+                        $this->handleBasicBot($botObj, $userObj->domain, $sender, $tenantObj->tenant_id, $message);
+                    }
+                }
+            }
+        }
+        return 1;
+    }
+
+    
     // public function handleTemplateButtonsResponse($message, $sender, $userObj, $tenantObj)
     // {
     //     $mainWhatsLoopObj = new \OfficialHelper();
