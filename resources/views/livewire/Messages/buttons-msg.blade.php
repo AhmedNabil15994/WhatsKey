@@ -1,5 +1,8 @@
 <div>
-    @php $msg = json_decode(json_encode($msg), true); @endphp
+    @php 
+    $msg = json_decode(json_encode($msg), true); 
+    $msg['metadata']['buttons'] = (array) $msg['metadata']['buttons'];
+    @endphp
     <div class="buttons" style="min-width: 200px;">
         @if(@$msg['metadata']['hasPreview'] == 0)
         @php
@@ -23,8 +26,10 @@
         
         <div class="bts text-center">
             @foreach($msg['metadata']['buttons'] as $button)
-            @php $button = (array)$button; @endphp            
+            @php $button = (array)$button; @endphp  
+            @if(isset($button) && isset($button['title']))          
             <button class="btn btn-block btn-{{$msg['fromMe'] ? 'secondary':'white'}}">{{$button['title']}}</button>
+            @endif
             @endforeach
         </div>
     </div>
