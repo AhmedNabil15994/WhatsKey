@@ -721,10 +721,10 @@ class MessagesWebhook extends ProcessWebhookJob
         return 1;
     }
 
-    public function handleTemplateMsg($message, $botObj, $domain, $sender,$tenantId,$senderMessage)
+    public function handleTemplateMsg($message, $botObj, $domain, $sender,$senderMessage)
     {
         $buttons = [];
-        $botObj = TemplateMsg::getData($botObj,$tenantId);
+        $botObj = TemplateMsg::getData($botObj);
         $mainWhatsLoopObj = new \OfficialHelper();
         if (isset($botObj->buttonsData) && !empty($botObj->buttonsData)) {
             foreach ($botObj->buttonsData as $key => $oneItem) {
