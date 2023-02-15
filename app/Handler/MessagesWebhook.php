@@ -157,6 +157,33 @@ class MessagesWebhook extends ProcessWebhookJob
                             }
                         }
                     }
+                }if($message['type'] == 'template'){
+                    $buttonsNumber = count($message['metadata']['buttons']);
+                    $textsArr = preg_split('/ \r\n| \r|\n /',$message['metadata']['content']);
+                    $title = $textsArr[0];
+                    $footer = $message['metadata']['footer'];
+                    $contactGroups = ContactGroup::where('contact',$contact)->get();
+                    foreach($contactGroups as $oneGroup){
+                        $groupMsgId = $oneGroup->group_id;
+                        $groupMsgObj = GroupMsg::find($groupMsgId);
+                        $trues = 0;
+                        if($groupMsgObj && $groupMsgObj->template_id != null){
+                            $deleteBot = TemplateMsg::find($groupMsgObj->template_id);
+                            if($deleteBot && $deleteBot->title == $title && $deleteBot->footer == $footer && $deleteBot->buttons == $buttonsNumber){
+                                $buttonsData = $deleteBot->buttonsData != null ? unserialize($deleteBot->buttonsData) : [];
+                                $buttonsData = json_decode(json_encode($buttonsData), true);
+                                for ($i=0; $i < $buttonsNumber; $i++) { 
+                                    if(str_replace('id','',$message['metadata']['buttons'][$i]['id']) == $buttonsData[$i]['id'] && $message['metadata']['buttons'][$i]['title'] == $buttonsData[$i]['text']){
+                                        $trues+=1;
+                                    }
+                                }
+                                if($trues == $buttonsNumber){
+                                    $message['metadata']['templateId'] = $groupMsgObj->template_id;
+                                    $oneGroup->delete();
+                                }
+                            }
+                        }
+                    }
                 }
             }
             // Fire Incoming Message Event For Web Application
@@ -804,54 +831,6 @@ class MessagesWebhook extends ProcessWebhookJob
         }
         return 1;
     }
-
-
-    // public function handleTemplateButtonsResponse($message, $sender, $userObj, $tenantObj)
-    // {
-    //     $mainWhatsLoopObj = new \OfficialHelper();
-    //     $msgId = $message['quotedMsgId'];
-    //     $msgObj = ChatMessage::find($msgId);
-    //     if ($msgObj) {
-    //         if (in_array($msgObj->module_id, [4, 5]) && $msgObj->module_status != '') {
-    //             $mod_id = $msgObj->module_id == 4 ? 2 : 1;
-    //             $templateObj = ModTemplate::where('mod_id', $mod_id)->where('statusText', $msgObj->module_status)->first();
-    //             if ($templateObj && $templateObj->type > 1) {
-    //                 $botObj = BotPlus::find($templateObj->type);
-    //                 $replyData = null;
-    //                 $botObj = BotPlus::getData($botObj);
-    //                 if ($botObj && isset($botObj->buttonsData)) {
-    //                     foreach ($botObj->buttonsData as $buttonData) {
-    //                         if ($buttonData['text'] == $message['body']) {
-    //                             $replyData = $buttonData;
-    //                         }
-    //                     }
-    //                 }
-    //                 if ($replyData != null) {
-    //                     if (isset($replyData['reply_type']) && $replyData['reply_type'] == 1) {
-    //                         $sendData['body'] = $replyData['msg'];
-    //                         // $sendData['chatId'] = $sender;
-    //                         $sendData['phone'] = str_replace('@c.us', '', $sender);
-    //                         $result = $mainWhatsLoopObj->sendMessage($sendData);
-    //                         $sendData['chatId'] = $sender;
-    //                         $this->handleRequest($message, $userObj->domain, $result, $sendData, 'BOT PLUS', 'text', 'chat', 'BotMessage');
-    //                     } else if (isset($replyData['reply_type']) && $replyData['reply_type'] == 2) {
-    //                         if ($replyData['msg_type'] == 2) {
-    //                             $botObj = BotPlus::getData(BotPlus::getOne($replyData['msg']));
-    //                             $this->handleBotPlus($message, $botObj, $userObj->domain, $sender);
-    //                         } elseif ($replyData['msg_type'] == 1) {
-    //                             $botObj = Bot::getData(Bot::getOne($replyData['msg']), $tenantObj->tenant_id);
-    //                             $this->handleBasicBot($botObj, $userObj->domain, $sender, $tenantObj->tenant_id, $message);
-    //                         }
-    //                     } else if (isset($replyData['reply_type']) && $replyData['reply_type'] == 3) {
-    //                         $this->handleTemplateOrderStatus($mod_id, $msgObj->module_order_id, $replyData);
-    //                     }
-    //                 }
-    //             }
-    //         }
-
-    //     }
-    //     return 1;
-    // }
 
     // public function handleTemplateOrderStatus($mod_id, $module_order_id, $replyData)
     // {
