@@ -166,18 +166,18 @@ class MessagesWebhook extends ProcessWebhookJob
                     foreach($contactGroups as $oneGroup){
                         $groupMsgId = $oneGroup->group_id;
                         $groupMsgObj = GroupMsg::find($groupMsgId);
-                        $trues = 0;
+                        $found = 0;
                         if($groupMsgObj && $groupMsgObj->template_id != null){
                             $deleteBot = TemplateMsg::find($groupMsgObj->template_id);
                             if($deleteBot && $deleteBot->title == $title && $deleteBot->footer == $footer && $deleteBot->buttons == $buttonsNumber){
                                 $buttonsData = $deleteBot->buttonsData != null ? unserialize($deleteBot->buttonsData) : [];
                                 $buttonsData = json_decode(json_encode($buttonsData), true);
                                 for ($i=0; $i < $buttonsNumber; $i++) { 
-                                    if($message['metadata']['buttons'][$i]['title'] == $buttonsData[$i]['text']){
-                                        $trues+=1;
+                                    if(isset($message['metadata']['buttons'][$i]['normalButton']) && $message['metadata']['buttons'][$i]['normalButton']['title'] == $buttonsData[$i]['text']){
+                                        $found =1;
                                     }
                                 }
-                                if($trues == $buttonsNumber){
+                                if($found){
                                     $message['metadata']['templateId'] = $groupMsgObj->template_id;
                                     $oneGroup->delete();
                                 }
