@@ -60,7 +60,7 @@ return [
         ],
         'groupMsgs' => [
             'driver' => 'database',
-            'table' => 'jobs',
+            'table' => 'groupMsgs_jobs',
             'connection' => 'main',
             'queue' => 'default',
             'retry_after' => 3700,
