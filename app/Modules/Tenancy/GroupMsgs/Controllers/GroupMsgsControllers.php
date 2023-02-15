@@ -12,6 +12,7 @@ use App\Models\Bot;
 use App\Models\BotPlus;
 use App\Models\ListMsg;
 use App\Models\Poll;
+use App\Models\TemplateMsg;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
