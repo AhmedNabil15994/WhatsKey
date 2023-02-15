@@ -173,7 +173,7 @@ class MessagesWebhook extends ProcessWebhookJob
                                 $buttonsData = $deleteBot->buttonsData != null ? unserialize($deleteBot->buttonsData) : [];
                                 $buttonsData = json_decode(json_encode($buttonsData), true);
                                 for ($i=0; $i < $buttonsNumber; $i++) { 
-                                    if(str_replace('id','',$message['metadata']['buttons'][$i]['id']) == $buttonsData[$i]['id'] && $message['metadata']['buttons'][$i]['title'] == $buttonsData[$i]['text']){
+                                    if($message['metadata']['buttons'][$i]['title'] == $buttonsData[$i]['text']){
                                         $trues+=1;
                                     }
                                 }
