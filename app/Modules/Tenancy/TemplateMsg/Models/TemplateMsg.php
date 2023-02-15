@@ -31,12 +31,19 @@ class TemplateMsg extends Model{
     }
 
     static function findBotMessage($senderMessage){
-        $obj = self::NotDeleted()->where('status',1)->where('message_type',1)->where('message',$senderMessage)->first();
-        if(!$obj){
-            $obj = self::NotDeleted()->where('status',1)->where('message_type',2)->search(strtolower($senderMessage))->first();
-            return $obj ? $obj : null;
-        }else{
-            return $obj;
+        if($senderMessage != ''){
+            $obj = self::NotDeleted()->where('status',1)->where('message_type',1)->where('message',$senderMessage)->first();
+            if(!$obj){
+                $allBots = self::NotDeleted()->where('status',1)->where('message_type',2)->search(strtolower($senderMessage))->get();
+                foreach ($allBots as $key => $value) {
+                    if(in_array(strtolower($senderMessage),array_map('trim', explode(',', $value->message)))){
+                        return $value;
+                    }
+                }
+                return $obj ? $obj : null;
+            }else{
+                return $obj;
+            }
         }
     }
 
@@ -48,8 +55,8 @@ class TemplateMsg extends Model{
         return $botObj;
     }
 
-    static function getMsg2($senderMessage){
-        $botObj = self::NotDeleted()->where('status',1)->where('message',$senderMessage)->first();
+    static function getMsgBotByMsg($senderMessage){
+        $botObj = self::where('status',1)->where('id',$senderMessage)->first();
         if($botObj){
             return self::getData($botObj);
         }

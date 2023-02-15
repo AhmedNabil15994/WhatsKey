@@ -14,12 +14,4 @@ Route::group(['prefix' => '/templateMsg'] , function () {
     Route::post('/fastEdit', [$controller,'fastEdit']);
 	Route::post('/create', [$controller,'create']);
     Route::get('/delete/{id}', [$controller,'delete']);
-
-    /*----------------------------------------------------------
-    Images
-    ----------------------------------------------------------*/
-
-    Route::post('/add/uploadImage', [$controller,'uploadImage']);
-    Route::post('/edit/editImage', [$controller,'uploadImage']);
-    Route::post('/edit/{id}/deleteImage', [$controller,'deleteImage']);
 });

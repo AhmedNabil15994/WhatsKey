@@ -1,36 +1,5 @@
 $(function(){
 		
-	Dropzone.options.myAwesomeDropzone = false;
-	Dropzone.autoDiscover = false;
-
-	$.each($('.kt_dropzone_1'),function(index,item){
-		var dropz = $(item).dropzone({
-		    url: myURL + "/uploadImage",
-		    paramName: "file", // The name that will be used to transfer the file
-		    maxFiles: 1,
-		    // maxFilesize: 0.1, // MB
-		    addRemoveLinks: true,
-		    // previewTemplate: $('#uploadPreviewTemplate').html(),
-		    accept: function(file, done) {
-		        if (file.name == "justinbieber.jpg") {
-		            done("Naha, you don't.");
-		        } else {
-		            done();
-		        }
-		    },
-		    success:function(file,data){
-		    	var dropzone = this;
-		        if(data){
-		            if(data.status.status != 1){
-		                errorNotification(data.status.message);
-						dropzone.removeFile(file);		            
-					}
-		        }
-		    },
-		});
-
-	});
-
 	var lang = $('html').attr('lang');
 	var text = 'Text';
 	var urlButton = "URL Button";
@@ -55,30 +24,13 @@ $(function(){
 		contact = "جهة اتصال";
 	}
 
-
-
-
-	$('select[name="title_type"]').on('change',function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		var val = $(this).val();
-		if(val == 1){
-			$('.imageRow').addClass('hidden')
-			$('.textRow').removeClass('hidden')
-		}else{
-			$('.textRow').addClass('hidden')
-			$('.imageRow').removeClass('hidden')
-		}	
-	});
-
 	$('select[name="buttons"]').on('change',function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 
 		var buttons = $(this).val();
 		if( buttons && buttons > 0 && buttons <= 10){
-			var oldItems = $('.buts .row.mains').length;
+			var oldItems = $('.templates .templateMsgs.mains').length;
 			var result = buttons-oldItems;
 			if(result > 0){
 				for (var i = 0; i < result; i++) {
@@ -87,7 +39,7 @@ $(function(){
 			}else if(result<0){
 				result = Math.abs(result);
 				for (var i = 0; i < result; i++) {
-					$('.buts').children('.row.mains').last().remove()
+					$('.templates').children('.templateMsgs.mains').last().remove()
 				}
 			}
 			
@@ -95,44 +47,58 @@ $(function(){
 	});
 
 	function appendButtons(itemIndex) {
+		var emojiSrc = $('emoji-picker').attr('data-source');
 		var buttonsData = "Button "+itemIndex+" Data ";
 		if(lang == 'ar'){
 			buttonsData = "بيانات الزر "+itemIndex;
 		}
-		var myString =  "<div class='row mains'>"+
-							"<div class='col-md-3'>"+
-                                "<label class='titleLabel'>"+buttonsData+":</label>"+
-							"</div>"+
-							"<div class='col-md-9'>"+
-								"<div class='row'>"+
-									"<div class='col-md-3'>" +
-										"<input type='text' name='btn_text_"+itemIndex+"' placeholder='"+text+"'>"+
+		var myString =  "<div class='form-group templateMsgs mains mb-0'>"+
+                            "<label class='titleLabel'>"+buttonsData+":</label>"+
+							"<div class='row'>"+
+								"<div class='col-md-4'>" +
+									'<div class="form-group textWrap">'+
+										"<input type='text' name='btn_text_"+itemIndex+"' class='form-control' placeholder='"+text+"'>"+
+										'<i class="la la-smile icon-xl emoji-icon"></i>'+
+										'<emoji-picker class="hidden" locale="en" data-source="'+emojiSrc+'"></emoji-picker>'+
 									" </div>"+
-									"<div class='col-md-3'>" +
-										"<select data-toggle='select2' class='button_types' name='btn_type_"+itemIndex+"'>"+
-											"<option value='1' selected>"+urlButton+"</option>"+
-											"<option value='2'>"+callButton+"</option>"+
-											"<option value='3'>"+normalButton+"</option>"+
-										"</select>"+
+								" </div>"+
+								
+								"<div class='col-md-4'>" +
+									"<select data-toggle='select2' class='button_types form-control' name='btn_type_"+itemIndex+"'>"+
+										"<option value='1' selected>"+urlButton+"</option>"+
+										"<option value='2'>"+callButton+"</option>"+
+										"<option value='3'>"+normalButton+"</option>"+
+									"</select>"+
+								" </div>"+
+
+								"<div class='col-md-4 repy'>" +
+									'<div class="form-group textWrap input">'+
+                                    	"<input type='text' class='form-control' name='url_"+itemIndex+"' placeholder='"+url+"'>"+
+                                    	'<i class="la la-smile icon-xl emoji-icon"></i>'+
+										'<emoji-picker class="hidden" locale="en" data-source="'+emojiSrc+'"></emoji-picker>'+
 									" </div>"+
-									"<div class='col-md-6 repy'>" +
-                                        "<input type='text' name='url_"+itemIndex+"' placeholder='"+url+"'>"+
-                                        "<select data-toggle='' class='reply_types hidden' name='btn_reply_type_"+itemIndex+"'>"+
-											"<option value='1' selected>"+newReply+"</option>"+
-											"<option value='2'>"+botMsg+"</option>"+
-										"</select>"+
-										"<textarea name='btn_reply_"+itemIndex+"' class='hidden' placeholder='"+msgContent+"'></textarea>"+
-										"<select class='hidden dets' name='btn_msg_"+itemIndex+"'>"+
-											"<option value='' selected>"+choose+"</optin>"+
-											$('select[name="bots"]').html()+
-										"</select>"+
-										"<input type='hidden' name='btn_msg_type_"+itemIndex+"' value=''>"+
+
+                                    "<select data-toggle='' class='reply_types form-control hidden' name='btn_reply_type_"+itemIndex+"'>"+
+										"<option value='1' selected>"+newReply+"</option>"+
+										"<option value='2'>"+botMsg+"</option>"+
+									"</select>"+
+
+									'<div class="form-group textWrap mt-3 textarea hidden">'+
+										"<textarea name='btn_reply_"+itemIndex+"' class='form-control' placeholder='"+msgContent+"'></textarea>"+
+										'<i class="la la-smile icon-xl emoji-icon"></i>'+
+										'<emoji-picker class="hidden" locale="en" data-source="'+emojiSrc+'"></emoji-picker>'+
 									" </div>"+
-								"</div>"+
+
+									"<select class='hidden dets form-control mt-3' name='btn_msg_"+itemIndex+"'>"+
+										"<option value='' selected>"+choose+"</optin>"+
+										$('select[name="bots"]').html()+
+									"</select>"+
+									"<input type='hidden' name='btn_msg_type_"+itemIndex+"' value=''>"+
+								" </div>"+
 							"</div>"+
 						"</div>";
-		$('.buts').append(myString);
-		$('.buts .row select[data-toggle="select2"]').select2();
+		$('.templates').append(myString);
+		$('.templates .row select[data-toggle="select2"]').select2();
 	}
 
 	$(document).on('change','.mains select.button_types',function(){
@@ -148,26 +114,26 @@ $(function(){
 
 		
 		if(itemValue == 1){
-			$(this).parents('.mains').find('.repy').children('textarea').addClass('hidden');
-			$(this).parents('.mains').find('.repy').children('input[type="text"]').removeClass('hidden').attr('placeholder',url);
-			var oldAttr = $(this).parents('.mains').find('.repy').children('input[type="text"]').attr('name');
+			$(this).parents('.mains').find('.repy').children('.textarea').addClass('hidden');
+			$(this).parents('.mains').find('.repy').children('.input').removeClass('hidden').children('input[type="text"]').attr('placeholder',url);
+			var oldAttr = $(this).parents('.mains').find('.repy').children('.input').children('input[type="text"]').attr('name');
 			var newAttr = oldAttr.replace('contact_','url_');
-			$(this).parents('.mains').find('.repy').children('input[type="text"]').attr('name',newAttr);
+			$(this).parents('.mains').find('.repy').children('.input').children('input[type="text"]').attr('name',newAttr);
 			if($(this).parents('.mains').find('.repy').children('select.dets').data('select2')){
 				$(this).parents('.mains').find('.repy').children('select.dets').select2('destroy');
 			}
 		}else if(itemValue == 2){
-			$(this).parents('.mains').find('.repy').children('textarea').addClass('hidden');
-			$(this).parents('.mains').find('.repy').children('input[type="text"]').removeClass('hidden').attr('placeholder',contact);
-			var oldAttr = $(this).parents('.mains').find('.repy').children('input[type="text"]').attr('name');
+			$(this).parents('.mains').find('.repy').children('.textarea').addClass('hidden');
+			$(this).parents('.mains').find('.repy').children('.input').removeClass('hidden').children('input[type="text"]').attr('placeholder',contact);
+			var oldAttr = $(this).parents('.mains').find('.repy').children('.input').children('input[type="text"]').attr('name');
 			var newAttr = oldAttr.replace('url_','contact_');
-			$(this).parents('.mains').find('.repy').children('input[type="text"]').attr('name',newAttr);
+			$(this).parents('.mains').find('.repy').children('.input').children('input[type="text"]').attr('name',newAttr);
 			if($(this).parents('.mains').find('.repy').children('select.dets').data('select2')){
 				$(this).parents('.mains').find('.repy').children('select.dets').select2('destroy');
 			}
 		}else if(itemValue == 3){
-			$(this).parents('.mains').find('.repy').children('input[type="text"]').addClass('hidden');
-			$(this).parents('.mains').find('.repy').children('textarea').removeClass('hidden');
+			$(this).parents('.mains').find('.repy').children('.input').addClass('hidden');
+			$(this).parents('.mains').find('.repy').children('.textarea').removeClass('hidden');
 			$(this).parents('.mains').find('.repy').children('select').not('.dets').removeClass('hidden');
 			$(this).parents('.mains').find('.repy').children('select').not('.dets').select2();
 		}
@@ -179,11 +145,11 @@ $(function(){
 	$(document).on('change','.mains select.reply_types',function(){
 		var itemValue = $(this).val();
 		if(itemValue == 1){
-			$(this).parents('.mains').find('.repy').children('textarea').removeClass('hidden');
+			$(this).parents('.mains').find('.repy').children('.textarea').removeClass('hidden');
 			$(this).parents('.mains').find('.repy').children('select').not('.reply_types').select2('destroy');
 			$(this).parents('.mains').find('.repy').children('select').not('.reply_types').addClass('hidden');
 		}else if(itemValue == 2){
-			$(this).parents('.mains').find('.repy').children('textarea').addClass('hidden');
+			$(this).parents('.mains').find('.repy').children('.textarea').addClass('hidden');
 			$(this).parents('.mains').find('.repy').children('select').removeClass('hidden');
 			$(this).parents('.mains').find('.repy').children('select').select2();
 		}

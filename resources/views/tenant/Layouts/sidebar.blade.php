@@ -73,14 +73,47 @@
                 </li>
                 @endif
 
-                @if(\Helper::checkRules('list-bots-plus') )
-                <li class="menu-item  {{ Active(URL::to('/botPlus*'),'menu-item-active') }}" aria-haspopup="true">
-                    <a href="{{URL::to('/botPlus')}}" class="menu-link">
+                @if(\Helper::checkRules('list-bots-plus,list-templates-messages') )
+                <li class="menu-item menu-item-submenu {{Active(URL::to('/botPlus*'),'menu-item-open')}} {{Active(URL::to('/templateMsg*'),'menu-item-open')}}" aria-haspopup="true" data-menu-toggle="hover">
+                    <a href="javascript:;" class="menu-link menu-toggle">
                         <span class="fa-icon fa-icon-2x">
                             <i class="icon-2x la la-robot text-primary"></i>
                         </span>
                         <span class="menu-text">{{ trans('main.smartBot') }}</span>
+                        <i class="menu-arrow"></i>
                     </a>
+                    <div class="menu-submenu">
+                        <i class="menu-arrow"></i>
+                        <ul class="menu-subnav">
+                            <li class="menu-item menu-item-parent" aria-haspopup="true">
+                                <span class="menu-link">
+                                    <span class="menu-text">{{ trans('main.smartBot') }}</span>
+                                </span>
+                            </li>
+
+                            @if(\Helper::checkRules('list-bots-plus') )
+                            <li class="menu-item {{ Active(URL::to('/botPlus*'),'menu-item-active') }}" aria-haspopup="true">
+                                <a href="{{URL::to('/botPlus')}}" class="menu-link">
+                                    <i class="menu-bullet menu-bullet-dot">
+                                        <span></span>
+                                    </i>
+                                    <span class="menu-text">{{ trans('main.botPlus') }}</span>
+                                </a>
+                            </li>
+                            @endif
+
+                            @if(\Helper::checkRules('list-templates-messages') )
+                            <li class="menu-item {{ Active(URL::to('/templateMsg*'),'menu-item-active') }}" aria-haspopup="true">
+                                <a href="{{URL::to('/templateMsg')}}" class="menu-link">
+                                    <i class="menu-bullet menu-bullet-dot">
+                                        <span></span>
+                                    </i>
+                                    <span class="menu-text">{{ trans('main.templateMsg') }}</span>
+                                </a>
+                            </li>
+                            @endif
+                        </ul>
+                    </div>
                 </li>
                 @endif
 
@@ -186,8 +219,8 @@
                 </li>
                 @endif
 
-                @if(\Helper::checkRules('list-lists,list-polls,list-templates-messages') )
-                <li class="menu-item menu-item-submenu {{Active(URL::to('/lists*'),'menu-item-open')}} {{Active(URL::to('/polls*'),'menu-item-open')}} {{Active(URL::to('/templateMsg*'),'menu-item-open')}}" aria-haspopup="true" data-menu-toggle="hover">
+                @if(\Helper::checkRules('list-lists,list-polls') )
+                <li class="menu-item menu-item-submenu {{Active(URL::to('/lists*'),'menu-item-open')}} {{Active(URL::to('/polls*'),'menu-item-open')}}" aria-haspopup="true" data-menu-toggle="hover">
                     <a href="javascript:;" class="menu-link menu-toggle">
                         <span class="fa-icon fa-icon-2x">
                             <i class="icon-2x la la-poll text-primary"></i>
@@ -223,17 +256,6 @@
                                     <span class="menu-text">{{ trans('main.polls') }}</span>
                                 </a>
                             </li>
-                            @endif
-
-                            @if(\Helper::checkRules('list-templates-messages') )
-{{--                             <li class="menu-item {{ Active(URL::to('/templateMsg*'),'menu-item-active') }}" aria-haspopup="true">
-                                <a href="{{URL::to('/templateMsg')}}" class="menu-link">
-                                    <i class="menu-bullet menu-bullet-dot">
-                                        <span></span>
-                                    </i>
-                                    <span class="menu-text">{{ trans('main.templateMsg') }}</span>
-                                </a>
-                            </li> --}}
                             @endif
                         </ul>
                     </div>

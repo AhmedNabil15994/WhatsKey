@@ -258,6 +258,16 @@ class Helper
                     'BotPlusControllers@delete' => 'delete-bot-plus',
                     'BotPlusControllers@uploadImage' => 'uploadImage-bot-plus',
                     'BotPlusControllers@deleteImage' => 'deleteImage-bot-plus',
+
+                    'TemplateMsgControllers@index' => 'list-templates-messages',
+                    'TemplateMsgControllers@edit' => 'edit-template-message',
+                    'TemplateMsgControllers@update' => 'edit-template-message',
+                    'TemplateMsgControllers@changeStatus' => 'edit-template-message',
+                    'TemplateMsgControllers@fastEdit' => 'edit-template-message',
+                    'TemplateMsgControllers@add' => 'add-template-message',
+                    'TemplateMsgControllers@create' => 'add-template-message',
+                    'TemplateMsgControllers@copy' => 'copy-template-message',
+                    'TemplateMsgControllers@delete' => 'delete-template-message',
                 ];
             }else if($value == 'GroupMsgs'){
                 $externalPermissions = [
@@ -296,19 +306,6 @@ class Helper
                     'PollsControllers@create' => 'add-poll',
                     'PollsControllers@copy' => 'copy-poll',
                     'PollsControllers@delete' => 'delete-poll',
-
-                    'TemplateMsgControllers@index' => 'list-templates-messages',
-                    'TemplateMsgControllers@edit' => 'edit-template-message',
-                    'TemplateMsgControllers@deleteImage' => 'deleteImage-template-message',
-                    'TemplateMsgControllers@update' => 'edit-template-message',
-                    'TemplateMsgControllers@changeStatus' => 'edit-template-message',
-                    'TemplateMsgControllers@fastEdit' => 'edit-template-message',
-                    'TemplateMsgControllers@add' => 'add-template-message',
-                    'TemplateMsgControllers@create' => 'add-template-message',
-                    'TemplateMsgControllers@uploadImage' => 'add-template-message',
-                    'TemplateMsgControllers@copy' => 'copy-template-message',
-                    'TemplateMsgControllers@delete' => 'delete-template-message',
-
                 ];
             }else if($value == 'BusinessProfile'){
                 $externalPermissions = [

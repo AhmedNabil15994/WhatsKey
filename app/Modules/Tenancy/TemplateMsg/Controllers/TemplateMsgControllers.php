@@ -19,8 +19,6 @@ use Redirect;
 class TemplateMsgControllers extends Controller {
 
     use \TraitsFunc;
-    public $addonId = '13';
-
     public function getData(){
         $messageTypes=[
             [
@@ -112,7 +110,7 @@ class TemplateMsgControllers extends Controller {
         $rules = [
             'message_type' => 'required',
             'message' => 'required',
-            // 'title' => 'required',
+            'title' => 'required',
             'body' => 'required',
             'footer' => 'required',
             'buttons' => 'required',
@@ -121,7 +119,7 @@ class TemplateMsgControllers extends Controller {
         $message = [
             'message_type.required' => trans('main.messageTypeValidate'),
             'message.required' => trans('main.messageValidate'),
-            // 'title.required' => trans('main.titleValidate'),
+            'title.required' => trans('main.titleValidate'),
             'body.required' => trans('main.bodyValidate'),
             'footer.required' => trans('main.footerValidate'),
             'buttons.required' => trans('main.buttonsValidate'),
@@ -142,14 +140,14 @@ class TemplateMsgControllers extends Controller {
 
     public function edit($id) {
         $id = (int) $id;
-        $checkAvail = 1;//UserAddon::checkUserAvailability(USER_ID,$this->addonId);
+        $checkAvail = UserAddon::checkUserAvailability('BotPlus');
         $dataObj = TemplateMsg::find($id);
         if($dataObj == null || !$checkAvail) {
             return Redirect('404');
         }
 
-        $checkAvailBot = 1;//UserAddon::checkUserAvailability(ROOT_ID,1);
-        $checkAvailBotPlus = 1;//UserAddon::checkUserAvailability(ROOT_ID,10);
+        $checkAvailBot = UserAddon::checkUserAvailability('Bot');
+        $checkAvailBotPlus = UserAddon::checkUserAvailability('BotPlus');
 
         $data['data'] = TemplateMsg::getData($dataObj);
         $data['designElems'] = $this->getData();
@@ -165,7 +163,7 @@ class TemplateMsgControllers extends Controller {
         $id = (int) $id;
 
         $dataObj = TemplateMsg::find($id);
-        $checkAvail = 1;//UserAddon::checkUserAvailability(USER_ID,$this->addonId);
+        $checkAvail = UserAddon::checkUserAvailability('BotPlus');
         if($dataObj == null || !$checkAvail) {
             return Redirect('404');
         }
@@ -179,11 +177,10 @@ class TemplateMsgControllers extends Controller {
         $id = (int) $id;
 
         $dataObj = TemplateMsg::find($id);
-        $checkAvail = 1;//UserAddon::checkUserAvailability(USER_ID,$this->addonId);
+        $checkAvail = UserAddon::checkUserAvailability('BotPlus');
         if($dataObj == null || !$checkAvail) {
             return Redirect('404');
         }
-
 
         $dataObj->status = $dataObj->status == 1 ? 0 : 1;
         $dataObj->save();
@@ -207,14 +204,6 @@ class TemplateMsgControllers extends Controller {
             return redirect()->back();
         }
 
-        if($input['title_type'] == 1 && (!isset($input['title']) || empty($input['title']))){
-            Session::flash('error', trans('main.titleValidate'));
-            return redirect()->back()->withInput();
-        }else if($input['title_type'] == 2 && !Session::has('botFile')){
-            Session::flash('error', trans('main.titleValidate'));
-            return redirect()->back()->withInput();
-        }
-
         $myData = [];
         for ($i = 0; $i < $input['buttons']; $i++) {
             if(!isset($input['btn_text_'.($i+1)]) || empty($input['btn_text_'.($i+1)]) || $input['btn_text_'.($i+1)] == null ){
@@ -250,7 +239,7 @@ class TemplateMsgControllers extends Controller {
             }
 
             $modelType = $input['btn_msg_type_'.($i+1)];
-            $modelName = $modelType != null ?  ((int)$modelType == 1 ? '\App\Models\Bot' : '\App\Models\BotPlus')  : '';
+            $modelName = $modelType != null && $replyType == 3 ?  ((int)$modelType == 1 ? '\App\Models\Bot' : '\App\Models\BotPlus')  : '';
             $msg = $replyType == 1 ? $input['btn_reply_'.($i+1)] : '';
 
             if($modelName != '' && $msg == ''){
@@ -267,7 +256,6 @@ class TemplateMsgControllers extends Controller {
                 }
             }
 
-
             $myData[] = [
                 'id' => $i + 1,
                 'text' => $input['btn_text_'.($i+1)],
@@ -282,7 +270,8 @@ class TemplateMsgControllers extends Controller {
         $botObj->message_type = $input['message_type'];
         $botObj->message = $input['message'];
         $botObj->title = isset($input['title']) ? $input['title'] : '';
-        $botObj->image = isset($input['image']) ? $input['image'] : '';        $botObj->body = $input['body'];
+        $botObj->image = '';        
+        $botObj->body = $input['body'];
         $botObj->footer = $input['footer'];
         $botObj->buttons = $input['buttons'];
         $botObj->buttonsData = serialize($myData);
@@ -295,13 +284,13 @@ class TemplateMsgControllers extends Controller {
     }
 
     public function add() {
-        $checkAvail = 1;//UserAddon::checkUserAvailability(USER_ID,$this->addonId);
+        $checkAvail = UserAddon::checkUserAvailability('BotPlus');
         if(!$checkAvail){
             return redirect(404);
         }
 
-        $checkAvailBot = 1;//UserAddon::checkUserAvailability(ROOT_ID,1);
-        $checkAvailBotPlus = 1;//UserAddon::checkUserAvailability(ROOT_ID,10);
+        $checkAvailBot = UserAddon::checkUserAvailability('Bot');
+        $checkAvailBotPlus = UserAddon::checkUserAvailability('BotPlus');
 
         $data['designElems'] = $this->getData();
         $data['designElems']['mainData']['title'] = trans('main.add') . ' '.trans('main.templateMsg') ;
@@ -320,14 +309,6 @@ class TemplateMsgControllers extends Controller {
             return redirect()->back()->withInput();
         }
 
-        if($input['title_type'] == 1 && (!isset($input['title']) || empty($input['title']))){
-            Session::flash('error', trans('main.titleValidate'));
-            return redirect()->back()->withInput();
-        }else if($input['title_type'] == 2 && !Session::has('botFile')){
-            Session::flash('error', trans('main.titleValidate'));
-            return redirect()->back()->withInput();
-        }
-
         $myData = [];
         for ($i = 0; $i < $input['buttons']; $i++) {
             if(!isset($input['btn_text_'.($i+1)]) || empty($input['btn_text_'.($i+1)]) || $input['btn_text_'.($i+1)] == null ){
@@ -363,7 +344,7 @@ class TemplateMsgControllers extends Controller {
             }
 
             $modelType = $input['btn_msg_type_'.($i+1)];
-            $modelName = $modelType != null ?  ((int)$modelType == 1 ? '\App\Models\Bot' : '\App\Models\BotPlus')  : '';
+            $modelName = $modelType != null && $replyType == 3 ?  ((int)$modelType == 1 ? '\App\Models\Bot' : '\App\Models\BotPlus')  : '';
             $msg = $replyType == 1 ? $input['btn_reply_'.($i+1)] : '';
 
             if($modelName != '' && $msg == ''){
@@ -380,7 +361,6 @@ class TemplateMsgControllers extends Controller {
                 }
             }
 
-
             $myData[] = [
                 'id' => $i + 1,
                 'text' => $input['btn_text_'.($i+1)],
@@ -396,7 +376,7 @@ class TemplateMsgControllers extends Controller {
         $dataObj->message_type = $input['message_type'];
         $dataObj->message = $input['message'];
         $dataObj->title = isset($input['title']) ? $input['title'] : '';
-        $dataObj->image = isset($input['image']) ? $input['image'] : '';
+        $dataObj->image = '';
         $dataObj->body = $input['body'];
         $dataObj->footer = $input['footer'];
         $dataObj->buttons = $input['buttons'];
@@ -407,27 +387,13 @@ class TemplateMsgControllers extends Controller {
         $dataObj->created_by = USER_ID;
         $dataObj->save();
 
-        $file = Session::get('botFile');
-        if($file){
-            $storageFile = Storage::files($file);
-            if(count($storageFile) > 0){
-                $images = self::addImage($storageFile[0],$dataObj->id);
-                if ($images == false) {
-                    Session::flash('error', trans('main.uploadProb'));
-                    return redirect()->back()->withInput();
-                }
-                $dataObj->image = $images;
-                $dataObj->save();
-            }
-        }
-
         Session::flash('success', trans('main.addSuccess'));
         return redirect()->to($this->getData()['mainData']['url'].'/');
     }
 
     public function delete($id) {
         $id = (int) $id;
-        $checkAvail = 1;//UserAddon::checkUserAvailability(USER_ID,$this->addonId);
+        $checkAvail = UserAddon::checkUserAvailability('BotPlus');
         if(!$checkAvail){
             return \TraitsFunc::SuccessResponse(trans('main.unAvail'));
         }
@@ -439,7 +405,7 @@ class TemplateMsgControllers extends Controller {
 
     public function fastEdit() {
         $input = \Request::all();
-        $checkAvail = 1;//UserAddon::checkUserAvailability(USER_ID,$this->addonId);
+        $checkAvail = UserAddon::checkUserAvailability('BotPlus');
         if(!$checkAvail){
             return \TraitsFunc::SuccessResponse(trans('main.unAvail'));
         }
@@ -454,55 +420,5 @@ class TemplateMsgControllers extends Controller {
         }
 
         return \TraitsFunc::SuccessResponse(trans('main.editSuccess'));
-    }
-
-    public function uploadImage(Request $request){
-        $rand = rand() . date("YmdhisA");
-    
-        if ($request->hasFile('file')) {
-            $files = $request->file('file');
-
-            $file_size = $files->getSize();
-            $file_size = $file_size/(1024 * 1024);
-            $file_size = number_format($file_size,2);
-            $uploadedSize = \Helper::getFolderSize(public_path().'/uploads/'.TENANT_ID.'/');
-            $totalStorage = Session::get('storageSize');
-            $extraQuotas = UserExtraQuota::getOneForUserByType(GLOBAL_ID,3);
-            if($totalStorage + $extraQuotas < (doubleval($uploadedSize) + $file_size) / 1024){
-                return \TraitsFunc::ErrorMessage(trans('main.storageQuotaError'));
-            }
-
-            $type = \ImagesHelper::checkFileExtension($files->getClientOriginalName());
-            
-            if( $type != 'photo' ){
-                return \TraitsFunc::ErrorMessage(trans('main.selectFile'));
-            }
-
-            Storage::put($rand,$files);
-            Session::put('botFile',$rand);
-            return \TraitsFunc::SuccessResponse('');
-        }
-    }
-
-    public function addImage($images,$nextID=false){
-        $fileName = \ImagesHelper::UploadFile('templateMsgs', $images, $nextID);
-        if($fileName == false){
-            return false;
-        }
-        return $fileName;        
-    }
-
-    public function deleteImage($id){
-        $id = (int) $id;
-        $input = \Request::all();
-        $menuObj = TemplateMsg::find($id);
-        if($menuObj == null) {
-            return \TraitsFunc::ErrorMessage(trans('main.botNotFound'));
-        }
-
-        \ImagesHelper::deleteDirectory(public_path('/').'/uploads/'.$this->getData()['mainData']['name'].'/'.$id.'/'.$menuObj->$file);
-        $menuObj->image = '';
-        $menuObj->save();
-        return \TraitsFunc::SuccessResponse(trans('main.imgDeleted'));
     }
 }

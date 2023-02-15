@@ -31,7 +31,7 @@ class BotPlusControllers extends Controller {
         ];
 
         $data['mainData'] = [
-            'title' => trans('main.smartBot'),
+            'title' => trans('main.botPlus'),
             'url' => 'botPlus',
             'name' => 'bots-plus',
             'nameOne' => 'bot-plus',
@@ -146,7 +146,7 @@ class BotPlusControllers extends Controller {
         $checkAsvail = 1;
         $data['data'] = BotPlus::getData($dataObj);
         $data['designElems'] = $this->getData();
-        $data['designElems']['mainData']['title'] = trans('main.edit') . ' '.trans('main.smartBot') ;
+        $data['designElems']['mainData']['title'] = trans('main.edit') . ' '.trans('main.botPlus') ;
         $data['designElems']['mainData']['icon'] = 'fa fa-pencil-alt';
         $checkAsvail = UserAddon::checkUserAvailability('Bot');
         $data['bots'] = $checkAsvail ? Bot::dataList(1)['data'] : [];
@@ -303,7 +303,7 @@ class BotPlusControllers extends Controller {
         $channels[] = $channelObj;
 
         $data['designElems'] = $this->getData();
-        $data['designElems']['mainData']['title'] = trans('main.add') . ' '.trans('main.smartBot') ;
+        $data['designElems']['mainData']['title'] = trans('main.add') . ' '.trans('main.botPlus') ;
         $data['designElems']['mainData']['icon'] = 'fa fa-plus';
         $checkAsvail = UserAddon::checkUserAvailability('Bot');
         $data['bots'] = $checkAsvail ? Bot::dataList(1)['data'] : [];
