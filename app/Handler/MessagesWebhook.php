@@ -202,11 +202,10 @@ class MessagesWebhook extends ProcessWebhookJob
                     }
 
                     // // Find TemplateMsg Object Based on incoming message
-                    // $templateObj = TemplateMsg::findBotMessage($langPref, $senderMessage);
-                    // if ($templateObj) {
-                    //     $templateObj = TemplateMsg::getData($templateObj);
-                    //     $this->handleTemplateMsg($message, $templateObj, $userObj->domain, $sender);
-                    // }
+                    $templateObj = TemplateMsg::findBotMessage($senderMessage);
+                    if ($templateObj) {
+                        $this->handleTemplateMsg($message, $templateObj, $userObj->domain, $sender,$senderMessage);
+                    }
 
                     // if (((!$botObj) || count($botObj) == 0) && !$botPlusObjs && !$templateObj && $message['type'] != 'order') {
                     //     $varObj = Variable::getVar('UNKNOWN_BOT_REPLY');
@@ -316,7 +315,7 @@ class MessagesWebhook extends ProcessWebhookJob
         $botObj = Bot::getData($botObj, $tenantId);
         $botObj->file = str_replace('localhost', $domain . '.whatskey.net', $botObj->file);
         // For Local
-        $botObj->file = str_replace('newdomain1.whatskey.net/', 'e720-156-219-175-151.ngrok.io', $botObj->file);
+        // $botObj->file = str_replace('newdomain1.whatskey.net/', 'e720-156-219-175-151.ngrok.io', $botObj->file);
         $myMessage = $botObj->reply;
         $message_type = '';
         if(str_contains($sender, '@g.us')){
@@ -428,6 +427,8 @@ class MessagesWebhook extends ProcessWebhookJob
             	$lastMessage['metadata']['listId'] = $botId;
             }else if($message_type == 'poll'){
             	$lastMessage['metadata']['pollId'] = $botId;
+            }else if($message_type == 'templates'){
+                $lastMessage['metadata']['templateId'] = $botId;
             }
 
             $messageObj = ChatMessage::newMessage($lastMessage);
@@ -454,7 +455,7 @@ class MessagesWebhook extends ProcessWebhookJob
             }
             if($botObj->image != ''){
         		$botObj->image = str_replace('localhost', $domain . '.whatskey.net', $botObj->image);
-        		$botObj->image = str_replace('newdomain1.whatskey.net/', 'e720-156-219-175-151.ngrok.io', $botObj->image);
+        		// $botObj->image = str_replace('newdomain1.whatskey.net/', 'e720-156-219-175-151.ngrok.io', $botObj->image);
 	            $sendData['image'] = $botObj->image;
             }
             $sendData['footer'] = $botObj->footer;
@@ -720,78 +721,38 @@ class MessagesWebhook extends ProcessWebhookJob
         return 1;
     }
 
-    // public function handleTemplateMsg($message, $botObj, $domain, $sender)
-    // {
-    //     $buttons = [];
-    //     $mainWhatsLoopObj = new \OfficialHelper();
-    //     if (isset($botObj->buttonsData) && !empty($botObj->buttonsData)) {
-    //         foreach ($botObj->buttonsData as $key => $oneItem) {
-    //             $buttons[] = [
-    //                 'id' => $oneItem['id'],
-    //                 'title' => $oneItem['text'],
-    //                 'type' => (int)$oneItem['button_type'],
-    //                 'extra_data' => in_array($oneItem['button_type'],[1,2]) ? $oneItem['msg'] : ('id'.$oneItem['id']),
-    //             ];
-    //         }
+    public function handleTemplateMsg($message, $botObj, $domain, $sender,$tenantId,$senderMessage)
+    {
+        $buttons = [];
+        $botObj = TemplateMsg::getData($botObj,$tenantId);
+        $mainWhatsLoopObj = new \OfficialHelper();
+        if (isset($botObj->buttonsData) && !empty($botObj->buttonsData)) {
+            foreach ($botObj->buttonsData as $key => $oneItem) {
+                $buttons[] = [
+                    'id' => $oneItem['id'],
+                    'title' => $oneItem['text'],
+                    'type' => (int)$oneItem['button_type'],
+                    'extra_data' => in_array($oneItem['button_type'],[1,2]) ? $oneItem['msg'] : ('id'.$oneItem['id']),
+                ];
+            }
 
-    //         $sendData['body'] = $botObj->body;
-    //         if($botObj->title != null){
-    //             $sendData['title'] = $botObj->title;
-    //         }
+            $sendData['title'] = $botObj->title;
+            $sendData['body'] = $botObj->body;
+            $sendData['footer'] = $botObj->footer;
 
-    //         if($botObj->image != null){
-    //             $sendData['image'] = $botObj->image;
-    //         }
+            $sendData['buttons'] = $buttons;
+            if(str_contains($sender, '@g.us')){
+                $sendData['chat'] = $sender;
+            }else{
+                $sendData['phone'] = str_replace('@c.us', '', $sender);
+            }
+            $result = $mainWhatsLoopObj->sendTemplates($sendData);
 
-    //         $sendData['footer'] = $botObj->footer;
-    //         $sendData['buttons'] = $buttons;
-    //         $sendData['phone'] = str_replace('@c.us', '', $sender);
-    //         $result = $mainWhatsLoopObj->sendTemplates($sendData);
-
-    //         $sendData['chatId'] = $sender;
-
-    //         if ($botObj->moderator_id != null) {
-    //             $modObj = User::find($botObj->moderator_id);
-    //             if ($modObj) {
-    //                 $dialogObj = ChatDialog::getOne($sendData['chatId']);
-    //                 $modArrs = $dialogObj->modsArr;
-    //                 if ($modArrs == null) {
-    //                     $dialogObj->modsArr = serialize([$botObj->moderator_id]);
-    //                     $dialogObj->save();
-    //                 } else {
-    //                     $oldArr = unserialize($dialogObj->modsArr);
-    //                     if (!in_array($botObj->moderator_id, $oldArr)) {
-    //                         array_push($oldArr, $botObj->moderator_id);
-    //                         $dialogObj->modsArr = serialize($oldArr);
-    //                         $dialogObj->save();
-    //                     }
-    //                 }
-    //             }
-    //         }
-
-    //         // if($botObj->category_id != null){
-    //         //     $categoryObj = Category::find($botObj->category_id);
-    //         //        if($categoryObj){
-    //         //            $labelData['liveChatId'] = $sendData['chatId'];
-    //         //         $labelData['labelId'] = $categoryObj->labelId;
-
-    //         //         $varObj = Variable::getVar('BUSINESS');
-    //         //         if($varObj){
-    //         //             $mainWhatsLoopObj2 = new \MainWhatsLoop();
-    //         //             $result1 = $mainWhatsLoopObj2->unlabelChat($labelData);
-    //         //             $result2 = $mainWhatsLoopObj2->labelChat($labelData);
-    //         //             $result3 = $result2->json();
-    //         //         }
-
-    //         //         $contactLabelObj = ContactLabel::newRecord(str_replace('@c.us','',$sendData['chatId']),$labelData['labelId']);
-    //         //         broadcast(new ChatLabelStatus($domain, ChatDialog::getData(ChatDialog::getOne($labelData['liveChatId'])) , Category::getData($categoryObj) , 1 ));
-    //         //        }
-    //         // }
-
-    //         return $this->handleRequest($message, $domain, $result, $sendData, 'BOT PLUS', 'text', 'chat', 'BotMessage', $botObj);
-    //     }
-    //     return 1;
-    // }
+            $sendData['chatId'] = $sender;
+            return $this->handleRequest($message, $domain, $result, $sendData, 'BOT PLUS', 'templates', 'BotMessage', $botObj,$botObj->id);
+        }
+        return 1;
+    }
 
     // public function handleTemplateButtonsResponse($message, $sender, $userObj, $tenantObj)
     // {
