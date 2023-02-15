@@ -120,7 +120,7 @@
                     <option value="16" {{ old('message_type') == 16 ? 'selected' : '' }}>{{ trans('main.link') }}</option>
                     @if($data->checkAvailBotPlus == 1)
                     <option value="30" {{ old('message_type') == 30 ? 'selected' : '' }}>{{ trans('main.botPlus') }}</option>
-                    <option value="33" {{ old('message_type') == 33 ? 'selected' : '' }}>{{ trans('main.templateMsg') }}</option>
+                    {{-- <option value="33" {{ old('message_type') == 33 ? 'selected' : '' }}>{{ trans('main.templateMsg') }}</option> --}}
                     @endif
                     <option value="31" {{ old('message_type') == 31 ? 'selected' : '' }}>{{ trans('main.listMsg') }}</option>
                     <option value="32" {{ old('message_type') == 32 ? 'selected' : '' }}>{{ trans('main.polls') }}</option>
@@ -519,7 +519,7 @@
                     </div>
                 </div>
             </div>
-            <div class="reply hidden" data-id="33">
+            {{-- <div class="reply hidden" data-id="33">
                 <div class="form-group textWrap">
                     <label>{{ trans('main.title') }} :</label>
                     <input class="form-control" type="text" value="{{ old('TMtitle') }}" name="TMtitle" placeholder="{{ trans('main.title') }}">
@@ -604,7 +604,7 @@
                         </div> 
                     </div>
                 </div>
-            </div>
+            </div> --}}
             <div class="card-footer text-right">
                 <button type="submit" class="btn btn-primary mr-2">{{trans('main.add')}}</button>
                 <a href="{{ URL::to('/'.$data->designElems['mainData']['url']) }}" class="btn btn-secondary">{{trans('main.back')}}</a>
