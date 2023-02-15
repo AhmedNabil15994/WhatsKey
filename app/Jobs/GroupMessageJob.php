@@ -200,6 +200,22 @@ class GroupMessageJob implements ShouldQueue
                 $messageData[$key]['options'] = $options;
                 $messageFunction = 'sendBulkPoll';
                 $hasVar = str_contains($botObj->body, '{CUSTOMER_NAME}') || str_contains($messageObj['message'], '{CUSTOMER_PHONE}') ? 1 : 0;
+            }else if($messageObj['message_type'] == 33){
+                $buttons = [];
+                foreach ($botObj->buttonsData as $buttonKey => $oneItem) {
+                    $buttons[] = [
+                        'id' => $oneItem['id'],
+                        'title' => $oneItem['text'],
+                        'type' => (int)$oneItem['button_type'],
+                        'extra_data' => in_array($oneItem['button_type'],[1,2]) ? $oneItem['msg'] : ('id'.$oneItem['id']),
+                    ];
+                }
+                $messageData[$key]['body'] = $botObj->title;
+                $messageData[$key]['body'] .= " \r\n \r\n".$this->reformMessage($botObj->body,$contact['name'],str_replace('+', '', $contact['phone']));
+                $messageData[$key]['footer'] = $botObj->footer;
+                $messageData[$key]['buttons'] = $buttons;
+                $messageFunction = 'sendBulkTemplate';
+                $hasVar = str_contains($botObj->body, '{CUSTOMER_NAME}') || str_contains($messageObj['message'], '{CUSTOMER_PHONE}') ? 1 : 0;
             }
         }
 
