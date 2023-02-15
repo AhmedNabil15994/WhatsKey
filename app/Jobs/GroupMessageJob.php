@@ -91,10 +91,22 @@ class GroupMessageJob implements ShouldQueue
 
             if($status){
                 $hasWhatsapp+=1;
+
+                $oldName = $contact->name;
+                $newName = str_replace('+', '',  str_replace(' ','',$oldName) );
+                if($newName == $checkData['phone']){
+                    $checkContactObj = Contact::where('phone',$contact->phone)->where('name','!=',$oldName)->first();
+                    if($checkContactObj){
+                        $newName = $checkContactObj->name;
+                    }else{
+                        $newName = $oldName;
+                    }
+                }
+
                 $allowedContacts[] = [
                     'hasWhatsapp' => 1,
                     'phone' => $checkData['phone'],
-                    'name' => $contact->name,
+                    'name' => $newName,
                 ];
             }else{
                 $hasNotWhatsapp+=1;

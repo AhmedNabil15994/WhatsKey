@@ -72,25 +72,25 @@ class InstanceStatus extends Command
             }
         }
         
-        $statuses = UserStatus::orderBy('id','DESC')->take(2)->get();
-        if(count($statuses) == 2 && in_array($statuses[0]->status,[3,4]) && in_array($statuses[1]->status,[3,4])){
+        $statuses = UserStatus::orderBy('id','DESC')->take(5)->get();
+        if(count($statuses) < 5 || (count($statuses) >= 4 && in_array($statuses[0]->status,[3,4]) && in_array($statuses[1]->status,[3,4]))){
             $stopSend = 1;
         }
         
-        // if (in_array($statusInt, [3, 4]) && !$stopSend) {
-        //     $channelObj = \DB::connection('main')->table('channels')->where('deleted_by', null)->orderBy('id', 'ASC')->first();
-        //     $whatsLoopObj = new \OfficialHelper($channelObj->id, $channelObj->token);
-        //     $phone = User::first()->emergency_number ? User::first()->emergency_number : User::first()->phone;
-        //     $data['phone'] = str_replace('+', '', $phone);
-        //     $data['body'] = 'Connection Closed and you got a new QR Code , please go and scan it!';
-        //     $test = $whatsLoopObj->sendMessage($data);
-        //     if (!isset($result['status']) || $result['status']['status'] != 1) {
-        //         $userStatusObj = new UserStatus;
-        //         $userStatusObj->status = $statusInt;
-        //         $userStatusObj->created_at = date('Y-m-d H:i:s');
-        //         $userStatusObj->save();
-        //     }
-        // }
+        if (in_array($statusInt, [3, 4]) && !$stopSend) {
+            $channelObj = \DB::connection('main')->table('channels')->where('deleted_by', null)->orderBy('id', 'ASC')->first();
+            $whatsLoopObj = new \OfficialHelper($channelObj->id, $channelObj->token);
+            $phone = User::first()->emergency_number ? User::first()->emergency_number : User::first()->phone;
+            $data['phone'] = str_replace('+', '', $phone);
+            $data['body'] = 'Connection Closed and you got a new QR Code , please go and scan it!';
+            $test = $whatsLoopObj->sendMessage($data);
+            if (!isset($result['status']) || $result['status']['status'] != 1) {
+                $userStatusObj = new UserStatus;
+                $userStatusObj->status = $statusInt;
+                $userStatusObj->created_at = date('Y-m-d H:i:s');
+                $userStatusObj->save();
+            }
+        }
         return 1;
     }
 }
