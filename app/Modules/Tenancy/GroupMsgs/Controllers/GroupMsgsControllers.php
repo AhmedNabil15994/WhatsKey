@@ -892,7 +892,7 @@ class GroupMsgsControllers extends Controller {
         $contactsChunk = 500;
         if($status == 1){
             $iterationCount = 0;
-            $contacts = Contact::NotDeleted()->where('group_id',$groupMsgObj->group_id)->where('status',1)->orderBy('id','DESC')->chunk($contactsChunk,function($data) use ($dataObj,$contactsChunk,&$iterationCount){
+            $contacts = Contact::NotDeleted()->where('group_id',$groupMsgObj->group_id)->where('status',1)->inRandomOrder()->chunk($contactsChunk,function($data) use ($dataObj,$contactsChunk,&$iterationCount){
                 try {
                     if($iterationCount == 0){
                         dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs');
@@ -920,7 +920,7 @@ class GroupMsgsControllers extends Controller {
             $allContacts = array_diff( $allContacts, $sentContacts );
             $oldContacts = array_unique(array_merge( $allContacts, $notSentContacts ));
 
-            $contacts = Contact::NotDeleted()->where('group_id',$groupMsgObj->group_id)->whereIn('phone',$oldContacts)->orderBy('id','DESC')->chunk($contactsChunk,function($data) use ($dataObj,$contactsChunk,&$iterationCount){
+            $contacts = Contact::NotDeleted()->where('group_id',$groupMsgObj->group_id)->whereIn('phone',$oldContacts)->inRandomOrder()->chunk($contactsChunk,function($data) use ($dataObj,$contactsChunk,&$iterationCount){
                 try {
                     if($iterationCount == 0){
                         dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs');
