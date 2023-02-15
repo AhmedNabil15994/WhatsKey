@@ -239,7 +239,7 @@ class TemplateMsgControllers extends Controller {
             }
 
             $modelType = $input['btn_msg_type_'.($i+1)];
-            $modelName = $modelType != null && $replyType == 3 ?  ((int)$modelType == 1 ? '\App\Models\Bot' : '\App\Models\BotPlus')  : '';
+            $modelName = $modelType != null && $replyType >= 2 ?  ((int)$modelType == 1 ? '\App\Models\Bot' : '\App\Models\BotPlus')  : '';
             $msg = $replyType == 1 ? $input['btn_reply_'.($i+1)] : '';
 
             if($modelName != '' && $msg == ''){
@@ -266,7 +266,7 @@ class TemplateMsgControllers extends Controller {
                 'msg' => $msg,
             ];
         }
-        
+
         $botObj->message_type = $input['message_type'];
         $botObj->message = $input['message'];
         $botObj->title = isset($input['title']) ? $input['title'] : '';
@@ -344,7 +344,7 @@ class TemplateMsgControllers extends Controller {
             }
 
             $modelType = $input['btn_msg_type_'.($i+1)];
-            $modelName = $modelType != null && $replyType == 3 ?  ((int)$modelType == 1 ? '\App\Models\Bot' : '\App\Models\BotPlus')  : '';
+            $modelName = $modelType != null && $replyType >= 2 ?  ((int)$modelType == 1 ? '\App\Models\Bot' : '\App\Models\BotPlus')  : '';
             $msg = $replyType == 1 ? $input['btn_reply_'.($i+1)] : '';
 
             if($modelName != '' && $msg == ''){
