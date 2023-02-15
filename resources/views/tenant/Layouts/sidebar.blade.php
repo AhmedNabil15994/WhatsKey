@@ -136,7 +136,7 @@
                             </li>
 
                             @if(\Helper::checkRules('list-group-messages') )
-                            <li class="menu-item {{ Active(URL::to('/groupMsgs'),'menu-item-active') }}" aria-haspopup="true">
+                            <li class="menu-item {{ Active(URL::to('/groupMsgs'),'menu-item-active') }} {{ Active(URL::to('/groupMsgs/view/*'),'menu-item-active') }}" aria-haspopup="true">
                                 <a href="{{URL::to('/groupMsgs')}}" class="menu-link">
                                     <i class="menu-bullet menu-bullet-dot">
                                         <span></span>
@@ -146,7 +146,7 @@
                             </li>
                             @endif
                             @if(\Helper::checkRules('add-group-message') )
-                            <li class="menu-item {{ Active(URL::to('/groupMsgs/*'),'menu-item-active') }}" aria-haspopup="true">
+                            <li class="menu-item {{ Active(URL::to('/groupMsgs/add'),'menu-item-active') }}" aria-haspopup="true">
                                 <a href="{{URL::to('/groupMsgs/add')}}" class="menu-link">
                                     <i class="menu-bullet menu-bullet-dot">
                                         <span></span>
