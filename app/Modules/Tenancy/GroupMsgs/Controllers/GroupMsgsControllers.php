@@ -40,9 +40,10 @@ class GroupMsgsControllers extends Controller {
             ['id'=>10,'title'=>trans('main.disappearing')],
             ['id'=>11,'title'=>trans('main.mention')],
             ['id'=>16,'title'=>trans('main.link')],
-            ['id'=>30,'title'=>trans('main.smartBot')],
+            ['id'=>30,'title'=>trans('main.botPlus')],
             ['id'=>31,'title'=>trans('main.listMsg')],
             ['id'=>32,'title'=>trans('main.polls')],
+            ['id'=>33,'title'=>trans('main.templateMsg')],
         ];
 
         $sent_types = [
@@ -308,6 +309,25 @@ class GroupMsgsControllers extends Controller {
         return $validate;
     }
 
+    protected function validateInsertTemplateMsgObject($input){
+        $rules = [
+            'TMtitle' => 'required',
+            'TMbody' => 'required',
+            'TMfooter' => 'required',
+            'TMbuttons' => 'required',
+        ];
+
+        $message = [
+            'TMtitle.required' => trans('main.titleValidate'),
+            'TMbody.required' => trans('main.bodyValidate'),
+            'TMfooter.required' => trans('main.footerValidate'),
+            'TMbuttons.required' => trans('main.buttonsValidate'),
+        ];
+
+        $validate = \Validator::make($input, $rules, $message);
+        return $validate;
+    }
+
     public function create() {
         $input = \Request::all();
         $validate = $this->validateInsertObject($input);
@@ -516,6 +536,74 @@ class GroupMsgsControllers extends Controller {
                 ];
             }
         }
+        else if($input['message_type'] == 33){
+            $validate = $this->validateInsertTemplateMsgObject($input);
+            if($validate->fails()){
+                Session::flash('error', $validate->messages()->first());
+                return redirect()->back()->withInput();
+            }
+            for ($i = 0; $i < $input['TMbuttons']; $i++) {
+                if(!isset($input['btn_text_'.($i+1)]) || empty($input['btn_text_'.($i+1)]) || $input['btn_text_'.($i+1)] == null ){
+                    Session::flash('error', trans('main.invalidText',['button'=>($i+1)]));
+                    return redirect()->back()->withInput();
+                }
+
+                if(!isset($input['btn_type_'.($i+1)]) || empty($input['btn_type_'.($i+1)]) || $input['btn_type_'.($i+1)] == null ){
+                    Session::flash('error', trans('main.invalidButtonType',['button'=>($i+1)]));
+                    return redirect()->back()->withInput();
+                }
+
+                if(!isset($input['btn_reply_type_'.($i+1)]) || empty($input['btn_reply_type_'.($i+1)]) || $input['btn_reply_type_'.($i+1)] == null ){
+                    Session::flash('error', trans('main.invalidType',['button'=>($i+1)]));
+                    return redirect()->back()->withInput();
+                }
+
+                $replyType = (int)$input['btn_reply_type_'.($i+1)];
+                if($replyType == 1 && ( !isset($input['btn_reply_'.($i+1)]) || empty($input['btn_reply_'.($i+1)]) ) && (!isset($input['url_'.($i+1)]) && !isset($input['contact_'.($i+1)])) ){
+                    Session::flash('error', trans('main.invalidReply',['button'=>($i+1)]));
+                    return redirect()->back()->withInput();
+                }
+
+                if($replyType == 2 && ( !isset($input['btn_msg_'.($i+1)]) || empty($input['btn_msg_'.($i+1)]) ) && (!isset($input['url_'.($i+1)]) && !isset($input['contact_'.($i+1)]))){
+                    Session::flash('error', trans('main.invalidMsg',['button'=>($i+1)]));
+                    return redirect()->back()->withInput();
+                }
+
+                $modelType = '';
+                if($replyType == 2 && ( !isset($input['btn_msg_type_'.($i+1)]) || empty($input['btn_msg_type_'.($i+1)]) ) && (!isset($input['url_'.($i+1)]) && !isset($input['contact_'.($i+1)])) ){
+                    Session::flash('error', trans('main.invalidMsg',['button'=>($i+1)]));
+                    return redirect()->back()->withInput();
+                }
+
+                $modelType = $input['btn_msg_type_'.($i+1)];
+                $modelName = $modelType != null && $replyType >= 2 ?  ((int)$modelType == 1 ? '\App\Models\Bot' : '\App\Models\BotPlus')  : '';
+                $msg = $replyType == 1 ? $input['btn_reply_'.($i+1)] : '';
+
+                if($modelName != '' && $msg == ''){
+                    $dataObj = $modelName::find($input['btn_msg_'.($i+1)]);
+                    if($dataObj){
+                        $msg = $dataObj->id;
+                    }
+                }
+                if($modelName == '' && $msg == ''){
+                    $modelType= '';
+                    $msg = isset($input['url_'.($i+1)]) ? $input['url_'.($i+1)] : '';
+                    if($msg == ''){
+                        $msg = isset($input['contact_'.($i+1)]) ? $input['contact_'.($i+1)] : '';
+                    }
+                }
+
+                $myData[] = [
+                    'id' => $i + 1,
+                    'text' => $input['btn_text_'.($i+1)],
+                    'button_type' => $input['btn_type_'.($i+1)],
+                    'reply_type' => $replyType,
+                    'msg_type' => $modelType,
+                    'model_name' => $modelName,
+                    'msg' => $msg,
+                ];
+            }
+        }
         $groupObj = GroupNumber::getOne($input['group_id']);
         if($groupObj == null){
             return redirect('404');
@@ -551,6 +639,8 @@ class GroupMsgsControllers extends Controller {
             $message = $input['LMbody'];
         }else if($input['message_type'] == 32){
             $message = $input['PLbody'];
+        }else if($input['message_type'] == 33){
+            $message = $input['TMbody'];
         }
 
         $contactsCount = Contact::NotDeleted()->where('group_id',$groupObj->id)->count();
@@ -667,6 +757,24 @@ class GroupMsgsControllers extends Controller {
 
             $dataObj->poll_id = $botObj->id;
             $dataObj->save();
+        }else if($input['message_type'] == 33){
+            $botObj = new TemplateMsg;
+            $botObj->message_type = 1;
+            $botObj->message = 'Group Message '.$dataObj->id;
+            $botObj->title = isset($input['TMtitle']) ? $input['TMtitle'] : '';
+            $botObj->image = '';
+            $botObj->body = $input['TMbody'];
+            $botObj->footer = $input['TMfooter'];
+            $botObj->buttons = $input['TMbuttons'];
+            $botObj->buttonsData = serialize($myData);
+            $botObj->sort = TemplateMsg::newSortIndex();
+            $botObj->status = 1;
+            $botObj->deleted_by = 1;
+            $botObj->deleted_at = DATE_TIME;
+            $botObj->save();
+
+            $dataObj->template_id = $botObj->id;
+            $dataObj->save();
         }
 
         $dataObj = GroupMsg::getData($dataObj);
@@ -678,7 +786,7 @@ class GroupMsgsControllers extends Controller {
                 try {
                     if($iterationCount == 0){
                         dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs');
-                    }else{
+                    }else if($iterationCount <= 5){
                         $oneJobTime = $contactsChunk * $dataObj->interval_in_sec;
                         $breakBetweenTwoJobs = 600; // 10 Minutes
                         $jobsMustWait = $iterationCount * ($oneJobTime + $breakBetweenTwoJobs);
@@ -698,7 +806,7 @@ class GroupMsgsControllers extends Controller {
                 try {
                     if($iterationCount == 0){
                         dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs')->delay($on);
-                    }else{
+                    }else if($iterationCount <= 5){
                         $oneJobTime = $contactsChunk * $dataObj->interval_in_sec;
                         $breakBetweenTwoJobs = 600; // 10 Minutes
                         $jobsMustWait = $iterationCount * ($oneJobTime + $breakBetweenTwoJobs);
@@ -787,7 +895,7 @@ class GroupMsgsControllers extends Controller {
                 try {
                     if($iterationCount == 0){
                         dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs');
-                    }else{
+                    }else if($iterationCount <= 5){
                         $oneJobTime = $contactsChunk * $dataObj->interval_in_sec;
                         $breakBetweenTwoJobs = 600; // 10 Minutes
                         $jobsMustWait = $iterationCount * ($oneJobTime + $breakBetweenTwoJobs);
@@ -815,7 +923,7 @@ class GroupMsgsControllers extends Controller {
                 try {
                     if($iterationCount == 0){
                         dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs');
-                    }else{
+                    }else if($iterationCount <= 5){
                         $oneJobTime = $contactsChunk * $dataObj->interval_in_sec;
                         $breakBetweenTwoJobs = 600; // 10 Minutes
                         $jobsMustWait = $iterationCount * ($oneJobTime + $breakBetweenTwoJobs);
