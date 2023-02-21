@@ -24,7 +24,7 @@ class AuthControllers extends Controller {
 
     public function login() {
         if(Session::has('user_id')){
-            return redirect('/menu');
+            return redirect('/login');
         }
         $data['code'] = 'eg';
         return view('Tenancy.Auth.Views.login')->with('data',(object) $data);
