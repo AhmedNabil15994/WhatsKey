@@ -240,6 +240,7 @@ class GroupMessageJob implements ShouldQueue
         $sendRequest = [
             'phones' => $phones,
             'interval' => $messageObj['interval_in_sec'],
+            'checked' => 1,
         ];
 
         if($hasVar){
@@ -254,6 +255,7 @@ class GroupMessageJob implements ShouldQueue
                     'phones' => $phones,
                     'interval' => 30 + $messageObj['interval_in_sec'],
                     'url' => $messageObj['file'],
+                    'checked' => 1,
                 ]);
             }else{
                 $mainWhatsLoopObj->$messageFunction($sendRequest);
