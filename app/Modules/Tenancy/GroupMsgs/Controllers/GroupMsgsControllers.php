@@ -779,7 +779,7 @@ class GroupMsgsControllers extends Controller {
         }
 
         $dataObj = GroupMsg::getData($dataObj);
-        $contactsChunk = 500;
+        $contactsChunk = 100;
 
         if($flag == 0){
             $iterationCount = 0;
@@ -787,9 +787,9 @@ class GroupMsgsControllers extends Controller {
                 try {
                     if($iterationCount == 0){
                         dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs');
-                    }else if($iterationCount <= 5){
+                    }else if($iterationCount <= 29){
                         $oneJobTime = $contactsChunk * $dataObj->interval_in_sec;
-                        $breakBetweenTwoJobs = 600; // 10 Minutes
+                        $breakBetweenTwoJobs = 300; // 5 Minutes
                         $jobsMustWait = $iterationCount * ($oneJobTime + $breakBetweenTwoJobs);
                         $on = \Carbon\Carbon::now()->addSeconds($jobsMustWait);  
                         dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs')->delay($on);
@@ -807,9 +807,9 @@ class GroupMsgsControllers extends Controller {
                 try {
                     if($iterationCount == 0){
                         dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs')->delay($on);
-                    }else if($iterationCount <= 5){
+                    }else if($iterationCount <= 29){
                         $oneJobTime = $contactsChunk * $dataObj->interval_in_sec;
-                        $breakBetweenTwoJobs = 600; // 10 Minutes
+                        $breakBetweenTwoJobs = 300; // 5 Minutes
                         $jobsMustWait = $iterationCount * ($oneJobTime + $breakBetweenTwoJobs);
                         $newOn = $on->addSeconds($jobsMustWait);  
                         dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs')->delay($newOn);
@@ -889,16 +889,16 @@ class GroupMsgsControllers extends Controller {
         }
 
         $dataObj = GroupMsg::getData($groupMsgObj);
-        $contactsChunk = 500;
+        $contactsChunk = 100;
         if($status == 1){
             $iterationCount = 0;
             $contacts = Contact::NotDeleted()->where('group_id',$groupMsgObj->group_id)->where('status',1)->inRandomOrder()->chunk($contactsChunk,function($data) use ($dataObj,$contactsChunk,&$iterationCount){
                 try {
                     if($iterationCount == 0){
                         dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs');
-                    }else if($iterationCount <= 5){
+                    }else if($iterationCount <= 29){
                         $oneJobTime = $contactsChunk * $dataObj->interval_in_sec;
-                        $breakBetweenTwoJobs = 600; // 10 Minutes
+                        $breakBetweenTwoJobs = 300; // 5 Minutes
                         $jobsMustWait = $iterationCount * ($oneJobTime + $breakBetweenTwoJobs);
                         $on = \Carbon\Carbon::now()->addSeconds($jobsMustWait);  
                         dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs')->delay($on);
@@ -924,9 +924,9 @@ class GroupMsgsControllers extends Controller {
                 try {
                     if($iterationCount == 0){
                         dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs');
-                    }else if($iterationCount <= 5){
+                    }else if($iterationCount <= 29){
                         $oneJobTime = $contactsChunk * $dataObj->interval_in_sec;
-                        $breakBetweenTwoJobs = 600; // 10 Minutes
+                        $breakBetweenTwoJobs = 300; // 5 Minutes
                         $jobsMustWait = $iterationCount * ($oneJobTime + $breakBetweenTwoJobs);
                         $on = \Carbon\Carbon::now()->addSeconds($jobsMustWait);  
                         dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs')->delay($on);
