@@ -779,7 +779,7 @@ class GroupMsgsControllers extends Controller {
         }
 
         $dataObj = GroupMsg::getData($dataObj);
-        $contactsChunk = 100;
+        $contactsChunk = 50;
 
         if($flag == 0){
             $iterationCount = 0;
@@ -787,7 +787,7 @@ class GroupMsgsControllers extends Controller {
                 try {
                     if($iterationCount == 0){
                         dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs');
-                    }else if($iterationCount <= 29){
+                    }else if($iterationCount <= 59){
                         $oneJobTime = $contactsChunk * $dataObj->interval_in_sec;
                         $breakBetweenTwoJobs = 300; // 5 Minutes
                         $jobsMustWait = $iterationCount * ($oneJobTime + $breakBetweenTwoJobs);
@@ -807,7 +807,7 @@ class GroupMsgsControllers extends Controller {
                 try {
                     if($iterationCount == 0){
                         dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs')->delay($on);
-                    }else if($iterationCount <= 29){
+                    }else if($iterationCount <= 59){
                         $oneJobTime = $contactsChunk * $dataObj->interval_in_sec;
                         $breakBetweenTwoJobs = 300; // 5 Minutes
                         $jobsMustWait = $iterationCount * ($oneJobTime + $breakBetweenTwoJobs);
@@ -889,14 +889,14 @@ class GroupMsgsControllers extends Controller {
         }
 
         $dataObj = GroupMsg::getData($groupMsgObj);
-        $contactsChunk = 100;
+        $contactsChunk = 50;
         if($status == 1){
             $iterationCount = 0;
             $contacts = Contact::NotDeleted()->where('group_id',$groupMsgObj->group_id)->where('status',1)->inRandomOrder()->chunk($contactsChunk,function($data) use ($dataObj,$contactsChunk,&$iterationCount){
                 try {
                     if($iterationCount == 0){
                         dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs');
-                    }else if($iterationCount <= 29){
+                    }else if($iterationCount <= 59){
                         $oneJobTime = $contactsChunk * $dataObj->interval_in_sec;
                         $breakBetweenTwoJobs = 300; // 5 Minutes
                         $jobsMustWait = $iterationCount * ($oneJobTime + $breakBetweenTwoJobs);
@@ -924,7 +924,7 @@ class GroupMsgsControllers extends Controller {
                 try {
                     if($iterationCount == 0){
                         dispatch(new GroupMessageJob(reset($data),$dataObj))->onConnection('groupMsgs');
-                    }else if($iterationCount <= 29){
+                    }else if($iterationCount <= 59){
                         $oneJobTime = $contactsChunk * $dataObj->interval_in_sec;
                         $breakBetweenTwoJobs = 300; // 5 Minutes
                         $jobsMustWait = $iterationCount * ($oneJobTime + $breakBetweenTwoJobs);
